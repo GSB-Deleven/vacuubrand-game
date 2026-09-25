@@ -172,7 +172,6 @@ const ENEMY_DEFS = {
   w: { name: 'WELLPLATTE', w: 15, h: 8, weight: 2, points: 250, beh: 'hopper', speed: 0.8, harm: true, spr: 'plate', frames: true, liquid: true },
   // Verdampfer
   c: { name: 'LÖSEMITTELDAMPF', w: 12, h: 9, weight: 1, points: 150, beh: 'floater', harm: true, spr: 'cloud' },
-  g: { name: 'LÖSEMITTEL-GEIST', w: 11, h: 11, weight: 2, points: 300, beh: 'ghost', speed: 0.35, harm: true, spr: 'ghost' },
   r: { name: 'KONZENTRATOR-RÖHRCHEN', w: 7, h: 14, weight: 2, points: 250, beh: 'hopper', speed: 0.8, harm: true, spr: 'tube', frames: true },
   k: { name: 'RUNDKOLBEN', w: 10, h: 12, weight: 2, points: 250, beh: 'walker', speed: 0.45, harm: true, spr: 'flask', frames: true },
   h: { name: 'HITZEDAMPF', w: 12, h: 9, weight: 2, points: 250, beh: 'floater', harm: true, spr: 'hotcloud' },
@@ -244,15 +243,6 @@ class Enemy {
         this.x = this.baseX + Math.sin(this.t * 0.02) * 24;
         this.y = this.baseY + Math.sin(this.t * 0.06) * 6;
         break;
-      case 'ghost': {
-        const dx = p.x - this.x;
-        if (Math.abs(dx) < 150) {
-          this.x += Math.sign(dx) * d.speed;
-          this.baseY += clamp(p.y - 2 - this.baseY, -0.2, 0.2);
-        }
-        this.y = this.baseY + Math.sin(this.t * 0.05) * 8;
-        break;
-      }
       case 'static':
         this.vy = Math.min(this.vy + 0.3, 5);
         moveBody(this, lv);

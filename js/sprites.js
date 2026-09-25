@@ -187,19 +187,6 @@ const ENEMY_GRIDS = {
     '..kkkkkk..',
     '...k..k...'
   ],
-  ghost: [
-    '....QQQQ....',
-    '..QQqqqqQQ..',
-    '.QqqqqqqqqQ.',
-    '.QqwkqqwkqQ.',
-    'QqqwkqqwkqqQ',
-    'QqqqqqqqqqqQ',
-    'QqqqqmmqqqqQ',
-    'QqqqqqqqqqqQ',
-    'QqqqqqqqqqqQ',
-    'QqQqqQQqqQqQ',
-    'QQ.QQ..QQ.QQ'
-  ],
   beaker: [
     'kkkkkkkkkk',
     '.klllllllk',
