@@ -27,6 +27,11 @@ const Input = {
         Game.requestAdmin();
         return;
       }
+      if (e.ctrlKey && e.shiftKey && (e.code === 'Enter' || e.code === 'NumpadEnter')) {
+        e.preventDefault();
+        Game.quickStart();
+        return;
+      }
       if (Overlay.visible) return;
       if (!e.repeat && !this.keys[e.code]) this.just[e.code] = true;
       this.keys[e.code] = true;

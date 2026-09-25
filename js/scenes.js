@@ -147,6 +147,8 @@ class ResultScene {
     this.res = res;
     this.allowAdmin = true;
     this.t = 0;
+    this.test = !!res.lead.isTest;
+    if (this.test) return; // Testrunde (ADMIN): wird nicht gespeichert
     Store.addRound({
       leadId: res.lead.id, score: res.total, base: res.score, timeBonus: res.timeBonus,
       finished: res.finished, timeLeft: res.timeLeft, pump: res.pump, captures: res.captures, ppe: res.ppe, views: res.views
@@ -186,7 +188,9 @@ class ResultScene {
     ctx.fillStyle = '#3aa0e8'; ctx.fillRect(50, 99, 220, 1);
     Font.draw(ctx, 'GESAMT', 50, 105, { color: THEME.gold, scale: 2 });
     Font.draw(ctx, String(Math.round(r.total * k)), 270, 105, { color: THEME.gold, scale: 2, align: 'right' });
-    if (this.t > 70) {
+    if (this.t > 70 && this.test) {
+      Font.draw(ctx, 'TESTRUNDE - NICHT IN DER BESTENLISTE', 160, 128, { color: '#c8f2ff', align: 'center' });
+    } else if (this.t > 70) {
       const rankTxt = 'PLATZ ' + (this.rankDay || '-') + ' HEUTE  ·  PLATZ ' + (this.rankAll || '-') + ' GESAMT';
       Font.draw(ctx, rankTxt, 160, 128, { color: '#ffffff', align: 'center' });
       if (!this.newBest) Font.draw(ctx, 'DEIN BESTWERT: ' + this.best, 160, 139, { color: '#c8f2ff', align: 'center' });
