@@ -165,12 +165,12 @@ class ResultScene {
     ];
     rows.forEach((row, i) => {
       const y = 49 + i * 10;
-      Font.draw(ctx, row[0], 70, y, { color: '#ffffff' });
-      Font.draw(ctx, row[1], 250, y, { color: '#ffffff', align: 'right' });
+      Font.draw(ctx, row[0], 50, y, { color: '#ffffff' });
+      Font.draw(ctx, row[1], 270, y, { color: '#ffffff', align: 'right' });
     });
-    ctx.fillStyle = '#3aa0e8'; ctx.fillRect(70, 99, 180, 1);
-    Font.draw(ctx, 'GESAMT', 70, 105, { color: THEME.gold, scale: 2 });
-    Font.draw(ctx, String(Math.round(r.total * k)), 250, 105, { color: THEME.gold, scale: 2, align: 'right' });
+    ctx.fillStyle = '#3aa0e8'; ctx.fillRect(50, 99, 220, 1);
+    Font.draw(ctx, 'GESAMT', 50, 105, { color: THEME.gold, scale: 2 });
+    Font.draw(ctx, String(Math.round(r.total * k)), 270, 105, { color: THEME.gold, scale: 2, align: 'right' });
     if (this.t > 70) {
       const rankTxt = 'PLATZ ' + (this.rankDay || '-') + ' HEUTE  ·  PLATZ ' + (this.rankAll || '-') + ' GESAMT';
       Font.draw(ctx, rankTxt, 160, 128, { color: '#ffffff', align: 'center' });

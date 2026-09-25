@@ -41,7 +41,7 @@ const CONFIG = {
   pumps: [
     null,
     { short: 'ME 1C', title: 'MEMBRANPUMPE ME 1C', slogan: 'FILTRATION & FESTPHASENEXTRAKTION\nSAUGT TROPFEN, PARTIKEL, FILTERPAPIER.', range: 46, power: 1, pull: 1.6, tank: 3 },
-    { short: 'PC 3001', title: 'PC 3001 VARIO SELECT', slogan: 'ROTAVAP · KONZENTRATOR · TROCKNUNG\nJETZT AUCH KOLBEN UND GEISTER!', range: 72, power: 2, pull: 2.4, tank: 3.5 },
+    { short: 'PC 3001 VARIO SELECT', title: 'PC 3001 VARIO SELECT', slogan: 'ROTAVAP · KONZENTRATOR · TROCKNUNG\nJETZT AUCH KOLBEN UND GEISTER!', range: 72, power: 2, pull: 2.4, tank: 3.5 },
     { short: 'VACUU·PURE', title: 'VACUU·PURE 10C', slogan: 'GEFRIERTROCKNUNG · SCHLENK · TURBO\nNICHTS IST DIR ZU SCHWER!', range: 104, power: 3, pull: 3.4, tank: 4 }
   ],
 
