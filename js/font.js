@@ -121,11 +121,16 @@ const Font = {
   drawLogo(ctx, cx, y, s, color) {
     s = s || 1;
     color = color || '#1a1c2c';
-    const w1 = this.width('VACUU', s) + s, w2 = this.width('BRAND', s);
-    const x = Math.round(cx - (w1 + s + w2) / 2);
-    this._line(ctx, 'VACUU', x, y, color, s);
-    this._line(ctx, 'VACUU', x + s, y, color, s);
-    this._line(ctx, 'BRAND', x + w1 + s, y, color, s);
+    // fette Buchstaben brauchen 1 Pixel mehr Abstand, sonst kleben sie zusammen
+    const bold = 'VACUU', adv = 8 * s;
+    const w1 = bold.length * adv - 2 * s, w2 = this.width('BRAND', s), gap = 3 * s;
+    const x = Math.round(cx - (w1 + gap + w2) / 2);
+    for (let i = 0; i < bold.length; i++) {
+      const g = this.glyph(bold[i], color);
+      ctx.drawImage(g, x + i * adv, y, 5 * s, 7 * s);
+      ctx.drawImage(g, x + i * adv + s, y, 5 * s, 7 * s);
+    }
+    this._line(ctx, 'BRAND', x + w1 + gap, y, color, s);
   },
   _line(ctx, line, x, y, color, s) {
     for (let i = 0; i < line.length; i++) {
