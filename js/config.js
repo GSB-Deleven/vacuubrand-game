@@ -39,7 +39,7 @@ const CONFIG = {
   // power = maximales Gewicht, das eingesaugt werden kann; tank = Sekunden Dauersaugen
   pumps: [
     null,
-    { short: 'ME 1C', title: 'MEMBRANPUMPE ME 1C', slogan: 'IDEAL FÜR FILTRATION & FESTPHASENEXTRAKTION', range: 46, power: 1, pull: 1.6, tank: 3 },
+    { short: 'ME 1C', title: 'MEMBRANPUMPE ME 1C', slogan: 'IDEAL FÜR DIE FILTRATION', range: 46, power: 1, pull: 1.6, tank: 3 },
     { short: 'PC 3001 VARIO SELECT', title: 'PC 3001 VARIO SELECT', slogan: 'ROTAVAP · VAKUUM-KONZENTRATOR · TROCKENSCHRANK\nMEHR SOG: JETZT AUCH RUNDKOLBEN!', range: 72, power: 2, pull: 2.4, tank: 3.5 },
     { short: 'VACUU·PURE 10C', title: 'VACUU·PURE 10C', slogan: 'ÖLFREI: GEFRIERTROCKNUNG · SCHLENK · TURBO\nMAXIMALER SOG!', range: 104, power: 3, pull: 3.4, tank: 4 }
   ],

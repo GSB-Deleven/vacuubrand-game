@@ -40,7 +40,7 @@ const Level = {
     lan(35, 7, 5); e('d', 36, 6); e('f', 38, 6);
     q(37, 3, '?');
     pit(43, 44);
-    sign(47, 'ME 1C: IDEAL FÜR\nFILTRATION & SPE');
+    sign(47, 'ME 1C: IDEAL FÜR\nDIE FILTRATION');
     e('f', 49); e('d', 51); e('d', 53); e('p', 55, 5); e('p', 58, 6);
     brick(61, 9); brick(62, 8, 1, 2);
     e('v', 62, 3);
