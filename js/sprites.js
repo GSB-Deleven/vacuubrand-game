@@ -3,13 +3,14 @@
 const PAL = {
   k: '#1a1c2c', w: '#ffffff', W: '#d6dde8', g: '#a7b3c4', G: '#5d6b80',
   s: '#ffcfa6', S: '#e8a47c', a: '#ffcfa6', l: '#c8f2ff', L: '#6fcbe8', e: '#1a1c2c',
-  r: '#ff8f8f', m: '#8a2a3a', c: '#ffffff', C: '#c3cedd', p: '#1f3b4d',
+  r: '#ff8f8f', m: '#8a2a3a', c: '#ffffff', C: '#c3cedd', p: '#34507a',
   h: '#6b3f22', b: '#3aa0e8', B: '#1f5fa8', n: '#7be07b', N: '#2f9e4f', o: '#ffa53a',
-  O: '#d1621a', v: '#7b5fb8', V: '#e6dcff', q: '#b4f7d4', Q: '#3fae7c', y: '#f2c14e',
+  O: '#d1621a', v: '#7b5fb8', V: '#e6dcff', q: '#b4f7d4', Q: '#3fae7c', y: '#f9b000',
   Y: '#c9921e', R: '#e04848', u: '#f7a531', U: '#d4711c'
 };
 // Farben aus dem VACUUBRAND-Maskottchen (Pin "Pressure Control")
-const THEME = { navy: '#1f3b4d', navyDark: '#142838', gold: '#f2c14e', ink: '#1a1c2c' };
+// Firmenfarben wie auf vacuubrand.com: Stahlblau, Gelb, Hellgrau, Hellblau
+const THEME = { navy: '#46648c', navyDark: '#34507a', gold: '#f9b000', light: '#e9edf2', sky: '#7b9cc0', blue: '#4f8fcf', ink: '#1a1c2c' };
 
 const SPR = {};
 
@@ -227,7 +228,7 @@ const ENEMY_GRIDS = {
 
 // Zonen: Anwendungen der Pumpen
 const ZONE_STYLE = [
-  { name: 'FILTRATIONSLABOR', wall: '#d6e8f0', wall2: '#c2d9e6', base: '#a5bfd0', floorTop: '#6a7f9f', floor: '#4a5c7c', line: '#34445f', brick: '#e9e4d6', mortar: '#b9b19c',
+  { name: 'FILTRATIONSLABOR', wall: '#e9edf2', wall2: '#d5dde6', base: '#b7c6d6', floorTop: '#6d87ab', floor: '#46648c', line: '#34507a', brick: '#e9e4d6', mortar: '#b9b19c',
     bench: ['buchner', 'me1c', 'buchner', 'window2'], wall_: ['vacuulan', 'periodic'] },
   { name: 'ZELLKULTUR-LABOR', wall: '#e9f3ea', wall2: '#d4e8d6', base: '#b5d1b8', floorTop: '#7fa38a', floor: '#5c7d66', line: '#44604d', brick: '#f4faf4', mortar: '#bcd4bf',
     bench: ['hood', 'incubator', 'plates'], wall_: ['vacuulan', 'periodic'] },
@@ -350,22 +351,22 @@ function buildSprites() {
   // Pumpen
   SPR.pump1 = outlined(12, 11, P => {
     P.rect(5, 1, 2, 2, '#5d6b80');
-    P.rect(1, 3, 10, 6, '#d5dde8'); P.rect(1, 3, 10, 2, THEME.navy);
+    P.rect(1, 3, 10, 6, '#c9d3dc'); P.rect(1, 3, 10, 2, THEME.blue);
     P.rect(3, 6, 1, 2, '#5d6b80'); P.rect(5, 6, 1, 2, '#5d6b80'); P.rect(7, 6, 1, 2, '#5d6b80');
     P.rect(2, 9, 2, 1, k); P.rect(8, 9, 2, 1, k);
   });
   SPR.pump2 = outlined(14, 16, P => {
-    P.rect(1, 7, 12, 7, '#d5dde8'); P.rect(1, 7, 12, 1, THEME.navy);
-    P.rect(6, 2, 6, 5, '#3b4658'); P.rect(7, 3, 4, 2, '#7be07b');
+    P.rect(1, 7, 12, 7, '#c9d3dc'); P.rect(1, 7, 12, 1, '#a9b6c3');
+    P.rect(6, 2, 6, 5, THEME.blue); P.rect(7, 3, 4, 2, '#e9f4ff');
     P.rect(3, 1, 2, 2, '#c8f2ff'); P.ell(4, 5, 2.6, 2.6, '#c8f2ff'); P.rect(3, 5, 3, 2, '#6fcbe8');
     P.rect(3, 10, 8, 1, '#8795a8'); P.rect(3, 12, 8, 1, '#8795a8');
     P.rect(2, 14, 2, 1, k); P.rect(10, 14, 2, 1, k);
   });
   SPR.pump3 = outlined(16, 17, P => {
-    P.rect(1, 1, 14, 13, '#2b3a55'); P.rect(1, 1, 14, 1, '#3aa0e8');
+    P.rect(1, 1, 14, 13, THEME.blue); P.rect(1, 1, 14, 1, '#8fbde6');
     P.rect(3, 3, 10, 6, '#e8eef5'); P.rect(4, 4, 5, 3, k); P.rect(5, 5, 3, 1, '#7be07b');
     P.px(11, 5, '#7be07b');
-    P.rect(3, 10, 10, 1, '#4a5b7a'); P.rect(3, 12, 10, 1, '#4a5b7a');
+    P.rect(3, 10, 10, 1, '#2f6aa8'); P.rect(3, 12, 10, 1, '#2f6aa8');
     P.rect(2, 14, 3, 1, k); P.rect(11, 14, 3, 1, k);
   });
   // BVC professional (Flüssigkeits-Absaugsystem mit Sammelflasche)
@@ -448,9 +449,9 @@ function buildSprites() {
   shades.forEach((sh, f) => {
     SPR['q' + f] = paint(16, 16, P => {
       P.rect(0, 0, 16, 16, k);
-      P.rect(1, 1, 14, 14, '#f0a93a');
-      P.rect(1, 1, 14, 1, '#ffd98a'); P.rect(1, 1, 1, 14, '#ffd98a');
-      P.rect(1, 14, 14, 1, '#b86a00'); P.rect(14, 1, 1, 14, '#b86a00');
+      P.rect(1, 1, 14, 14, THEME.gold);
+      P.rect(1, 1, 14, 1, '#ffd466'); P.rect(1, 1, 1, 14, '#ffd466');
+      P.rect(1, 14, 14, 1, '#b87f00'); P.rect(14, 1, 1, 14, '#b87f00');
       [[2, 2], [13, 2], [2, 13], [13, 13]].forEach(([x, y]) => P.px(x, y, '#b86a00'));
       FLASK.forEach((row, y) => { for (let x = 0; x < 8; x++) if (row[x] !== '.') P.px(5 + x, 4 + y, '#b86a00'); });
       FLASK.forEach((row, y) => {

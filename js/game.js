@@ -551,7 +551,7 @@ class PlayScene {
 
   drawHud(ctx) {
     const p = this.player;
-    ctx.fillStyle = 'rgba(20,40,56,0.9)';
+    ctx.fillStyle = 'rgba(52,80,122,0.94)';
     ctx.fillRect(0, 0, VIEW_W, HUD_H);
     ctx.fillStyle = THEME.gold; ctx.fillRect(0, HUD_H, VIEW_W, 1);
     Font.draw(ctx, 'PUNKTE ' + pad(this.score, 6), 4, 3, { color: '#ffffff' });
@@ -618,7 +618,7 @@ class PlayScene {
   drawFloorBar(ctx) {
     const camX = Math.round(this.camX), y0 = 10 * T - CAM_Y + 2, h = VIEW_H - y0;
     // Hintergrund nur über Boden, Gruben bleiben sichtbar
-    ctx.fillStyle = 'rgba(20,40,56,0.85)';
+    ctx.fillStyle = 'rgba(52,80,122,0.88)';
     for (let sx = -(camX % T); sx < VIEW_W; sx += T) {
       const tx = Math.floor((camX + sx) / T);
       if (tileAt(this.level, tx, 10) !== ' ') ctx.fillRect(sx, y0, T, h);
