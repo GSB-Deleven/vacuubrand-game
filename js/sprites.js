@@ -268,14 +268,6 @@ function buildSprites() {
       P.px(5, 3, k); P.px(11, 3, k);
       if (f) { P.rect(3, 8, 1, 2, k); P.rect(14, 8, 1, 2, k); } else { P.rect(2, 8, 1, 2, k); P.rect(15, 8, 1, 2, k); }
     });
-    SPR['tube' + sfx] = outlined(10, 16, P => {
-      P.rect(2, 1, 6, 2, '#f2c14e');
-      P.rect(3, 3, 4, 7, '#fff8dc');
-      P.rect(4, 10, 2, 2, '#fff8dc');
-      P.rect(3, 7, 4, 3, '#ffa53a');
-      P.px(4, 5, k); P.px(6, 5, k);
-      if (f) { P.px(3, 13, k); P.px(6, 13, k); } else { P.px(4, 13, k); P.px(5, 13, k); }
-    });
     SPR['ice' + sfx] = outlined(15, 15, P => {
       const c1 = '#e6fbff', c2 = '#8fd8f0';
       P.rect(7, 1, 1, 13, c2); P.rect(1, 7, 13, 1, c2);

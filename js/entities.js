@@ -172,7 +172,6 @@ const ENEMY_DEFS = {
   w: { name: 'WELLPLATTE', w: 15, h: 8, weight: 2, points: 250, beh: 'hopper', speed: 0.8, harm: true, spr: 'plate', frames: true, liquid: true },
   // Verdampfer
   c: { name: 'LÖSEMITTELDAMPF', w: 12, h: 9, weight: 1, points: 150, beh: 'floater', harm: true, spr: 'cloud' },
-  r: { name: 'KONZENTRATOR-RÖHRCHEN', w: 7, h: 14, weight: 2, points: 250, beh: 'hopper', speed: 0.8, harm: true, spr: 'tube', frames: true },
   k: { name: 'RUNDKOLBEN', w: 10, h: 12, weight: 2, points: 250, beh: 'walker', speed: 0.45, harm: true, spr: 'flask', frames: true },
   h: { name: 'HITZEDAMPF', w: 12, h: 9, weight: 2, points: 250, beh: 'floater', harm: true, spr: 'hotcloud' },
   m: { name: 'MESSBECHER', w: 10, h: 10, weight: 2, points: 250, beh: 'walker', speed: 0.6, harm: true, spr: 'beaker', frames: true },
