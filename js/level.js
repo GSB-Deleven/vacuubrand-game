@@ -5,7 +5,7 @@
 //           V Kolben-Block mit BVC professional   U leerer Block
 // Gegner:   Zone 1 Filtration: d Filtrat-Tropfen  f Schmutzpartikel  p Filterpapier
 //           Zone 2 Zellkultur: n Nährmedium  e Petrischalen-Schleim  w Wellplatte
-//           Zone 3 Verdampfer: c Lösemitteldampf  g Lösemittel-Geist  r Konzentrator-Röhrchen
+//           Zone 3 Verdampfer: c Lösemitteldampf  r Konzentrator-Röhrchen
 //                              k Rundkolben  h Trockenschrank-Hitze  m Messbecher
 //           Zone 4 Hochvakuum: i Eiskristall  l Schlenk-Kolben  z Argon-Flasche  b Siedeblase
 //           K Dampf-Krake (Boss)   v VACUU·VIEW extended (+10 s)
@@ -58,11 +58,11 @@ const Level = {
     // ---------------- Zone 3: VERDAMPFER-LABOR (PC 3001 VARIO select) ----------------
     sign(122, 'PC 3001 VARIO SELECT:\nIDEAL FÜR DEN ROTAVAP');
     q(125, 6, '2');
-    e('k', 128); e('c', 131, 6); e('r', 134); e('g', 138, 6);
+    e('k', 128); e('c', 131, 6); e('r', 134); e('h', 138, 6);
     lan(141, 7, 4); e('r', 142, 6); lan(146, 5, 4); e('h', 147, 3); q(148, 2, '?');
     e('k', 152); e('m', 155);
     pit(158, 159);
-    e('g', 162, 5); e('r', 165); e('c', 168, 6);
+    e('c', 162, 5); e('r', 165); e('c', 168, 6);
     e('c', 172, 6);
     brick(174, 9); brick(175, 8, 1, 2); brick(176, 7, 1, 3);
     e('v', 176, 2);
