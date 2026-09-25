@@ -215,13 +215,13 @@ const ENEMY_GRIDS = {
 
 // Zonen: Anwendungen der Pumpen
 const ZONE_STYLE = [
-  { name: 'FILTRATIONSLABOR', wall: '#e9edf2', wall2: '#d5dde6', base: '#b7c6d6', floorTop: '#6d87ab', floor: '#46648c', line: '#34507a', brick: '#e9e4d6', mortar: '#b9b19c',
+  { name: 'FILTRATIONSLABOR', wall: '#e9edf2', wall2: '#d5dde6', base: '#b7c6d6', floorTop: '#6d87ab', floor: '#46648c', line: '#34507a', brick: '#f2f5f8', mortar: '#b9c6d4',
     bench: ['buchner', 'me1c', 'buchner', 'window2'], wall_: ['vacuulan', 'periodic'] },
-  { name: 'ZELLKULTUR-LABOR', wall: '#e9f3ea', wall2: '#d4e8d6', base: '#b5d1b8', floorTop: '#7fa38a', floor: '#5c7d66', line: '#44604d', brick: '#f4faf4', mortar: '#bcd4bf',
+  { name: 'ZELLKULTUR-LABOR', wall: '#e9f3ea', wall2: '#d4e8d6', base: '#b5d1b8', floorTop: '#7fa38a', floor: '#5c7d66', line: '#44604d', brick: '#f4faf5', mortar: '#b9cfbd',
     bench: ['hood', 'incubator', 'plates'], wall_: ['vacuulan', 'periodic'] },
-  { name: 'VERDAMPFER-LABOR', wall: '#efe3cf', wall2: '#e2d2b7', base: '#c7ae88', floorTop: '#8a6a45', floor: '#6b5033', line: '#523b24', brick: '#c07a52', mortar: '#8a4f33',
+  { name: 'VERDAMPFER-LABOR', wall: '#efe3cf', wall2: '#e2d2b7', base: '#c7ae88', floorTop: '#8a6a45', floor: '#6b5033', line: '#523b24', brick: '#f5efe4', mortar: '#cbb893',
     bench: ['rotavap', 'concentrator', 'oven', 'rotavap'], wall_: ['vacuulan', 'periodic'] },
-  { name: 'HOCHVAKUUM-TECHNIKUM', wall: '#d9dfea', wall2: '#c5cedd', base: '#8f9bb3', floorTop: '#5a6478', floor: '#3e4658', line: '#2b3140', brick: '#b8c2d4', mortar: '#8a95aa',
+  { name: 'HOCHVAKUUM-TECHNIKUM', wall: '#d9dfea', wall2: '#c5cedd', base: '#8f9bb3', floorTop: '#5a6478', floor: '#3e4658', line: '#2b3140', brick: '#e8ecf2', mortar: '#a9b4c5',
     bench: ['freezedryer', 'distill', 'turbo'], wall_: ['schlenk', 'vacuulan'] }
 ];
 
@@ -328,33 +328,54 @@ function buildSprites() {
   }
 
   // Pumpen
-  SPR.pump1 = outlined(12, 11, P => {
-    P.rect(5, 1, 2, 2, '#5d6b80');
-    P.rect(1, 3, 10, 6, '#c9d3dc'); P.rect(1, 3, 10, 2, THEME.blue);
-    P.rect(3, 6, 1, 2, '#5d6b80'); P.rect(5, 6, 1, 2, '#5d6b80'); P.rect(7, 6, 1, 2, '#5d6b80');
-    P.rect(2, 9, 2, 1, k); P.rect(8, 9, 2, 1, k);
+  const blue = '#3d9bd8', blueD = '#2a78b5', alu = '#dfe5ec', rib = '#b7c2cd', grey = '#c9d3dc', greyD = '#8e98a4', glass = '#e6f6ff';
+  // ME 1C: Aluminium-Mittelteil mit blauen Endkappen
+  SPR.pump1 = outlined(19, 12, P => {
+    P.rect(4, 3, 10, 6, alu); P.rect(4, 5, 10, 1, rib); P.rect(4, 7, 10, 1, rib);
+    P.rect(4, 2, 10, 1, blue);
+    P.rect(1, 2, 3, 8, blue); P.rect(14, 2, 3, 8, blue);
+    P.rect(1, 9, 3, 1, blueD); P.rect(14, 9, 3, 1, blueD);
+    P.rect(8, 1, 2, 1, k);
+    P.rect(15, 4, 1, 3, '#ffffff');
+    P.rect(17, 3, 1, 2, '#e8eef5');
+    P.rect(2, 10, 2, 1, k); P.rect(14, 10, 2, 1, k);
   });
-  SPR.pump2 = outlined(14, 16, P => {
-    P.rect(1, 7, 12, 7, '#c9d3dc'); P.rect(1, 7, 12, 1, '#a9b6c3');
-    P.rect(6, 2, 6, 5, THEME.blue); P.rect(7, 3, 4, 2, '#e9f4ff');
-    P.rect(3, 1, 2, 2, '#c8f2ff'); P.ell(4, 5, 2.6, 2.6, '#c8f2ff'); P.rect(3, 5, 3, 2, '#6fcbe8');
-    P.rect(3, 10, 8, 1, '#8795a8'); P.rect(3, 12, 8, 1, '#8795a8');
-    P.rect(2, 14, 2, 1, k); P.rect(10, 14, 2, 1, k);
+  // PC 3001 VARIO select: blaues Oberteil, graues Gehäuse, Touchscreen, Kühler und zwei Rundkolben
+  SPR.pump2 = outlined(23, 21, P => {
+    P.rect(2, 1, 8, 1, blueD);
+    P.rect(2, 2, 8, 8, blue); P.rect(7, 3, 1, 6, '#ffffff');
+    P.rect(1, 10, 10, 8, grey);
+    P.rect(2, 11, 6, 5, k); P.rect(3, 12, 4, 3, '#8fd0f0'); P.px(5, 13, '#ffffff');
+    P.rect(1, 18, 17, 1, '#b8c3cd');
+    P.rect(12, 1, 4, 8, '#b8c3cd'); P.rect(12, 1, 1, 8, '#eef2f6');
+    P.rect(11, 9, 5, 2, greyD);
+    P.rect(13, 11, 1, 2, glass); P.ell(13.5, 15, 2.5, 2.5, glass); P.px(12, 14, '#ffffff');
+    P.rect(16, 9, 3, 1, greyD); P.rect(19, 10, 1, 2, glass); P.ell(19.5, 14, 2.3, 2.3, glass); P.px(18, 13, '#ffffff');
   });
-  SPR.pump3 = outlined(16, 17, P => {
-    P.rect(1, 1, 14, 13, THEME.blue); P.rect(1, 1, 14, 1, '#8fbde6');
-    P.rect(3, 3, 10, 6, '#e8eef5'); P.rect(4, 4, 5, 3, k); P.rect(5, 5, 3, 1, '#7be07b');
-    P.px(11, 5, '#7be07b');
-    P.rect(3, 10, 10, 1, '#2f6aa8'); P.rect(3, 12, 10, 1, '#2f6aa8');
-    P.rect(2, 14, 3, 1, k); P.rect(11, 14, 3, 1, k);
+  // VACUU·PURE 10C: weisse Front, graue Seite, schwarzer Flansch oben
+  SPR.pump3 = outlined(18, 17, P => {
+    P.rect(1, 2, 15, 2, '#e9edf1');
+    P.rect(1, 4, 10, 11, '#f7f9fb');
+    P.rect(11, 4, 5, 11, greyD); P.rect(11, 4, 1, 11, '#a9b3be');
+    P.rect(12, 11, 3, 1, '#5d6b80'); P.rect(12, 13, 3, 1, '#5d6b80');
+    P.rect(2, 1, 2, 3, k);
+    P.rect(6, 2, 4, 2, k); P.px(7, 2, blue);
+    P.rect(3, 7, 6, 2, '#b8c3cd');
+    P.rect(7, 11, 2, 2, k);
+    P.rect(2, 13, 5, 1, '#c9d3dc');
+    P.rect(2, 15, 2, 1, k); P.rect(13, 15, 2, 1, k);
   });
-  // BVC professional (Flüssigkeits-Absaugsystem mit Sammelflasche)
-  SPR.bvc = outlined(16, 19, P => {
-    P.rect(1, 12, 14, 5, '#d5dde8'); P.rect(1, 12, 14, 1, THEME.navy);
-    P.rect(3, 14, 3, 1, '#7be07b');
-    P.rect(4, 3, 8, 9, '#e8f6ff'); P.rect(4, 7, 8, 5, '#ff8fb8'); P.rect(5, 4, 1, 6, '#ffffff');
-    P.rect(5, 1, 6, 2, '#3aa0e8');
-    P.rect(2, 17, 2, 1, k); P.rect(12, 17, 2, 1, k);
+  // BVC professional: weisser Sockel mit Bedienfeld, grosse Sammelflasche, blaues Pumpenmodul
+  SPR.bvc = outlined(18, 21, P => {
+    P.rect(6, 1, 1, 1, '#c8d4e0');
+    P.rect(3, 2, 7, 2, '#ffffff');
+    P.rect(2, 4, 9, 11, '#f4f7fa'); P.rect(3, 5, 1, 8, '#ffffff');
+    P.rect(3, 10, 7, 4, '#ffb3cf');
+    P.rect(11, 4, 5, 1, blueD); P.rect(11, 5, 5, 12, blue);
+    P.rect(12, 7, 4, 1, grey); P.rect(12, 9, 4, 1, grey); P.rect(12, 11, 4, 1, grey); P.rect(12, 13, 4, 1, grey);
+    P.rect(1, 15, 16, 4, '#eef1f4');
+    P.rect(2, 15, 5, 3, '#2b2f3a'); P.px(3, 16, blue); P.px(5, 16, blue);
+    P.px(8, 17, blue);
   });
   // VACUU·VIEW extended (Vakuum-Messgerät)
   SPR.view = outlined(12, 17, P => {
@@ -408,16 +429,17 @@ function buildSprites() {
   ZONE_STYLE.forEach((z, i) => {
     SPR['groundTop' + i] = paint(16, 16, P => {
       P.rect(0, 0, 16, 16, z.floor); P.rect(0, 0, 16, 4, z.floorTop); P.rect(0, 0, 16, 1, '#ffffff');
-      P.rect(0, 4, 16, 1, z.line); P.rect(15, 0, 1, 16, z.line); P.rect(0, 10, 16, 1, z.line); P.rect(7, 5, 1, 5, z.line);
+      P.rect(0, 4, 16, 1, z.line);
     });
     SPR['ground' + i] = paint(16, 16, P => {
-      P.rect(0, 0, 16, 16, z.floor); P.rect(15, 0, 1, 16, z.line); P.rect(0, 7, 16, 1, z.line);
-      P.rect(0, 15, 16, 1, z.line); P.rect(7, 0, 1, 7, z.line);
+      P.rect(0, 0, 16, 16, z.floor);
     });
     SPR['brick' + i] = paint(16, 16, P => {
-      P.rect(0, 0, 16, 16, z.brick); P.rect(0, 7, 16, 1, z.mortar); P.rect(0, 15, 16, 1, z.mortar);
-      P.rect(7, 0, 1, 7, z.mortar); P.rect(15, 0, 1, 7, z.mortar); P.rect(3, 8, 1, 7, z.mortar);
-      P.rect(11, 8, 1, 7, z.mortar); P.rect(0, 0, 16, 1, '#ffffff');
+      P.rect(0, 0, 16, 16, z.mortar);
+      P.rect(1, 1, 14, 14, z.brick);
+      P.rect(1, 1, 14, 1, '#ffffff');
+      P.rect(1, 14, 14, 1, z.mortar);
+      [[2, 2], [13, 2], [2, 13], [13, 13]].forEach(([x, y]) => P.px(x, y, z.mortar));
     });
   });
 
@@ -442,10 +464,11 @@ function buildSprites() {
     });
   });
   SPR.used = paint(16, 16, P => {
-    P.rect(0, 0, 16, 16, k); P.rect(1, 1, 14, 14, '#8a6a45');
-    P.rect(1, 1, 14, 1, '#a88d66'); P.rect(1, 14, 14, 1, '#523b24');
-    [[3, 3], [12, 3], [3, 12], [12, 12]].forEach(([x, y]) => P.px(x, y, '#523b24'));
+    P.rect(0, 0, 16, 16, '#6d7a89'); P.rect(1, 1, 14, 14, '#c3ccd6');
+    P.rect(1, 1, 14, 1, '#eef2f6'); P.rect(1, 14, 14, 1, '#9aa6b3');
+    [[2, 2], [13, 2], [2, 13], [13, 13]].forEach(([x, y]) => P.px(x, y, '#8e98a4'));
   });
+
   // VACUU·LAN-Leitung als Plattform (mit und ohne Ventilmodul)
   [0, 1].forEach(v => {
     SPR['platform' + v] = paint(16, 16, P => {
