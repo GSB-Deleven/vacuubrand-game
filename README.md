@@ -83,7 +83,8 @@ Auf dem Titelbild **Strg + Shift + A** drücken, PIN eingeben (Standard **1234**
 - **Leads (CSV/Excel)** und **Alle Runden (CSV/Excel)** exportieren → landen im Download-Ordner
 - **Sicherung speichern / laden** (JSON) – z.B. um Daten auf einen anderen Laptop zu übertragen
 - Messename, Rundenzeit und PIN ändern
-- Einzelne Runden löschen (z.B. Testrunden), **alle Daten löschen** nach der Messe
+- Einzelne Runden löschen (✕ zweimal klicken), **alle Daten löschen** nach der Messe (LÖSCHEN ins Feld tippen)
+- Nach jedem Export erscheint der Inhalt zusätzlich in einem Textfeld mit „Inhalt kopieren“ – praktisch, falls der Browser keinen Download erlaubt (z.B. in der Online-Vorschau)
 
 **Tipp:** Am Ende jedes Messetags die Leads exportieren. Die Daten liegen nur im Browser-Speicher
 dieses Laptops. Wenn jemand den Browserverlauf/Cookies löscht, sind sie weg.
