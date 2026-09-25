@@ -434,7 +434,7 @@ class PlayScene {
     } else if (it.kind === 'bvc') {
       p.bvcZone = zoneOf(p.x) === BVC_ZONE;
       p.bvcT = p.bvcZone ? 1 : CONFIG.bvcSeconds * 60;
-      this.banner = { title: 'PUMPE BVC PROFESSIONAL', sub: 'MIT VHC: MEDIEN AUS WELLPLATTEN UND\nPETRISCHALEN ABSAUGEN · PUNKTE ×2', t: 220, icon: 'bvc' };
+      this.banner = { title: 'PUMPE BVC PROFESSIONAL', sub: 'MIT VHC: MEDIENABSAUGUNG\nPUNKTE ×2', t: 220, icon: 'bvc' };
       this.addScore(300);
       if (p.sucking) Sound.suckStart(2);
       Sound.sfx('powerup');
