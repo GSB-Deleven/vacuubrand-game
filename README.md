@@ -19,7 +19,7 @@ Die durchspringbaren Plattformen sind **VACUU·LAN**-Leitungen.
 | Item | Wirkung |
 |---|---|
 | Pumpe ME 1C → PC 3001 VARIO select → VACUU·PURE 10C | mehr Reichweite, schwerere Sachen einsaugen |
-| Pumpe **BVC professional** (Zellkultur) | für 8 Sekunden: BVC auf dem Rücken, Pistole wird zum **VHC-Handstück**, saugt alle Medien (Wellplatten, Petrischalen, Nährmedium, Tropfen) mit doppelten Punkten; danach wieder die normale Pumpe |
+| Pumpe **BVC professional** (Zellkultur) | im ganzen Zellkultur-Labor: BVC auf dem Rücken, Pistole wird zum **VHC-Handstück**, saugt alle Medien (Wellplatten, Petrischalen, Nährmedium, Tropfen) ohne Energie-Limit mit doppelten Punkten; beim Verlassen des Labors wieder die normale Pumpe |
 | Schutzbrille | Treffer kosten nur 1 statt 3 Sekunden |
 | Handschuhe | Saug-Energie lädt doppelt so schnell |
 | Schutzhelm | Gegner von unten wegköpfen |
