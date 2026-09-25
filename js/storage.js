@@ -123,6 +123,7 @@ const Store = {
     document.body.appendChild(a);
     a.click();
     setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 2000);
+    return { filename, text };
   },
   fileStamp() {
     const d = new Date();
@@ -139,7 +140,7 @@ const Store = {
       ['Punkte', r => r.score], ['Grundpunkte', r => r.base], ['Zeitbonus', r => r.timeBonus],
       ['Labor gerettet', r => yn(r.finished)], ['Eingesaugt', r => r.captures], ['Beste Pumpe', r => (CONFIG.pumps[r.pump] || {}).short || '-']
     ], rows);
-    this.download('vakuum-professor_runden_' + this.fileStamp() + '.csv', text);
+    return this.download('vakuum-professor_runden_' + this.fileStamp() + '.csv', text);
   },
   exportLeadsCSV() {
     const rounds = this.rounds();
@@ -158,11 +159,11 @@ const Store = {
       ['Bester Score', r => r.best], ['Platz gesamt', r => r.rankAll], ['Anzahl Runden', r => r.n],
       ['Erstmals', r => formatDateTime(r.created)]
     ], rows);
-    this.download('vakuum-professor_leads_' + this.fileStamp() + '.csv', text);
+    return this.download('vakuum-professor_leads_' + this.fileStamp() + '.csv', text);
   },
   exportJSON() {
     const data = { app: 'vakuum-professor', version: 1, exported: Date.now(), leads: this.leads(), rounds: this.rounds() };
-    this.download('vakuum-professor_backup_' + this.fileStamp() + '.json', JSON.stringify(data, null, 1), 'application/json');
+    return this.download('vakuum-professor_backup_' + this.fileStamp() + '.json', JSON.stringify(data, null, 1), 'application/json');
   },
   importJSON(data) {
     if (!data || data.app !== 'vakuum-professor') throw new Error('Keine gültige Sicherungsdatei.');
