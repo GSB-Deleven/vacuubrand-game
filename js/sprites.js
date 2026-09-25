@@ -228,13 +228,13 @@ const ENEMY_GRIDS = {
 // Zonen: Anwendungen der Pumpen
 const ZONE_STYLE = [
   { name: 'FILTRATIONSLABOR', wall: '#d6e8f0', wall2: '#c2d9e6', base: '#a5bfd0', floorTop: '#6a7f9f', floor: '#4a5c7c', line: '#34445f', brick: '#e9e4d6', mortar: '#b9b19c',
-    bench: ['buchner', 'spe', 'buchner', 'spe'], wall_: ['window', 'poster0', 'vacuulan', 'periodic'] },
+    bench: ['buchner', 'me1c', 'buchner', 'window2'], wall_: ['vacuulan', 'periodic'] },
   { name: 'ZELLKULTUR-LABOR', wall: '#e9f3ea', wall2: '#d4e8d6', base: '#b5d1b8', floorTop: '#7fa38a', floor: '#5c7d66', line: '#44604d', brick: '#f4faf4', mortar: '#bcd4bf',
-    bench: ['hood', 'incubator', 'plates'], wall_: ['poster1', 'window', 'vacuulan'] },
+    bench: ['hood', 'incubator', 'plates'], wall_: ['vacuulan', 'periodic'] },
   { name: 'VERDAMPFER-LABOR', wall: '#efe3cf', wall2: '#e2d2b7', base: '#c7ae88', floorTop: '#8a6a45', floor: '#6b5033', line: '#523b24', brick: '#c07a52', mortar: '#8a4f33',
-    bench: ['rotavap', 'concentrator', 'oven', 'rotavap'], wall_: ['poster2', 'vacuulan', 'window'] },
+    bench: ['rotavap', 'concentrator', 'oven', 'rotavap'], wall_: ['vacuulan', 'periodic'] },
   { name: 'HOCHVAKUUM-TECHNIKUM', wall: '#d9dfea', wall2: '#c5cedd', base: '#8f9bb3', floorTop: '#5a6478', floor: '#3e4658', line: '#2b3140', brick: '#b8c2d4', mortar: '#8a95aa',
-    bench: ['freezedryer', 'distill', 'turbo'], wall_: ['schlenk', 'poster3', 'vacuulan'] }
+    bench: ['freezedryer', 'distill', 'turbo'], wall_: ['schlenk', 'vacuulan'] }
 ];
 
 function buildSprites() {
@@ -263,15 +263,6 @@ function buildSprites() {
       P.px(4, 9, '#8b93a6'); P.px(11, 4, '#8b93a6'); P.px(12, 8, '#8b93a6');
       P.px(6, 5, k); P.px(10, 5, k); P.rect(7, 8, 3, 1, PAL.m);
     }, '#5d6b80');
-    SPR['spe' + sfx] = outlined(10, 16, P => {
-      P.rect(2, 1, 6, 2, '#ffffff');
-      P.rect(3, 3, 4, 8, '#e8eef5');
-      P.rect(3, 7, 4, 3, '#f2c14e');
-      P.rect(3, 10, 4, 1, '#a7b3c4');
-      P.rect(4, 11, 2, 2, '#e8eef5');
-      P.px(3, 4, k); P.px(6, 4, k);
-      if (f) { P.px(3, 13, k); P.px(6, 13, k); } else { P.px(2, 13, k); P.px(7, 13, k); }
-    });
     SPR['medium' + sfx] = outlined(18, 9, P => {
       P.ell(9, 5, f ? 7.5 : 8, f ? 3 : 2.6, '#ff8fb8');
       P.rect(4, 4, 3, 1, '#ffd0e2');
@@ -509,16 +500,6 @@ function buildDecor() {
     P.rect(13, 13, 4, 3, white);
     P.rect(8, 3, 14, 2, '#a88d66');
   });
-  // SPE-Manifold mit Kartuschen
-  D.spe = outlined(52, 32, P => {
-    P.rect(2, 12, 48, 18, glass); P.rect(2, 12, 48, 1, '#ffffff');
-    P.rect(0, 10, 52, 3, metal);
-    for (let i = 0; i < 5; i++) {
-      P.rect(5 + i * 9, 1, 5, 9, white); P.rect(5 + i * 9, 5, 5, 3, '#f2c14e');
-      P.rect(6 + i * 9, 14, 3, 8, '#e8eef5');
-    }
-    P.ell(44, 22, 4, 4, '#ffffff'); P.rect(44, 19, 1, 3, k);
-  });
   // Zellkultur: Sterilwerkbank, Brutschrank, Platten
   D.hood = outlined(72, 62, P => {
     P.rect(0, 0, 72, 60, '#e8eef5'); P.rect(0, 0, 72, 8, '#c3cedd');
@@ -620,7 +601,7 @@ function buildDecor() {
     }
     Font.draw(P.g, 'VACUU·LAN', 30, 0, { color: '#5d6b80' });
   });
-  const posterText = ['ME 1C', 'BVC PRO', 'PC 3001 VARIO SELECT', 'VACUU·PURE'];
+  const posterText = ['ME 1C', 'BVC PROFESSIONAL', 'PC 3001 VARIO SELECT', 'VACUU·PURE 10C'];
   posterText.forEach((t, i) => {
     const pw = Math.max(80, Font.width(t) + 10);
     D['poster' + i] = paint(pw, 28, P => {
@@ -629,6 +610,16 @@ function buildDecor() {
       P.rect(4, 13, pw - 8, 1, THEME.gold);
       Font.draw(P.g, t, pw / 2, 17, { color: THEME.navy, align: 'center' });
     });
+  });
+  // ME 1C als Gerät auf dem Labortisch (doppelt so gross)
+  D.me1c = makeCanvas(SPR.pump1.width * 2, SPR.pump1.height * 2);
+  { const g = D.me1c.getContext('2d'); g.imageSmoothingEnabled = false; g.drawImage(SPR.pump1, 0, 0, D.me1c.width, D.me1c.height); }
+  // Chemikalienschrank
+  D.window2 = outlined(40, 44, P => {
+    P.rect(0, 0, 40, 44, '#e8eef5'); P.rect(2, 2, 36, 40, '#f4f7fb');
+    P.rect(19, 2, 2, 40, '#c3cedd');
+    P.rect(15, 18, 2, 6, '#5d6b80'); P.rect(23, 18, 2, 6, '#5d6b80');
+    P.rect(6, 6, 8, 6, '#ffd23f'); P.rect(8, 7, 4, 4, '#e04848');
   });
   for (const name of Object.keys(D)) SPR['deco_' + name] = D[name];
 }

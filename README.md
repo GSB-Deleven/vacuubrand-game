@@ -7,10 +7,10 @@ Schutzausrüstung und Spezial-Geräte. Die Level zeigen die echten Anwendungen d
 
 | Zone | Gerät | Anwendungen / Gegner |
 |---|---|---|
-| 1 Filtrationslabor | **ME 1C** | Filtration & SPE: Filtrat-Tropfen, Partikel, Filterpapier, SPE-Kartuschen |
+| 1 Filtrationslabor | **ME 1C** | Filtration: Filtrat-Tropfen, Partikel, Filterpapier |
 | 2 Zellkultur-Labor | **BVC professional** (Spezial) | Medienabsaugung: Nährmedium, Petrischalen-Schleim, Wellplatten |
-| 3 Verdampfer-Labor | **PC 3001 VARIO select** | Rotavap, Konzentrator, Trockenschrank: Dampf, Geister, Röhrchen, Rundkolben |
-| 4 Hochvakuum-Technikum | **VACUU·PURE 10C** | Gefriertrocknung, Schlenk-Line, Turbo-Vorvakuum: Eiskristalle, Schlenk-Kolben, Argon-Flaschen, **Dampf-Krake** (Boss) |
+| 3 Verdampfer-Labor | **PC 3001 VARIO select** | Rotavap, Vakuum-Konzentrator, Trockenschrank: Lösemitteldampf, Röhrchen, Rundkolben |
+| 4 Hochvakuum-Technikum | **VACUU·PURE 10C** | Ölfreie Trocknung (Gefriertrocknung, Schlenk-Line, Turbo-Vorvakuum): Eiskristalle, Schlenk-Kolben, Argon-Flaschen, **Dampf-Krake** (Boss) |
 
 Die durchspringbaren Plattformen sind **VACUU·LAN**-Leitungen.
 
