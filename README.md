@@ -1,17 +1,34 @@
 # Vakuum-Professor – das VACUUBRAND Messespiel
 
 Ein kleines Retro-Jump'n'Run (Pixelart wie auf dem Game Boy) für den Messestand.
-Der verrückte **Prof. Vakuumus** saugt mit seiner Saugpistole das Labor-Chaos weg.
-Aus den **?-Blöcken** holt er sich immer stärkere Pumpen:
+Der verrückte Professor (oranges Wuschelhaar, runde Brille – wie unser Maskottchen) saugt mit
+seiner Saugpistole das Labor-Chaos weg. Aus den **Kolben-Blöcken** holt er sich immer stärkere Pumpen,
+Schutzausrüstung und Spezial-Geräte. Die Level zeigen die echten Anwendungen der Pumpen:
 
-| Pumpe | kann einsaugen |
+| Zone | Gerät | Anwendungen / Gegner |
+|---|---|---|
+| 1 Filtrationslabor | **ME 1C** | Filtration & SPE: Filtrat-Tropfen, Partikel, Filterpapier, SPE-Kartuschen |
+| 2 Zellkultur-Labor | **BVC professional** (Spezial) | Medienabsaugung: Nährmedium, Petrischalen-Schleim, Wellplatten |
+| 3 Verdampfer-Labor | **PC 3001 VARIO select** | Rotavap, Konzentrator, Trockenschrank: Dampf, Geister, Röhrchen, Rundkolben |
+| 4 Hochvakuum-Technikum | **VACUU·PURE 10C** | Gefriertrocknung, Schlenk-Line, Turbo-Vorvakuum: Eiskristalle, Schlenk-Kolben, Argon-Flaschen, **Dampf-Krake** (Boss) |
+
+Die durchspringbaren Plattformen sind **VACUU·LAN**-Leitungen.
+
+**Items aus den Kolben-Blöcken** (laufen wie die Pilze bei Mario davon – hinterher!):
+
+| Item | Wirkung |
 |---|---|
-| **ME 1** (Start) | Tropfen, Staubfussel, Dampfwolken |
-| **PC 3001 VARIO select** | + Glaskolben, Messbecher, Lösemittel-Geister |
-| **VACUU·PURE** | + Gasflaschen, Fässer und die **Dampf-Krake** (Endgegner) |
+| Pumpe ME 1C → PC 3001 → VACUU·PURE | mehr Reichweite, schwerere Sachen einsaugen |
+| Schutzbrille | Treffer kosten nur 1 statt 3 Sekunden |
+| Handschuhe | Saug-Energie lädt doppelt so schnell |
+| Schutzhelm | Gegner von unten wegköpfen |
+| Sicherheitsschuhe | Gegner durch Draufspringen zerstören |
+| alle 4 = **Vollschutz** | Gegner können nicht mehr schaden |
+| BVC professional | 8 Sekunden VHC-Handstück: saugt alle Flüssigkeiten, doppelte Punkte |
+| VACUU·VIEW extended (versteckt, 3×) | „Zeitvakuum“: +10 Sekunden |
 
-Eine Runde dauert **120 Sekunden**. Wer die Dampf-Krake einsaugt und den Ausgang erreicht,
-bekommt die Restzeit als Bonus. Treffer kosten Zeit (kein Game Over).
+Jedes neue Schutz-Teil gibt +2 Sekunden. Eine Runde dauert **120 Sekunden**. Wer die Dampf-Krake
+einsaugt und den Ausgang erreicht, bekommt die Restzeit als Bonus. Treffer kosten Zeit (kein Game Over).
 
 ## Starten – ohne Installation, ohne Internet
 
@@ -28,12 +45,18 @@ sonst sieht das Spiel die bisherige Bestenliste nicht.
 | Taste | Aktion |
 |---|---|
 | ← → | laufen |
-| Leertaste | springen |
-| X (gedrückt halten) | saugen |
+| ↑ | springen |
+| ↓ | ducken |
+| Leertaste (halten) | saugen – die **SOG**-Leiste leert sich, danach kurz abkühlen lassen |
+| Shift oder Ctrl (halten) | sprinten – **SPRINT**-Leiste beachten |
 | Enter | Start / bestätigen |
 | Esc | Pause / zurück |
 | M | Ton an/aus |
 | F | Vollbild (auf dem Titelbild) |
+
+**Tipp für den Messe-Laptop:** Wenn jemand 5× Shift drückt, fragt Windows nach der „Einrastfunktion“.
+Abschalten unter *Einstellungen → Barrierefreiheit → Tastatur → Einrastfunktion* (Tastenkombination deaktivieren).
+Sprinten geht auch mit Ctrl.
 
 ## Ablauf am Stand
 
@@ -68,7 +91,8 @@ kurz mit der Marketing-/Datenschutzstelle abgestimmt werden. Nach der Messe im A
 ## Anpassen
 
 Die meisten Einstellungen stehen gut kommentiert in **`js/config.js`**:
-Rundenzeit, Punkte, Zeitabzüge, Pumpen-Namen und -Slogans, Anmeldefelder und Texte.
+Rundenzeit, Punkte, Zeitabzüge, Saug-Energie, Sprint, Item-Boni, Pumpen-Namen und -Slogans,
+Schutzausrüstung, Anmeldefelder und Texte.
 Datei mit einem Texteditor öffnen, ändern, speichern, im Browser **F5** drücken.
 
 ## Technik (für Neugierige)
@@ -86,3 +110,4 @@ Pixelart und Sound werden direkt im Code erzeugt.
 | `js/ui.js` | Anmeldeformular, Admin-Bereich |
 | `js/storage.js` | Speicherung, Bestenliste, CSV-Export |
 | `js/sprites.js`, `js/font.js`, `js/sound.js` | Pixelgrafik, Schrift, 8-Bit-Sound |
+| `assets/vacuubrand-logo.png` | Logo für das Anmeldeformular |

@@ -13,7 +13,7 @@ function drawMenuBackground(ctx, t) {
 function drawBoards(ctx, t, highlightId) {
   ctx.fillStyle = 'rgba(16,32,74,0.55)';
   ctx.fillRect(0, 0, VIEW_W, VIEW_H);
-  Font.draw(ctx, 'BESTENLISTE', 160, 5, { color: '#ffe066', scale: 2, align: 'center', outline: '#1a1c2c' });
+  Font.draw(ctx, 'BESTENLISTE', 160, 5, { color: THEME.gold, scale: 2, align: 'center', outline: '#1a1c2c' });
   const cols = [
     { title: 'HEUTE', list: Store.board(todayKey()), x: 8 },
     { title: 'GESAMT · ' + CONFIG.eventName, list: Store.board(null), x: 164 }
@@ -30,7 +30,7 @@ function drawBoards(ctx, t, highlightId) {
       const y = 46 + i * 12;
       const hl = e.leadId === highlightId;
       if (hl && t % 40 < 20) { ctx.fillStyle = '#2d4a8f'; ctx.fillRect(c.x + 2, y - 2, 144, 11); }
-      const col = hl ? '#ffe066' : i === 0 ? '#ffd23f' : i < 3 ? '#ffffff' : '#c8d4e8';
+      const col = hl ? THEME.gold : i === 0 ? '#ffd23f' : i < 3 ? '#ffffff' : '#c8d4e8';
       Font.draw(ctx, String(i + 1), c.x + 20, y, { color: col, align: 'right' });
       if (i === 0) Font.draw(ctx, '★', c.x + 3, y, { color: '#ffd23f' });
       Font.draw(ctx, e.name.slice(0, 12), c.x + 26, y, { color: col });
@@ -61,7 +61,7 @@ class TitleScene {
     // kleine Demo: der Professor saugt Laborchaos ein
     const nz = { x: 102, y: 134 };
     if (this.t % 45 === 0) {
-      const types = ['drop', 'dust', 'cloud', 'flask', 'ghost', 'beaker'];
+      const types = ['drop', 'paper', 'medium', 'cloud', 'flask', 'ghost', 'tube', 'ice'];
       const spr = types[Math.floor(hash(this.t) * types.length)];
       this.demo.push({ x: 340, y: 104 + hash(this.t + 3) * 44, spr, v: 0.8, t: 0 });
     }
@@ -83,7 +83,7 @@ class TitleScene {
     drawMenuBackground(ctx, this.t);
     if (this.mode === 'board') {
       drawBoards(ctx, this.t, null);
-      if (this.t % 60 < 40) Font.draw(ctx, 'ENTER DRÜCKEN ZUM STARTEN', 160, 170, { color: '#ffe066', align: 'center', outline: '#1a1c2c' });
+      if (this.t % 60 < 40) Font.draw(ctx, 'ENTER DRÜCKEN ZUM STARTEN', 160, 170, { color: THEME.gold, align: 'center', outline: '#1a1c2c' });
       return;
     }
     // Demo
@@ -102,20 +102,20 @@ class TitleScene {
     ctx.save();
     ctx.translate(-66, -148);
     ctx.scale(2, 2);
-    drawProfessor(ctx, 70, 148, 1, 2, this.t % 30 < 15 ? 'idle' : 'idle', (this.t >> 1) % 2, sucking);
+    drawProfessor(ctx, 70, 148, { face: 1, pump: 2, pose: 'idle', shake: (this.t >> 1) % 2, sucking, ppe: {} });
     ctx.restore();
-    for (const p of this.pops) Font.draw(ctx, p.text, p.x, p.y, { color: '#ffe066', align: 'center', outline: '#1a1c2c' });
+    for (const p of this.pops) Font.draw(ctx, p.text, p.x, p.y, { color: THEME.gold, align: 'center', outline: '#1a1c2c' });
 
     ctx.fillStyle = 'rgba(207,227,239,0.75)';
     ctx.fillRect(0, 0, VIEW_W, 88);
-    Font.draw(ctx, 'VACUUBRAND PRÄSENTIERT', 160, 6, { color: '#1f5fa8', align: 'center' });
+    Font.drawLogo(ctx, 160, 5, 1, PAL.k);
     const bob = Math.round(Math.sin(this.t * 0.05) * 2);
-    Font.draw(ctx, 'VAKUUM', 160, 18 + bob, { color: '#ffe066', scale: 4, align: 'center', outline: '#1a1c2c' });
-    Font.draw(ctx, 'PROFESSOR', 160, 50 + bob, { color: '#ffffff', scale: 3, align: 'center', outline: '#1f5fa8' });
+    Font.draw(ctx, 'VAKUUM', 160, 18 + bob, { color: THEME.gold, scale: 4, align: 'center', outline: PAL.k });
+    Font.draw(ctx, 'PROFESSOR', 160, 50 + bob, { color: '#ffffff', scale: 3, align: 'center', outline: THEME.navy });
     Font.draw(ctx, 'SAUG DAS LABOR-CHAOS WEG!', 160, 77, { color: '#1a1c2c', align: 'center' });
     if (this.t % 60 < 42) {
       drawPanel(ctx, 158, 92, 150, 14);
-      Font.draw(ctx, 'ENTER = START', 233, 96, { color: '#ffe066', align: 'center' });
+      Font.draw(ctx, 'ENTER = START', 233, 96, { color: THEME.gold, align: 'center' });
     }
     const top = Store.board(todayKey())[0];
     if (top) {
@@ -134,7 +134,7 @@ class ResultScene {
     this.t = 0;
     Store.addRound({
       leadId: res.lead.id, score: res.total, base: res.score, timeBonus: res.timeBonus,
-      finished: res.finished, timeLeft: res.timeLeft, pump: res.pump, captures: res.captures
+      finished: res.finished, timeLeft: res.timeLeft, pump: res.pump, captures: res.captures, ppe: res.ppe, views: res.views
     });
     this.best = Store.bestOf(res.lead.id);
     this.rankDay = Store.rank(res.lead.id, todayKey());
@@ -153,30 +153,31 @@ class ResultScene {
     const r = this.res;
     drawMenuBackground(ctx, this.t);
     drawPanel(ctx, 36, 10, 248, 160);
-    Font.draw(ctx, r.finished ? 'LABOR GERETTET!' : 'ZEIT ABGELAUFEN!', 160, 17, { color: r.finished ? '#7be07b' : '#ffe066', scale: 2, align: 'center' });
+    Font.draw(ctx, r.finished ? 'LABOR GERETTET!' : 'ZEIT ABGELAUFEN!', 160, 17, { color: r.finished ? '#7be07b' : THEME.gold, scale: 2, align: 'center' });
     Font.draw(ctx, displayName(r.lead), 160, 38, { color: '#c8f2ff', align: 'center' });
     const k = Math.min(1, this.t / 70);
     const rows = [
       ['EINGESAUGT', String(r.captures)],
       ['BESTE PUMPE', r.pump ? CONFIG.pumps[r.pump].short : '-'],
       ['PUNKTE', String(Math.round(r.score * k))],
+      ['SCHUTZAUSRÜSTUNG', (r.ppe || 0) + '/4'],
       ['ZEITBONUS', r.finished ? String(Math.round(r.timeBonus * k)) : '-']
     ];
     rows.forEach((row, i) => {
-      const y = 54 + i * 11;
+      const y = 49 + i * 10;
       Font.draw(ctx, row[0], 70, y, { color: '#ffffff' });
       Font.draw(ctx, row[1], 250, y, { color: '#ffffff', align: 'right' });
     });
     ctx.fillStyle = '#3aa0e8'; ctx.fillRect(70, 99, 180, 1);
-    Font.draw(ctx, 'GESAMT', 70, 105, { color: '#ffe066', scale: 2 });
-    Font.draw(ctx, String(Math.round(r.total * k)), 250, 105, { color: '#ffe066', scale: 2, align: 'right' });
+    Font.draw(ctx, 'GESAMT', 70, 105, { color: THEME.gold, scale: 2 });
+    Font.draw(ctx, String(Math.round(r.total * k)), 250, 105, { color: THEME.gold, scale: 2, align: 'right' });
     if (this.t > 70) {
       const rankTxt = 'PLATZ ' + (this.rankDay || '-') + ' HEUTE  ·  PLATZ ' + (this.rankAll || '-') + ' GESAMT';
       Font.draw(ctx, rankTxt, 160, 128, { color: '#ffffff', align: 'center' });
       if (!this.newBest) Font.draw(ctx, 'DEIN BESTWERT: ' + this.best, 160, 139, { color: '#c8f2ff', align: 'center' });
       else if (this.rankDay === 1 && this.t % 30 < 20) Font.draw(ctx, '★ TAGESBESTWERT! ★', 160, 139, { color: '#ffd23f', align: 'center' });
     }
-    if (this.t > 60 && this.t % 50 < 35) Font.draw(ctx, 'ENTER = BESTENLISTE', 160, 156, { color: '#ffe066', align: 'center' });
+    if (this.t > 60 && this.t % 50 < 35) Font.draw(ctx, 'ENTER = BESTENLISTE', 160, 156, { color: THEME.gold, align: 'center' });
   }
 }
 
@@ -190,6 +191,6 @@ class BoardScene {
   draw(ctx) {
     drawMenuBackground(ctx, this.t);
     drawBoards(ctx, this.t, this.hl);
-    if (this.t % 60 < 40) Font.draw(ctx, 'DANKE FÜRS SPIELEN!  ENTER = WEITER', 160, 170, { color: '#ffe066', align: 'center', outline: '#1a1c2c' });
+    if (this.t % 60 < 40) Font.draw(ctx, 'DANKE FÜRS SPIELEN!  ENTER = WEITER', 160, 170, { color: THEME.gold, align: 'center', outline: '#1a1c2c' });
   }
 }

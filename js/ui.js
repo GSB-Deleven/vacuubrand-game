@@ -32,6 +32,7 @@ class RegisterScene {
       '" autocomplete="off" spellcheck="false"></label>').join('');
     Overlay.show(
       '<form class="panel reg" novalidate>' +
+      '<div class="logo"><img src="assets/vacuubrand-logo.png" alt="VACUUBRAND"></div>' +
       '<h1>SPIELER-ANMELDUNG</h1>' +
       '<p class="hint">' + escapeHtml(cfg.intro) + '</p>' +
       '<div class="fields">' + fields + '</div>' +

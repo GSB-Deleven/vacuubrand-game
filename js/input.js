@@ -1,13 +1,16 @@
 'use strict';
-// Tastatur. Bewusst keine Shift-Taste (Windows-Einrastfunktion!) und keine Strg-Kombis.
+// Tastatur. Bewusst nur Pfeiltasten + Leertaste + Shift/Ctrl, damit Ctrl + Buchstabe
+// keine Browser-Funktionen (z.B. Fenster schliessen) auslösen kann.
 const Input = {
   keys: {},
   just: {},
   map: {
-    left: ['ArrowLeft', 'KeyA'],
-    right: ['ArrowRight', 'KeyD'],
-    jump: ['Space', 'ArrowUp', 'KeyW'],
-    suck: ['KeyX', 'KeyC'],
+    left: ['ArrowLeft'],
+    right: ['ArrowRight'],
+    jump: ['ArrowUp'],
+    down: ['ArrowDown'],
+    suck: ['Space'],
+    sprint: ['ShiftLeft', 'ShiftRight', 'ControlLeft', 'ControlRight'],
     start: ['Enter', 'NumpadEnter', 'Space'],
     back: ['Escape'],
     mute: ['KeyM'],
@@ -26,7 +29,7 @@ const Input = {
       if (Overlay.visible) return;
       if (!e.repeat && !this.keys[e.code]) this.just[e.code] = true;
       this.keys[e.code] = true;
-      if (this.gameKeys.has(e.code)) e.preventDefault();
+      if (this.gameKeys.has(e.code) || e.ctrlKey) e.preventDefault();
     });
     window.addEventListener('keyup', e => { this.keys[e.code] = false; });
     window.addEventListener('blur', () => this.clear());
