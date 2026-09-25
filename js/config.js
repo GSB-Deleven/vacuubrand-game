@@ -30,7 +30,6 @@ const CONFIG = {
   viewTimeBonus: 10,           // VACUU·VIEW extended = "Zeitvakuum"
   bvcSeconds: 8,               // BVC gilt im ganzen Zellkultur-Labor; nur falls man sie ausserhalb erwischt: so viele Sekunden
 
-  attractSwitchSeconds: 9,     // Titelbild <-> Bestenliste wechseln
   resultAutoReturnSeconds: 25, // Ergebnis-Bildschirm schliesst automatisch
   boardAutoReturnSeconds: 20,
   registrationTimeoutSeconds: 90,

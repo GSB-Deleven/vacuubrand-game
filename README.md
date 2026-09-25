@@ -53,6 +53,7 @@ sonst sieht das Spiel die bisherige Bestenliste nicht.
 | Esc | Pause / zurück |
 | M | Ton an/aus |
 | F | Vollbild (auf dem Titelbild) |
+| B | Bestenliste ein/aus (auf dem Titelbild) |
 
 **Tipp für den Messe-Laptop:** Wenn jemand 5× Shift drückt, fragt Windows nach der „Einrastfunktion“.
 Abschalten unter *Einstellungen → Barrierefreiheit → Tastatur → Einrastfunktion* (Tastenkombination deaktivieren).
@@ -60,7 +61,7 @@ Sprinten geht auch mit Ctrl.
 
 ## Ablauf am Stand
 
-1. Titelbild wechselt automatisch mit der Bestenliste und lockt Besucher an.
+1. Titelbild mit Demo lockt Besucher an. **B** (oder Klick auf den Knopf) zeigt die Bestenliste.
 2. **Enter** → Anmeldung: Vorname, Name, Firma, E-Mail + Einwilligung (Pflicht), Newsletter (freiwillig).
 3. Kurze Anleitung → Countdown → spielen.
 4. Ergebnis mit Platzierung (heute / ganze Messe) → Bestenliste → zurück zum Titelbild.
