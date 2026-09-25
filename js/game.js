@@ -430,7 +430,7 @@ class PlayScene {
       this.addScore(200);
     } else if (it.kind === 'bvc') {
       p.bvcT = CONFIG.bvcSeconds * 60;
-      this.banner = { title: 'BVC PROFESSIONAL', sub: 'FLÜSSIGKEITSABSAUGUNG FÜR ZELLKULTUR\n' + CONFIG.bvcSeconds + ' SEK: ALLE FLÜSSIGKEITEN, DOPPELTE PUNKTE!', t: 200, icon: 'bvc' };
+      this.banner = { title: 'PUMPE BVC PROFESSIONAL', sub: 'MIT VHC: MEDIEN AUS WELLPLATTEN\nUND PETRISCHALEN ABSAUGEN! (' + CONFIG.bvcSeconds + ' SEK, ×2)', t: 200, icon: 'bvc' };
       this.addScore(300);
       if (p.sucking) Sound.suckStart(2);
       Sound.sfx('powerup');
@@ -553,7 +553,7 @@ class PlayScene {
     ctx.fillStyle = THEME.gold; ctx.fillRect(0, HUD_H, VIEW_W, 1);
     Font.draw(ctx, 'PUNKTE ' + pad(this.score, 6), 4, 3, { color: '#ffffff' });
     if (p.bvcT > 0) {
-      Font.draw(ctx, 'BVC ' + Math.ceil(p.bvcT / 60) + ' S', 160, 3, { color: '#ff8fb8', align: 'center' });
+      Font.draw(ctx, 'BVC PROFESSIONAL ' + Math.ceil(p.bvcT / 60) + ' S', 160, 3, { color: '#ff8fb8', align: 'center' });
     } else {
       const pumpName = p.pump ? CONFIG.pumps[p.pump].short : 'KEINE PUMPE';
       Font.draw(ctx, pumpName, 160, 3, { color: p.pump ? '#7be07b' : '#a7b3c4', align: 'center' });
@@ -635,16 +635,17 @@ class PlayScene {
     Font.draw(ctx, 'KOLBEN-BLÖCKE VON UNTEN ANSPRINGEN:', 160, 91, { color: THEME.gold, align: 'center' });
     // Block + Inhalte
     ctx.drawImage(SPR.q0, 30, 104);
-    const icons = ['pump1', 'pump2', 'pump3', 'ppe_goggles', 'ppe_gloves', 'ppe_helmet', 'ppe_shoes', 'bvc', 'view'];
+    const icons = ['pump1', 'pump2', 'pump3', 'bvc', 'ppe_goggles', 'ppe_gloves', 'ppe_helmet', 'ppe_shoes', 'view'];
     icons.forEach((n, i) => {
       const spr = SPR[n];
       const x = 62 + i * 26;
       ctx.drawImage(spr, Math.round(x - spr.width / 2), 120 - spr.height);
     });
-    Font.draw(ctx, 'PUMPEN', 88, 124, { color: '#ffffff', align: 'center' });
-    Font.draw(ctx, 'SCHUTZAUSRÜSTUNG', 179, 124, { color: '#ffffff', align: 'center' });
-    Font.draw(ctx, 'BVC', 270, 124, { color: '#ff8fb8', align: 'center' });
-    Font.draw(ctx, '+10S', 270, 133, { color: '#7be07b', align: 'center' });
+    ctx.fillStyle = '#5d6b80'; ctx.fillRect(153, 100, 1, 32); ctx.fillRect(257, 100, 1, 32);
+    Font.draw(ctx, 'PUMPEN', 101, 124, { color: '#ffffff', align: 'center' });
+    Font.draw(ctx, 'INKL. BVC', 101, 133, { color: '#ff8fb8', align: 'center' });
+    Font.draw(ctx, 'SCHUTZAUSRÜSTUNG', 205, 124, { color: '#ffffff', align: 'center' });
+    Font.draw(ctx, '+10 S', 272, 124, { color: '#7be07b', align: 'center' });
     Font.draw(ctx, 'SAUG IN ' + CONFIG.roundSeconds + ' SEK SO VIEL CHAOS WIE MÖGLICH EIN!', 160, 146, { color: '#ffffff', align: 'center' });
     if (this.t % 50 < 35) Font.draw(ctx, 'ENTER = START', 160, 160, { color: THEME.gold, align: 'center' });
   }

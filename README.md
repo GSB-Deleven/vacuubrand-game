@@ -19,12 +19,12 @@ Die durchspringbaren Plattformen sind **VACUU·LAN**-Leitungen.
 | Item | Wirkung |
 |---|---|
 | Pumpe ME 1C → PC 3001 VARIO select → VACUU·PURE 10C | mehr Reichweite, schwerere Sachen einsaugen |
+| Pumpe **BVC professional** (Zellkultur) | für 8 Sekunden: BVC auf dem Rücken, Pistole wird zum **VHC-Handstück**, saugt alle Medien (Wellplatten, Petrischalen, Nährmedium, Tropfen) mit doppelten Punkten; danach wieder die normale Pumpe |
 | Schutzbrille | Treffer kosten nur 1 statt 3 Sekunden |
 | Handschuhe | Saug-Energie lädt doppelt so schnell |
 | Schutzhelm | Gegner von unten wegköpfen |
 | Sicherheitsschuhe | Gegner durch Draufspringen zerstören |
 | alle 4 = **Vollschutz** | Gegner können nicht mehr schaden |
-| BVC professional | 8 Sekunden VHC-Handstück: saugt alle Flüssigkeiten, doppelte Punkte |
 | VACUU·VIEW extended (versteckt, 3×) | „Zeitvakuum“: +10 Sekunden |
 
 Jedes neue Schutz-Teil gibt +2 Sekunden. Eine Runde dauert **120 Sekunden**. Wer die Dampf-Krake
