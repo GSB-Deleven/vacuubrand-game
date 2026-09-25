@@ -77,7 +77,7 @@ class Player {
     const shake = this.sucking ? ((t >> 1) % 2) : 0;
     drawProfessor(ctx, Math.round(this.x - camX), Math.round(this.y), {
       face: this.face, pump: this.pump, pose: this.pose(), shake, sucking: this.sucking,
-      ppe: this.ppe, bvc: this.bvcT > 0, glow: this.fullPPE() && (t % 20 < 10)
+      ppe: this.ppe, bvc: this.bvcT > 0
     });
   }
   pose() {
@@ -116,7 +116,7 @@ function drawProfessor(ctx, x, y, o) {
       ctx.fillStyle = o.bvc ? '#ff8fb8' : '#3aa0e8'; ctx.fillRect(Math.round(hx), Math.round(hy), 1, 1);
     }
   }
-  if (o.glow) {
+  if (false) {
     ctx.fillStyle = 'rgba(255,230,102,0.45)';
     ctx.fillRect(bx - 2, by - 2, 20, spr.height + 4);
   }
@@ -166,7 +166,6 @@ const ENEMY_DEFS = {
   d: { name: 'FILTRAT-TROPFEN', w: 8, h: 9, weight: 1, points: 100, beh: 'hopper', speed: 0.9, harm: true, spr: 'drop', liquid: true },
   f: { name: 'SCHMUTZPARTIKEL', w: 10, h: 8, weight: 1, points: 100, beh: 'walker', speed: 0.4, harm: true, spr: 'dust', frames: true },
   p: { name: 'FILTERPAPIER', w: 12, h: 10, weight: 1, points: 150, beh: 'floater', harm: true, spr: 'paper', frames: true },
-  s: { name: 'SPE-KARTUSCHE', w: 7, h: 14, weight: 1, points: 150, beh: 'walker', speed: 0.5, harm: true, spr: 'spe', frames: true },
   // Zellkultur
   n: { name: 'NÄHRMEDIUM', w: 14, h: 6, weight: 1, points: 150, beh: 'walker', speed: 0.35, harm: true, spr: 'medium', frames: true, liquid: true },
   e: { name: 'PETRI-SCHLEIM', w: 14, h: 8, weight: 1, points: 150, beh: 'walker', speed: 0.45, harm: true, spr: 'petri', frames: true, liquid: true },
@@ -178,7 +177,6 @@ const ENEMY_DEFS = {
   k: { name: 'RUNDKOLBEN', w: 10, h: 12, weight: 2, points: 250, beh: 'walker', speed: 0.45, harm: true, spr: 'flask', frames: true },
   h: { name: 'HITZEDAMPF', w: 12, h: 9, weight: 2, points: 250, beh: 'floater', harm: true, spr: 'hotcloud' },
   m: { name: 'MESSBECHER', w: 10, h: 10, weight: 2, points: 250, beh: 'walker', speed: 0.6, harm: true, spr: 'beaker', frames: true },
-  o: { name: 'LÖSEMITTELFASS', w: 12, h: 15, weight: 3, points: 500, beh: 'static', harm: false, spr: 'barrel' },
   // Hochvakuum
   i: { name: 'EISKRISTALL', w: 12, h: 12, weight: 2, points: 300, beh: 'floater', harm: true, spr: 'ice', frames: true },
   l: { name: 'SCHLENK-KOLBEN', w: 12, h: 16, weight: 3, points: 500, beh: 'walker', speed: 0.4, harm: true, spr: 'schlenk', frames: true },

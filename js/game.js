@@ -33,7 +33,7 @@ class PlayScene {
   exit() { Sound.suckStop(); }
 
   showMsg(text, dur, color) { this.msg = { text, t: dur || 100, color: color || '#ffffff' }; }
-  popup(x, y, text, color) { this.popups.push({ x, y, text, color: color || '#ffffff', t: 50 }); }
+  popup(x, y, text, color) { this.popups.push({ x, y, text, color: color || '#ffffff', t: 36 }); }
   burst(x, y, colors, n) {
     for (let i = 0; i < (n || 8); i++) {
       const a = Math.random() * Math.PI * 2, s = 0.5 + Math.random() * 1.8;
@@ -382,7 +382,7 @@ class PlayScene {
         }
       } else if (this.heavyT <= 0) {
         this.heavyT = 150;
-        this.showMsg('DIE KRAKE IST ZU STARK! HOL DIR DIE VACUU·PURE!', 130, '#ff8f8f');
+        this.showMsg('DIE KRAKE IST ZU STARK! HOL DIR DIE VACUU·PURE 10C!', 130, '#ff8f8f');
         Sound.sfx('heavy');
       }
     }
@@ -413,7 +413,6 @@ class PlayScene {
         p.energy = 1; p.overheat = false;
         const cfg = CONFIG.pumps[p.pump];
         this.banner = { title: cfg.title, sub: cfg.slogan, t: 220, icon: 'pump' + p.pump };
-        this.freeze = 40;
         this.addScore(500);
         this.popup(p.x, p.y - 26, '+500', THEME.gold);
         if (p.sucking) Sound.suckStart(p.bvcT > 0 ? 2 : p.pump);
@@ -435,7 +434,7 @@ class PlayScene {
     } else if (it.kind === 'bvc') {
       p.bvcZone = zoneOf(p.x) === BVC_ZONE;
       p.bvcT = p.bvcZone ? 1 : CONFIG.bvcSeconds * 60;
-      this.banner = { title: 'PUMPE BVC PROFESSIONAL', sub: 'MIT VHC: MEDIEN AUS WELLPLATTEN\nUND PETRISCHALEN ABSAUGEN! (PUNKTE ×2)\n' + (p.bvcZone ? 'GILT IM GANZEN ZELLKULTUR-LABOR.' : 'FÜR ' + CONFIG.bvcSeconds + ' SEKUNDEN.'), t: 220, icon: 'bvc' };
+      this.banner = { title: 'PUMPE BVC PROFESSIONAL', sub: 'MIT VHC: MEDIEN AUS WELLPLATTEN UND\nPETRISCHALEN ABSAUGEN · PUNKTE ×2', t: 220, icon: 'bvc' };
       this.addScore(300);
       if (p.sucking) Sound.suckStart(2);
       Sound.sfx('powerup');
@@ -443,7 +442,6 @@ class PlayScene {
       this.views++;
       this.addTime(CONFIG.viewTimeBonus, p.x, p.y - 26);
       this.banner = { title: 'VACUU·VIEW EXTENDED', sub: 'ZEITVAKUUM: +' + CONFIG.viewTimeBonus + ' SEKUNDEN!', t: 180, icon: 'view' };
-      this.freeze = 30;
       this.addScore(300);
       Sound.sfx('timebonus');
     }
@@ -499,7 +497,7 @@ class PlayScene {
   updateEffects() {
     for (const q of this.parts) { q.x += q.vx; q.y += q.vy; q.vy += q.g; q.t--; }
     this.parts = this.parts.filter(q => q.t > 0);
-    for (const q of this.popups) { q.y -= 0.4; q.t--; }
+    for (const q of this.popups) { if (q.t > 26) q.y -= 0.5; q.t--; }
     this.popups = this.popups.filter(q => q.t > 0);
     for (const b of this.bumps) b.t++;
     this.bumps = this.bumps.filter(b => b.t < 8);
@@ -571,7 +569,11 @@ class PlayScene {
     const sogCol = p.bvcT > 0 ? '#ff8fb8' : heat ? (this.t % 20 < 10 ? '#e04848' : '#ff8f8f') : '#3aa0e8';
     this.drawBar(ctx, 4, 14, 50, p.bvcT > 0 ? 1 : p.energy, sogCol, heat ? 'HEISS' : 'SOG', heat ? '#ff8f8f' : '#ffffff');
     this.drawBar(ctx, 96, 14, 40, p.stamina, p.tired ? '#8795a8' : '#7be07b', 'SPRINT');
-    // Schutzausrüstung
+    // Schutzausrüstung (bei Vollschutz goldener Rahmen)
+    if (p.fullPPE()) {
+      ctx.fillStyle = THEME.gold; ctx.fillRect(240, 11, 76, 12);
+      ctx.fillStyle = THEME.navyDark; ctx.fillRect(241, 12, 74, 10);
+    }
     CONFIG.ppe.forEach((q, i) => {
       const spr = SPR['ppe_' + q.key];
       const x = 244 + i * 18, y = 13 + Math.round((10 - spr.height) / 2);
@@ -579,7 +581,6 @@ class PlayScene {
       ctx.drawImage(spr, x, y);
       ctx.globalAlpha = 1;
     });
-    if (p.fullPPE() && this.t % 30 < 20) Font.draw(ctx, 'VOLLSCHUTZ', 200, 14, { color: THEME.gold, align: 'center' });
     if (this.combo > 1 && this.comboT > 0) Font.draw(ctx, 'COMBO ×' + Math.min(this.combo, 5), 4, HUD_H + 4, { color: THEME.gold, outline: PAL.k });
     const b = this.boss;
     if (b && b.active && b.alive && !b.captured) {
@@ -590,22 +591,8 @@ class PlayScene {
   }
 
   drawOverlays(ctx) {
-    const bossBar = this.boss && this.boss.active && this.boss.alive;
-    if (this.msg) Font.draw(ctx, this.msg.text, 160, bossBar ? HUD_H + 24 : HUD_H + 6, { color: this.msg.color, align: 'center', outline: PAL.k });
-    if (this.banner) {
-      const b = this.banner;
-      const lines = b.sub.split('\n').length;
-      const h = 24 + lines * 9, y = 56;
-      drawPanel(ctx, 24, y, 272, h);
-      let tx = 160;
-      if (b.icon) {
-        const spr = SPR[b.icon];
-        ctx.drawImage(spr, 32, y + Math.round((h - spr.height * 2) / 2), spr.width * 2, spr.height * 2);
-        tx = 178;
-      }
-      Font.draw(ctx, b.title, tx, y + 6, { color: THEME.gold, align: 'center' });
-      Font.draw(ctx, b.sub, tx, y + 18, { color: '#ffffff', align: 'center' });
-    }
+    // Einblendungen unten im Boden, damit das Spielfeld frei bleibt
+    if (this.banner || this.msg) this.drawFloorBar(ctx);
     if (this.state === 'howto') this.drawHowto(ctx);
     if (this.state === 'count') {
       const n = 3 - Math.floor(this.stateT / 60);
@@ -625,6 +612,30 @@ class PlayScene {
       drawPanel(ctx, 60, 55, 200, 60);
       Font.draw(ctx, 'PAUSE', 160, 62, { color: THEME.gold, scale: 2, align: 'center' });
       Font.draw(ctx, 'ESC = WEITERSPIELEN\nENTER = RUNDE ABBRECHEN', 160, 84, { color: '#ffffff', align: 'center' });
+    }
+  }
+
+  drawFloorBar(ctx) {
+    const camX = Math.round(this.camX), y0 = 10 * T - CAM_Y + 2, h = VIEW_H - y0;
+    // Hintergrund nur über Boden, Gruben bleiben sichtbar
+    ctx.fillStyle = 'rgba(20,40,56,0.85)';
+    for (let sx = -(camX % T); sx < VIEW_W; sx += T) {
+      const tx = Math.floor((camX + sx) / T);
+      if (tileAt(this.level, tx, 10) !== ' ') ctx.fillRect(sx, y0, T, h);
+    }
+    ctx.fillStyle = THEME.gold; ctx.fillRect(0, y0 - 1, VIEW_W, 1);
+    const b = this.banner;
+    if (b) {
+      let tx = 6;
+      if (b.icon) {
+        const spr = SPR[b.icon];
+        ctx.drawImage(spr, 6, y0 + Math.round((h - spr.height) / 2));
+        tx = 12 + spr.width;
+      }
+      Font.draw(ctx, b.title, tx, y0 + 2, { color: THEME.gold });
+      Font.draw(ctx, b.sub.split('\n').slice(0, 2).join('\n'), tx, y0 + 11, { color: '#ffffff' });
+    } else if (this.msg) {
+      Font.draw(ctx, this.msg.text, 160, y0 + Math.round((h - 7) / 2), { color: this.msg.color, align: 'center' });
     }
   }
 
@@ -697,33 +708,40 @@ function drawBackground(ctx, camX) {
     ctx.fillStyle = z.base; ctx.fillRect(x0, 106, x1 - x0, 42);
     ctx.fillStyle = z.wall2; ctx.fillRect(x0, 104, x1 - x0, 3);
   }
-  // Fliesenraster (Parallax)
-  const px = Math.round(camX * 0.5);
-  for (let x = -(px % 16); x < VIEW_W; x += 16) {
+  // Ebene 1 (ganz hinten, 0.2×): Fliesen und Fenster
+  const p1 = Math.round(camX * 0.2);
+  for (let x = -(p1 % 16); x < VIEW_W; x += 16) {
     ctx.fillStyle = ZONE_STYLE[zoneOf(camX + x)].wall2;
     ctx.fillRect(x, 12, 1, 92);
   }
   ctx.fillStyle = 'rgba(0,0,0,0.05)';
   for (let y = 12; y < 104; y += 16) ctx.fillRect(0, y, VIEW_W, 1);
-  // Geräte und Wand-Deko (Parallax): erst Wand, dann Labortisch-Geräte davor
-  const step = 80;
-  const n0 = Math.floor(px / step) - 1;
-  const slots = [];
-  for (let n = n0; n < n0 + 6; n++) {
-    const sx = n * step - px;
-    slots.push({ n, sx, z: ZONE_STYLE[zoneOf(camX + sx + 40)] });
+  ctx.globalAlpha = 0.45;
+  const w1 = 150;
+  for (let n = Math.floor(p1 / w1) - 1; n < Math.floor(p1 / w1) + 3; n++) {
+    ctx.drawImage(SPR.deco_window, n * w1 - p1 + 50, 28);
   }
+  // Ebene 2 (0.45×): Wand-Deko; Poster zeigt immer die Pumpe des aktuellen Abschnitts
+  const p2 = Math.round(camX * 0.45), w2 = 110, here = zoneOf(camX + VIEW_W / 2);
   ctx.globalAlpha = 0.6;
-  const wallY = { window: 28, poster0: 34, poster1: 34, poster2: 34, poster3: 34, vacuulan: 30, periodic: 30, schlenk: 30 };
-  for (const s of slots) {
-    if (s.n % 2) continue;
-    const L = s.z.wall_.length, name = s.z.wall_[((s.n / 2) % L + L) % L];
-    ctx.drawImage(SPR['deco_' + name], s.sx + 4, wallY[name] || 30);
+  for (let n = Math.floor(p2 / w2) - 1; n < Math.floor(p2 / w2) + 5; n++) {
+    const sx = n * w2 - p2;
+    let name;
+    if (((n % 3) + 3) % 3 === 0) name = 'poster' + here;
+    else {
+      const list = ZONE_STYLE[zoneOf(camX + sx + 40)].wall_;
+      name = list[((n % list.length) + list.length) % list.length];
+    }
+    ctx.drawImage(SPR['deco_' + name], sx, name === 'vacuulan' ? 74 : name === 'schlenk' ? 64 : 34);
   }
-  for (const s of slots) {
-    const L = s.z.bench.length, name = s.z.bench[(s.n % L + L) % L];
-    const spr = SPR['deco_' + name];
-    ctx.drawImage(spr, s.sx + 40 - Math.round(spr.width / 2), 105 - spr.height);
+  // Ebene 3 (0.7×): Laborgeräte auf dem Labortisch
+  const p3 = Math.round(camX * 0.7), w3 = 84;
+  ctx.globalAlpha = 0.8;
+  for (let n = Math.floor(p3 / w3) - 1; n < Math.floor(p3 / w3) + 6; n++) {
+    const sx = n * w3 - p3;
+    const list = ZONE_STYLE[zoneOf(camX + sx + 42)].bench;
+    const spr = SPR['deco_' + list[((n % list.length) + list.length) % list.length]];
+    ctx.drawImage(spr, sx + 42 - Math.round(spr.width / 2), 105 - spr.height);
   }
   ctx.globalAlpha = 1;
 }
