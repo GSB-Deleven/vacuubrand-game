@@ -1,7 +1,7 @@
 'use strict';
-// Spielfiguren: Professor, Gegner/Objekte, Pumpen-Items, Boss + Tile-Kollision
+// Spielfiguren: Professor, Gegner/Objekte, Items, Boss + Tile-Kollision
 
-const SOLID_TILES = new Set(['#', 'B', '1', '2', '3', '?', 'U']);
+const SOLID_TILES = new Set(['#', 'B', '1', '2', '3', '?', 'V', 'U']);
 
 function tileAt(level, tx, ty) {
   if (tx < 0 || tx >= level.W) return 'B';
@@ -62,77 +62,127 @@ class Player {
     this.vx = 0; this.vy = 0; this.face = 1;
     this.onGround = false; this.pump = 0;
     this.stun = 0; this.inv = 0; this.coyote = 0; this.jumpBuf = 0;
-    this.sucking = false; this.walkT = 0;
+    this.sucking = false; this.walkT = 0; this.ducking = false;
+    this.energy = 1; this.overheat = false;
+    this.stamina = 1; this.tired = false; this.sprinting = false;
+    this.bvcT = 0;
+    this.ppe = { goggles: false, gloves: false, helmet: false, shoes: false };
     this.safe = { x, y };
   }
-  nozzle() { return { x: this.x + this.face * 14, y: this.y - 7 }; }
+  fullPPE() { return this.ppe.goggles && this.ppe.gloves && this.ppe.helmet && this.ppe.shoes; }
+  nozzle() { return { x: this.x + this.face * 14, y: this.y - (this.ducking ? 4 : 7) }; }
 
   draw(ctx, camX, t) {
     if (this.inv > 0 && Math.floor(this.inv / 3) % 2 === 0 && this.stun <= 0) return;
-    const f = this.face;
     const shake = this.sucking ? ((t >> 1) % 2) : 0;
-    const x = Math.round(this.x - camX), y = Math.round(this.y);
-    drawProfessor(ctx, x, y, f, this.pump, this.pose(), shake, this.sucking);
+    drawProfessor(ctx, Math.round(this.x - camX), Math.round(this.y), {
+      face: this.face, pump: this.pump, pose: this.pose(), shake, sucking: this.sucking,
+      ppe: this.ppe, bvc: this.bvcT > 0, glow: this.fullPPE() && (t % 20 < 10)
+    });
   }
   pose() {
+    if (this.ducking) return 'duck';
     if (!this.onGround) return 'jump';
-    if (Math.abs(this.vx) > 0.2) return Math.floor(this.walkT / 7) % 2 ? 'walk1' : 'walk2';
+    if (Math.abs(this.vx) > 0.2) return Math.floor(this.walkT / (this.sprinting ? 4 : 7)) % 2 ? 'walk1' : 'walk2';
     return 'idle';
   }
 }
 
-// Professor inklusive Pumpe auf dem Rücken, Schlauch und Saugpistole.
+// Professor inklusive Pumpe auf dem Rücken, Schlauch, Saugpistole und Schutzausrüstung.
 // x = Mitte, y = Unterkante (Bildschirmkoordinaten)
-function drawProfessor(ctx, x, y, face, pump, pose, shake, sucking) {
-  const spr = SPR['prof_' + pose + (face < 0 ? '_L' : '')];
-  const bx = x - 8, by = y - 18 + (shake ? 1 : 0);
-  // Pumpe auf dem Rücken
-  let pumpSpr = null, px = 0, py = 0;
-  if (pump > 0) {
-    pumpSpr = SPR['pump' + pump];
-    px = face > 0 ? x - 6 - pumpSpr.width : x + 6;
-    py = y - 5 - pumpSpr.height;
-    ctx.drawImage(pumpSpr, px, py);
-  }
-  // Schlauch
-  if (pumpSpr) {
-    const sx = face > 0 ? px + pumpSpr.width - 3 : px + 3, sy = py + 3;
-    const ex = x + face * 4, ey = y - 6;
+function drawProfessor(ctx, x, y, o) {
+  const face = o.face, ppe = o.ppe || {};
+  const pose = o.pose || 'idle';
+  const spr = SPR['prof_' + pose + '_' + (ppe.shoes ? 1 : 0) + (ppe.gloves ? 1 : 0) + (face < 0 ? '_L' : '')];
+  const bx = x - 8, by = y - spr.height + (o.shake ? 1 : 0);
+  const mx = (ox, w) => (face > 0 ? bx + ox : bx + 16 - ox - w); // gespiegelte x-Position
+
+  // Gerät auf dem Rücken
+  const backSpr = o.bvc ? SPR.bvc : (o.pump > 0 ? SPR['pump' + o.pump] : null);
+  let px = 0, py = 0;
+  if (backSpr) {
+    px = face > 0 ? x - 6 - backSpr.width : x + 6;
+    py = y - (pose === 'duck' ? 1 : 5) - backSpr.height;
+    ctx.drawImage(backSpr, px, py);
+    // Schlauch
+    const sx = face > 0 ? px + backSpr.width - 3 : px + 3, sy = py + 3;
+    const ex = x + face * 4, ey = by + 12;
     const cx = (sx + ex) / 2, cy = Math.max(sy, ey) + 6;
     for (let i = 0; i <= 14; i++) {
       const tt = i / 14;
       const hx = (1 - tt) * (1 - tt) * sx + 2 * (1 - tt) * tt * cx + tt * tt * ex;
       const hy = (1 - tt) * (1 - tt) * sy + 2 * (1 - tt) * tt * cy + tt * tt * ey;
-      ctx.fillStyle = '#1a1c2c'; ctx.fillRect(Math.round(hx), Math.round(hy), 2, 2);
-      ctx.fillStyle = '#3aa0e8'; ctx.fillRect(Math.round(hx), Math.round(hy), 1, 1);
+      ctx.fillStyle = PAL.k; ctx.fillRect(Math.round(hx), Math.round(hy), 2, 2);
+      ctx.fillStyle = o.bvc ? '#ff8fb8' : '#3aa0e8'; ctx.fillRect(Math.round(hx), Math.round(hy), 1, 1);
     }
   }
+  if (o.glow) {
+    ctx.fillStyle = 'rgba(255,230,102,0.45)';
+    ctx.fillRect(bx - 2, by - 2, 20, spr.height + 4);
+  }
   ctx.drawImage(spr, bx, by);
-  // Saugpistole
-  const gy = by + 11;
-  const gx0 = face > 0 ? x + 2 : x - 12;
-  ctx.fillStyle = '#1a1c2c'; ctx.fillRect(gx0 - 1, gy - 1, 12, 5);
-  ctx.fillStyle = '#a7b3c4'; ctx.fillRect(gx0, gy, 10, 3);
-  ctx.fillStyle = pump === 3 ? '#ffa53a' : pump === 2 ? '#7be07b' : pump === 1 ? '#3aa0e8' : '#5d6b80';
-  ctx.fillRect(gx0 + 3, gy, 2, 3);
-  const nx = face > 0 ? x + 12 : x - 14;
-  const flare = sucking ? 1 : 0;
-  ctx.fillStyle = '#1a1c2c'; ctx.fillRect(nx - 1, gy - 3 - flare, 4, 9 + flare * 2);
-  ctx.fillStyle = '#d5dde8'; ctx.fillRect(nx, gy - 2 - flare, 2, 7 + flare * 2);
-  // Handgriff
-  ctx.fillStyle = '#1a1c2c'; ctx.fillRect(face > 0 ? x + 4 : x - 6, gy + 3, 3, 3);
+
+  // Schutzbrille und Helm
+  if (ppe.goggles) {
+    ctx.fillStyle = '#c9921e'; ctx.fillRect(mx(3, 11), by + 5, 11, 3);
+    ctx.fillStyle = '#ffe066'; ctx.fillRect(mx(4, 4), by + 6, 4, 1); ctx.fillRect(mx(9, 4), by + 6, 4, 1);
+  }
+  if (ppe.helmet) {
+    ctx.fillStyle = PAL.k; ctx.fillRect(mx(2, 12), by - 2, 12, 5); ctx.fillRect(mx(0, 16), by + 2, 16, 2);
+    ctx.fillStyle = '#ffd23f'; ctx.fillRect(mx(3, 10), by - 1, 10, 4);
+    ctx.fillStyle = '#e0a000'; ctx.fillRect(mx(1, 14), by + 2, 14, 1); ctx.fillRect(mx(7, 2), by - 1, 2, 3);
+  }
+
+  // Saugpistole bzw. VHC-Handstück der BVC
+  const gy = by + (pose === 'duck' ? 11 : 11);
+  if (o.bvc) {
+    const gx0 = face > 0 ? x + 2 : x - 14;
+    ctx.fillStyle = PAL.k; ctx.fillRect(gx0 - 1, gy - 1, 14, 4);
+    ctx.fillStyle = '#f4f7fb'; ctx.fillRect(gx0, gy, 12, 2);
+    ctx.fillStyle = '#3aa0e8'; ctx.fillRect(gx0 + 4, gy - 1, 3, 1);
+    const tip = face > 0 ? x + 14 : x - 19;
+    ctx.fillStyle = PAL.k; ctx.fillRect(tip, gy, 5, 2);
+    ctx.fillStyle = '#c8f2ff'; ctx.fillRect(tip, gy, 5, 1);
+  } else {
+    const gx0 = face > 0 ? x + 2 : x - 12;
+    ctx.fillStyle = PAL.k; ctx.fillRect(gx0 - 1, gy - 1, 12, 5);
+    ctx.fillStyle = '#a7b3c4'; ctx.fillRect(gx0, gy, 10, 3);
+    ctx.fillStyle = o.pump === 3 ? '#ffa53a' : o.pump === 2 ? '#7be07b' : o.pump === 1 ? '#3aa0e8' : '#5d6b80';
+    ctx.fillRect(gx0 + 3, gy, 2, 3);
+    const nx = face > 0 ? x + 12 : x - 14;
+    const flare = o.sucking ? 1 : 0;
+    ctx.fillStyle = PAL.k; ctx.fillRect(nx - 1, gy - 3 - flare, 4, 9 + flare * 2);
+    ctx.fillStyle = '#d5dde8'; ctx.fillRect(nx, gy - 2 - flare, 2, 7 + flare * 2);
+  }
+  ctx.fillStyle = PAL.k; ctx.fillRect(face > 0 ? x + 4 : x - 6, gy + 3, 3, 3);
 }
 
 // ---------------------------------------------------------------------
+// weight: 1 = ME 1C reicht, 2 = PC 3001 nötig, 3 = VACUU·PURE nötig
+// liquid: kann mit der BVC professional immer abgesaugt werden
 const ENEMY_DEFS = {
-  d: { name: 'TROPFEN', w: 8, h: 9, weight: 1, points: 100, beh: 'hopper', speed: 0.9, harm: true, stomp: true, spr: 'drop' },
-  f: { name: 'STAUB', w: 10, h: 8, weight: 1, points: 100, beh: 'walker', speed: 0.4, harm: true, stomp: true, spr: 'dust', frames: true },
-  c: { name: 'DAMPF', w: 12, h: 9, weight: 1, points: 150, beh: 'floater', speed: 0.3, harm: true, stomp: false, spr: 'cloud' },
-  k: { name: 'KOLBEN', w: 10, h: 12, weight: 2, points: 250, beh: 'walker', speed: 0.45, harm: true, stomp: true, spr: 'flask', frames: true },
-  g: { name: 'GEIST', w: 11, h: 11, weight: 2, points: 300, beh: 'ghost', speed: 0.35, harm: true, stomp: false, spr: 'ghost' },
-  m: { name: 'BECHER', w: 10, h: 10, weight: 2, points: 250, beh: 'walker', speed: 0.6, harm: true, stomp: true, spr: 'beaker', frames: true },
-  z: { name: 'GASFLASCHE', w: 8, h: 17, weight: 3, points: 500, beh: 'static', harm: false, stomp: false, spr: 'cylinder' },
-  o: { name: 'FASS', w: 12, h: 15, weight: 3, points: 500, beh: 'static', harm: false, stomp: false, spr: 'barrel' }
+  // Filtration
+  d: { name: 'FILTRAT-TROPFEN', w: 8, h: 9, weight: 1, points: 100, beh: 'hopper', speed: 0.9, harm: true, spr: 'drop', liquid: true },
+  f: { name: 'SCHMUTZPARTIKEL', w: 10, h: 8, weight: 1, points: 100, beh: 'walker', speed: 0.4, harm: true, spr: 'dust', frames: true },
+  p: { name: 'FILTERPAPIER', w: 12, h: 10, weight: 1, points: 150, beh: 'floater', harm: true, spr: 'paper', frames: true },
+  s: { name: 'SPE-KARTUSCHE', w: 7, h: 14, weight: 1, points: 150, beh: 'walker', speed: 0.5, harm: true, spr: 'spe', frames: true },
+  // Zellkultur
+  n: { name: 'NÄHRMEDIUM', w: 14, h: 6, weight: 1, points: 150, beh: 'walker', speed: 0.35, harm: true, spr: 'medium', frames: true, liquid: true },
+  e: { name: 'PETRI-SCHLEIM', w: 14, h: 8, weight: 1, points: 150, beh: 'walker', speed: 0.45, harm: true, spr: 'petri', frames: true, liquid: true },
+  w: { name: 'WELLPLATTE', w: 15, h: 8, weight: 2, points: 250, beh: 'hopper', speed: 0.8, harm: true, spr: 'plate', frames: true, liquid: true },
+  // Verdampfer
+  c: { name: 'LÖSEMITTELDAMPF', w: 12, h: 9, weight: 1, points: 150, beh: 'floater', harm: true, spr: 'cloud' },
+  g: { name: 'LÖSEMITTEL-GEIST', w: 11, h: 11, weight: 2, points: 300, beh: 'ghost', speed: 0.35, harm: true, spr: 'ghost' },
+  r: { name: 'KONZENTRATOR-RÖHRCHEN', w: 7, h: 14, weight: 2, points: 250, beh: 'hopper', speed: 0.8, harm: true, spr: 'tube', frames: true },
+  k: { name: 'RUNDKOLBEN', w: 10, h: 12, weight: 2, points: 250, beh: 'walker', speed: 0.45, harm: true, spr: 'flask', frames: true },
+  h: { name: 'HITZEDAMPF', w: 12, h: 9, weight: 2, points: 250, beh: 'floater', harm: true, spr: 'hotcloud' },
+  m: { name: 'MESSBECHER', w: 10, h: 10, weight: 2, points: 250, beh: 'walker', speed: 0.6, harm: true, spr: 'beaker', frames: true },
+  o: { name: 'LÖSEMITTELFASS', w: 12, h: 15, weight: 3, points: 500, beh: 'static', harm: false, spr: 'barrel' },
+  // Hochvakuum
+  i: { name: 'EISKRISTALL', w: 12, h: 12, weight: 2, points: 300, beh: 'floater', harm: true, spr: 'ice', frames: true },
+  l: { name: 'SCHLENK-KOLBEN', w: 12, h: 16, weight: 3, points: 500, beh: 'walker', speed: 0.4, harm: true, spr: 'schlenk', frames: true },
+  z: { name: 'ARGON-FLASCHE', w: 8, h: 17, weight: 3, points: 500, beh: 'static', harm: false, spr: 'cylinder' },
+  b: { name: 'SIEDEBLASE', w: 12, h: 12, weight: 3, points: 500, beh: 'floater', harm: true, spr: 'bubble', frames: true }
 };
 
 class Enemy {
@@ -142,7 +192,7 @@ class Enemy {
     this.x = x; this.y = y; this.w = d.w; this.h = d.h;
     this.vx = 0; this.vy = 0; this.dir = -1;
     this.alive = true; this.active = false; this.captured = false; this.capT = 0;
-    this.pulledNow = false; this.wasPulled = false; this.pullV = 0; this.shake = 0;
+    this.pulledNow = false; this.wasPulled = false; this.pullV = 0; this.shake = 0; this.safeT = 0;
     this.t = Math.floor(hash(Math.floor(x) * 7 + Math.floor(y)) * 100);
     this.baseX = x; this.baseY = y; this.onGround = false;
   }
@@ -150,6 +200,7 @@ class Enemy {
   update(scene) {
     this.t++;
     if (this.shake > 0) this.shake--;
+    if (this.safeT > 0) this.safeT--;
     if (this.captured) {
       const nz = scene.player.nozzle();
       this.x += (nz.x - this.x) * 0.4;
@@ -229,33 +280,46 @@ class Enemy {
 }
 
 // ---------------------------------------------------------------------
+// Items: steigen aus dem Block und laufen dann wie die Pilze bei Mario davon.
+// kind: 'pump' (tier), 'ppe' (key), 'bvc', 'view' (schwebt an Ort)
 class Item {
-  constructor(tier, tx, ty) {
-    this.tier = tier;
-    this.x = tx * T + 8; this.y = (ty + 1) * T;
-    this.targetY = ty * T - 1;
-    this.w = 14; this.h = 14; this.t = 0; this.alive = true;
+  constructor(kind, value, x, y, fromBlock) {
+    this.kind = kind; this.value = value;
+    this.x = x; this.y = y;
+    this.w = 12; this.h = 12;
+    this.vx = 0; this.vy = 0; this.dir = 1;
+    this.t = 0; this.alive = true;
+    this.rising = fromBlock ? 16 : 0;
+  }
+  sprite() {
+    if (this.kind === 'pump') return SPR['pump' + this.value];
+    if (this.kind === 'ppe') return SPR['ppe_' + this.value];
+    return SPR[this.kind];
   }
   update(scene) {
     this.t++;
-    if (this.y > this.targetY && this.t < 40) { this.y = Math.max(this.targetY, this.y - 1); return; }
-    if (this.t < 45) return;
-    // schwebt zum Professor, damit das Item nie verloren geht
-    const p = scene.player;
-    const dx = p.x - this.x, dy = (p.y - 4) - this.y;
-    const len = Math.hypot(dx, dy) || 1;
-    const sp = Math.min(1.6, 0.4 + this.t * 0.01);
-    this.x += dx / len * sp;
-    this.y += dy / len * sp;
+    if (this.rising > 0) { this.rising--; this.y -= 1; return; }
+    if (this.kind === 'view') return;
+    this.vx = this.dir * 0.75;
+    this.vy = Math.min(this.vy + 0.3, 5);
+    moveBody(this, scene.level);
+    if (this.hitWall) this.dir *= -1;
+    if (this.y > scene.level.H * T + 20) {
+      this.alive = false;
+      if (this.kind === 'pump') scene.showMsg('OH NEIN, DIE PUMPE IST WEG! NÄCHSTER KOLBEN-BLOCK...', 140, '#ff8f8f');
+    }
   }
   draw(ctx, camX) {
-    const spr = SPR['pump' + this.tier];
-    const bob = this.t > 40 ? Math.round(Math.sin(this.t * 0.15) * 2) : 0;
+    const spr = this.sprite();
+    const bob = this.kind === 'view' ? Math.round(Math.sin(this.t * 0.1) * 2) : 0;
     const x = Math.round(this.x - camX - spr.width / 2), y = Math.round(this.y - spr.height) + bob;
     if (this.t % 20 < 10) {
-      ctx.fillStyle = '#fff3b0';
-      ctx.fillRect(x - 2, y + 2, 1, 1); ctx.fillRect(x + spr.width + 1, y + 5, 1, 1);
-      ctx.fillRect(x + 4, y - 3, 1, 1);
+      ctx.fillStyle = this.kind === 'view' ? '#7be07b' : '#fff3b0';
+      ctx.fillRect(x - 2, y + 2, 1, 1); ctx.fillRect(x + spr.width + 1, y + 5, 1, 1); ctx.fillRect(x + 4, y - 3, 1, 1);
+    }
+    if (this.kind === 'view') {
+      ctx.fillStyle = 'rgba(123,224,123,0.35)';
+      ctx.fillRect(x - 3, y - 3, spr.width + 6, spr.height + 6);
     }
     ctx.drawImage(spr, x, y);
   }
@@ -269,12 +333,12 @@ class Boss {
     this.maxHp = CONFIG.bossHp; this.hp = this.maxHp;
     this.active = false; this.alive = true; this.t = 0;
     this.shootT = 90; this.shake = 0; this.suckedNow = false;
-    this.pullV = 0; this.captured = false; this.capT = 0; this.defeated = false;
+    this.pullV = 0; this.captured = false; this.capT = 0;
   }
   update(scene) {
     const p = scene.player;
     if (!this.active) {
-      if (p.x > (scene.level.bossArenaX) * T) {
+      if (p.x > scene.level.bossArenaX * T) {
         this.active = true;
         scene.showMsg('DIE DAMPF-KRAKE! SAUG SIE WEG!', 150, '#e6dcff');
         Sound.sfx('bossappear');
@@ -310,7 +374,7 @@ class Boss {
     }
     this.suckedNow = false;
   }
-  draw(ctx, camX, t) {
+  draw(ctx, camX) {
     const spr = SPR['boss' + (Math.floor(this.t / 15) % 2)];
     if (this.captured) {
       const k = Math.max(0.1, this.capT / 40);

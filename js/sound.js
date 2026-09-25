@@ -127,6 +127,10 @@ const Sound = {
       case 'bossappear': this.tone(110, 0.6, { type: 'sawtooth', to: 55, vol: 0.18 }); this.tone(116, 0.6, { type: 'sawtooth', to: 58, vol: 0.18 }); break;
       case 'door': [392, 523, 659, 784].forEach((f, i) => this.tone(f, 0.1, { delay: i * 0.08, vol: 0.18 })); break;
       case 'spit': this.noise(0.15, { freq: 1200, to: 400, vol: 0.2 }); break;
+      case 'sprout': [262, 330, 392, 523].forEach((f, i) => this.tone(f, 0.08, { delay: i * 0.05, vol: 0.14, type: 'triangle' })); break;
+      case 'overheat': this.noise(0.5, { freq: 3000, to: 500, vol: 0.25 }); this.tone(300, 0.4, { to: 120, vol: 0.12 }); break;
+      case 'boing': this.tone(180, 0.15, { to: 420, type: 'triangle', vol: 0.3 }); break;
+      case 'timebonus': [659, 784, 988, 1319, 1568].forEach((f, i) => this.tone(f, 0.1, { delay: i * 0.06, vol: 0.16 })); break;
     }
   },
 

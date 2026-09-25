@@ -117,6 +117,16 @@ const Font = {
       this._line(ctx, line, lx, ly, color, s);
     });
   },
+  // VACUUBRAND-Wortmarke: "VACUU" fett, "BRAND" normal. cx = Mitte
+  drawLogo(ctx, cx, y, s, color) {
+    s = s || 1;
+    color = color || '#1a1c2c';
+    const w1 = this.width('VACUU', s) + s, w2 = this.width('BRAND', s);
+    const x = Math.round(cx - (w1 + s + w2) / 2);
+    this._line(ctx, 'VACUU', x, y, color, s);
+    this._line(ctx, 'VACUU', x + s, y, color, s);
+    this._line(ctx, 'BRAND', x + w1 + s, y, color, s);
+  },
   _line(ctx, line, x, y, color, s) {
     for (let i = 0; i < line.length; i++) {
       const ch = line[i];
