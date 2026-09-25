@@ -124,8 +124,9 @@ function drawProfessor(ctx, x, y, o) {
 
   // Schutzbrille und Helm
   if (ppe.goggles) {
-    ctx.fillStyle = '#c9921e'; ctx.fillRect(mx(3, 11), by + 5, 11, 3);
-    ctx.fillStyle = '#ffe066'; ctx.fillRect(mx(4, 4), by + 6, 4, 1); ctx.fillRect(mx(9, 4), by + 6, 4, 1);
+    ctx.fillStyle = '#5d6b80'; ctx.fillRect(mx(3, 11), by + 5, 11, 3);
+    ctx.fillStyle = 'rgba(223,244,251,0.8)'; ctx.fillRect(mx(4, 4), by + 6, 4, 1); ctx.fillRect(mx(9, 4), by + 6, 4, 1);
+    ctx.fillStyle = '#ffffff'; ctx.fillRect(mx(4, 1), by + 6, 1, 1); ctx.fillRect(mx(9, 1), by + 6, 1, 1);
   }
   if (ppe.helmet) {
     ctx.fillStyle = PAL.k; ctx.fillRect(mx(2, 12), by - 2, 12, 5); ctx.fillRect(mx(0, 16), by + 2, 16, 2);
