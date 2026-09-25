@@ -69,6 +69,12 @@ Sprinten geht auch mit Ctrl.
 In der öffentlichen Bestenliste erscheint nur **„Vorname N.“**. Wer mehrmals spielt (gleiche E-Mail),
 steht mit seinem besten Ergebnis drin.
 
+## Schnellstart ohne Anmeldung (zum Testen / Vorführen)
+
+Auf dem Titelbild, der Bestenliste oder im Anmeldeformular **Strg + Shift + Enter** drücken:
+Das Spiel startet sofort mit dem Spieler **ADMIN**. Diese Testrunden werden **nicht** gespeichert
+und erscheinen weder in der Bestenliste noch im Export.
+
 ## Admin-Bereich (für das Standpersonal)
 
 Auf dem Titelbild **Strg + Shift + A** drücken, PIN eingeben (Standard **1234** – bitte ändern!).

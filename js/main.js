@@ -12,6 +12,12 @@ const Game = {
   requestAdmin() {
     if (this.scene && this.scene.allowAdmin) this.go(new AdminScene());
   },
+  // Schnellstart ohne Anmeldung (Strg + Shift + Enter): Spieler "ADMIN", Runde wird nicht gespeichert
+  quickStart() {
+    if (!this.scene || !(this.scene.allowAdmin || this.scene instanceof RegisterScene)) return;
+    Sound.sfx('select');
+    this.go(new PlayScene({ id: 'ADMIN', firstName: 'ADMIN', lastName: '', isTest: true }));
+  },
   update() {
     this.t++;
     if (Input.pressed('mute')) Sound.toggleMute();
