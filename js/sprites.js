@@ -622,7 +622,7 @@ function buildDecor() {
   });
   const posterText = ['ME 1C', 'BVC PRO', 'PC 3001 VARIO SELECT', 'VACUU·PURE'];
   posterText.forEach((t, i) => {
-    const pw = Math.max(70, Font.width(t) + 10);
+    const pw = Math.max(80, Font.width(t) + 10);
     D['poster' + i] = paint(pw, 28, P => {
       P.rect(0, 0, pw, 28, k); P.rect(1, 1, pw - 2, 26, '#ffffff');
       Font.drawLogo(P.g, pw / 2, 4, 1, k);
