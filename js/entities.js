@@ -65,7 +65,7 @@ class Player {
     this.sucking = false; this.walkT = 0; this.ducking = false;
     this.energy = 1; this.overheat = false;
     this.stamina = 1; this.tired = false; this.sprinting = false;
-    this.bvcT = 0;
+    this.bvcT = 0; this.bvcZone = false;
     this.ppe = { goggles: false, gloves: false, helmet: false, shoes: false };
     this.safe = { x, y };
   }

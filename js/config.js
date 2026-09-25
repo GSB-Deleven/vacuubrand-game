@@ -28,7 +28,7 @@ const CONFIG = {
   ppeTimeBonus: 2,             // Sekunden für jedes neue Schutzausrüstungs-Teil
   ppeDuplicateTimeBonus: 1,    // Sekunden, wenn man schon alles hat
   viewTimeBonus: 10,           // VACUU·VIEW extended = "Zeitvakuum"
-  bvcSeconds: 8,               // so lange ist die BVC professional aktiv
+  bvcSeconds: 8,               // BVC gilt im ganzen Zellkultur-Labor; nur falls man sie ausserhalb erwischt: so viele Sekunden
 
   attractSwitchSeconds: 9,     // Titelbild <-> Bestenliste wechseln
   resultAutoReturnSeconds: 25, // Ergebnis-Bildschirm schliesst automatisch

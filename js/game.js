@@ -2,6 +2,7 @@
 // Die eigentliche Spielrunde
 const CAM_Y = 12; // die obersten 12 Pixel des Levels liegen unter der Anzeige
 const HUD_H = 24;
+const BVC_ZONE = 1; // Zellkultur-Labor
 
 class PlayScene {
   constructor(lead) {
@@ -278,9 +279,12 @@ class PlayScene {
     const p = this.player;
     const bvc = p.bvcT > 0;
     if (bvc) {
-      p.bvcT--;
-      if (p.bvcT === 0) {
-        this.showMsg('BVC-EINSATZ VORBEI - WEITER MIT DER PUMPE!', 110, '#ff8fb8');
+      // Im Zellkultur-Labor bleibt die BVC dauerhaft, sonst läuft die Zeit ab
+      if (p.bvcZone) { if (zoneOf(p.x) !== BVC_ZONE) p.bvcT = 0; }
+      else p.bvcT--;
+      if (p.bvcT <= 0) {
+        p.bvcT = 0; p.bvcZone = false;
+        this.showMsg(p.pump ? 'DIE BVC BLEIBT IM ZELLKULTUR-LABOR - WEITER MIT DER PUMPE!' : 'DIE BVC BLEIBT IM ZELLKULTUR-LABOR!', 130, '#ff8fb8');
         if (p.sucking) { Sound.suckStop(); p.sucking = false; }
       }
     }
@@ -429,8 +433,9 @@ class PlayScene {
       }
       this.addScore(200);
     } else if (it.kind === 'bvc') {
-      p.bvcT = CONFIG.bvcSeconds * 60;
-      this.banner = { title: 'PUMPE BVC PROFESSIONAL', sub: 'MIT VHC: MEDIEN AUS WELLPLATTEN\nUND PETRISCHALEN ABSAUGEN! (' + CONFIG.bvcSeconds + ' SEK, ×2)', t: 200, icon: 'bvc' };
+      p.bvcZone = zoneOf(p.x) === BVC_ZONE;
+      p.bvcT = p.bvcZone ? 1 : CONFIG.bvcSeconds * 60;
+      this.banner = { title: 'PUMPE BVC PROFESSIONAL', sub: 'MIT VHC: MEDIEN AUS WELLPLATTEN\nUND PETRISCHALEN ABSAUGEN! (PUNKTE ×2)\n' + (p.bvcZone ? 'GILT IM GANZEN ZELLKULTUR-LABOR.' : 'FÜR ' + CONFIG.bvcSeconds + ' SEKUNDEN.'), t: 220, icon: 'bvc' };
       this.addScore(300);
       if (p.sucking) Sound.suckStart(2);
       Sound.sfx('powerup');
@@ -553,7 +558,7 @@ class PlayScene {
     ctx.fillStyle = THEME.gold; ctx.fillRect(0, HUD_H, VIEW_W, 1);
     Font.draw(ctx, 'PUNKTE ' + pad(this.score, 6), 4, 3, { color: '#ffffff' });
     if (p.bvcT > 0) {
-      Font.draw(ctx, 'BVC PROFESSIONAL ' + Math.ceil(p.bvcT / 60) + ' S', 160, 3, { color: '#ff8fb8', align: 'center' });
+      Font.draw(ctx, 'BVC PROFESSIONAL' + (p.bvcZone ? '' : ' ' + Math.ceil(p.bvcT / 60) + ' S'), 160, 3, { color: '#ff8fb8', align: 'center' });
     } else {
       const pumpName = p.pump ? CONFIG.pumps[p.pump].short : 'KEINE PUMPE';
       Font.draw(ctx, pumpName, 160, 3, { color: p.pump ? '#7be07b' : '#a7b3c4', align: 'center' });
