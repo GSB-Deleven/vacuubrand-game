@@ -158,7 +158,7 @@ function drawProfessor(ctx, x, y, o) {
 }
 
 // ---------------------------------------------------------------------
-// weight: 1 = ME 1C reicht, 2 = PC 3001 nötig, 3 = VACUU·PURE nötig
+// weight: 1 = ME 1C reicht, 2 = PC 3001 VARIO select nötig, 3 = VACUU·PURE nötig
 // liquid: kann mit der BVC professional immer abgesaugt werden
 const ENEMY_DEFS = {
   // Filtration

@@ -673,7 +673,7 @@ function drawSign(ctx, s, camX) {
   const h = lines.length * 9 + 5;
   const cx = s.x * T + 8 - camX;
   if (cx + w / 2 < 0 || cx - w / 2 > VIEW_W) return;
-  const bx = Math.round(cx - w / 2), by = 42;
+  const bx = Math.round(cx - w / 2), by = 52;
   ctx.fillStyle = '#6b3f22'; ctx.fillRect(cx - 1, by + h, 3, 160 - by - h);
   ctx.fillStyle = PAL.k; ctx.fillRect(bx - 1, by - 1, w + 2, h + 2);
   ctx.fillStyle = '#fff6d5'; ctx.fillRect(bx, by, w, h);

@@ -56,7 +56,7 @@ const Level = {
     e('e', 118);
 
     // ---------------- Zone 3: VERDAMPFER-LABOR (PC 3001 VARIO select) ----------------
-    sign(122, 'PC 3001: ROTAVAP,\nKONZENTRATOR, TROCKNUNG');
+    sign(122, 'PC 3001 VARIO SELECT:\nROTAVAP, KONZENTRATOR,\nTROCKNUNG');
     q(125, 6, '2');
     e('k', 128); e('c', 131, 6); e('r', 134); e('g', 138, 6);
     lan(141, 7, 4); e('r', 142, 6); lan(146, 5, 4); e('h', 147, 3); q(148, 2, '?');

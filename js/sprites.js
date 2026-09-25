@@ -619,13 +619,14 @@ function buildDecor() {
     }
     Font.draw(P.g, 'VACUU·LAN', 30, 0, { color: '#5d6b80' });
   });
-  const posterText = ['ME 1C', 'BVC PRO', 'PC 3001', 'VACUU·PURE'];
+  const posterText = ['ME 1C', 'BVC PRO', 'PC 3001 VARIO SELECT', 'VACUU·PURE'];
   posterText.forEach((t, i) => {
-    D['poster' + i] = paint(70, 28, P => {
-      P.rect(0, 0, 70, 28, k); P.rect(1, 1, 68, 26, '#ffffff');
-      Font.drawLogo(P.g, 35, 4, 1, k);
-      P.rect(4, 13, 62, 1, THEME.gold);
-      Font.draw(P.g, t, 35, 17, { color: THEME.navy, align: 'center' });
+    const pw = Math.max(70, Font.width(t) + 10);
+    D['poster' + i] = paint(pw, 28, P => {
+      P.rect(0, 0, pw, 28, k); P.rect(1, 1, pw - 2, 26, '#ffffff');
+      Font.drawLogo(P.g, pw / 2, 4, 1, k);
+      P.rect(4, 13, pw - 8, 1, THEME.gold);
+      Font.draw(P.g, t, pw / 2, 17, { color: THEME.navy, align: 'center' });
     });
   });
   for (const name of Object.keys(D)) SPR['deco_' + name] = D[name];

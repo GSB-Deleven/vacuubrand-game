@@ -18,7 +18,7 @@ Die durchspringbaren Plattformen sind **VACUU·LAN**-Leitungen.
 
 | Item | Wirkung |
 |---|---|
-| Pumpe ME 1C → PC 3001 → VACUU·PURE | mehr Reichweite, schwerere Sachen einsaugen |
+| Pumpe ME 1C → PC 3001 VARIO select → VACUU·PURE 10C | mehr Reichweite, schwerere Sachen einsaugen |
 | Schutzbrille | Treffer kosten nur 1 statt 3 Sekunden |
 | Handschuhe | Saug-Energie lädt doppelt so schnell |
 | Schutzhelm | Gegner von unten wegköpfen |
