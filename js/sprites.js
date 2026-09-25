@@ -395,10 +395,11 @@ function buildSprites() {
   });
   // Schutzausrüstung
   SPR.ppe_goggles = outlined(14, 8, P => {
-    P.rect(1, 3, 12, 1, '#1a1c2c');
-    P.rect(2, 2, 4, 4, '#ffe066'); P.rect(8, 2, 4, 4, '#ffe066');
-    P.rect(2, 2, 4, 1, '#fff3b0'); P.rect(8, 2, 4, 1, '#fff3b0');
-    P.rect(6, 3, 2, 1, '#c9921e');
+    P.rect(1, 1, 12, 6, '#5d6b80');
+    P.rect(2, 2, 4, 4, '#dff4fb'); P.rect(8, 2, 4, 4, '#dff4fb');
+    P.rect(2, 2, 2, 1, '#ffffff'); P.rect(8, 2, 2, 1, '#ffffff'); P.px(2, 3, '#ffffff'); P.px(8, 3, '#ffffff');
+    P.rect(4, 5, 2, 1, '#b7e3f2'); P.rect(10, 5, 2, 1, '#b7e3f2');
+    P.rect(6, 3, 2, 2, '#8795a8');
   });
   SPR.ppe_gloves = outlined(11, 12, P => {
     P.rect(2, 4, 6, 6, '#3aa0e8');
