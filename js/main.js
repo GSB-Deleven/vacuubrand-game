@@ -40,6 +40,11 @@ const Game = {
     Overlay.el.style.fontSize = Math.max(11, Math.round(s * 4)) + 'px';
   }
   window.addEventListener('resize', resize);
+  canvas.addEventListener('click', e => {
+    const r = canvas.getBoundingClientRect();
+    const x = (e.clientX - r.left) / r.width * VIEW_W, y = (e.clientY - r.top) / r.height * VIEW_H;
+    if (Game.scene && Game.scene.click) Game.scene.click(x, y);
+  });
   resize();
 
   Game.go(new TitleScene());

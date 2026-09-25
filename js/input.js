@@ -14,7 +14,8 @@ const Input = {
     start: ['Enter', 'NumpadEnter', 'Space'],
     back: ['Escape'],
     mute: ['KeyM'],
-    fullscreen: ['KeyF']
+    fullscreen: ['KeyF'],
+    board: ['KeyB']
   },
   gameKeys: new Set(['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'Space', 'Enter', 'Tab', 'Backspace']),
 

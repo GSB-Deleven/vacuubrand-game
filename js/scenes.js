@@ -40,6 +40,9 @@ function drawBoards(ctx, t, highlightId) {
 }
 
 // ---------------------------------------------------------------------
+const TITLE_BTN_START = [158, 92, 150, 14];
+const TITLE_BTN_BOARD = [158, 112, 150, 14];
+
 class TitleScene {
   constructor() {
     this.allowAdmin = true;
@@ -49,13 +52,24 @@ class TitleScene {
   enter() { Sound.music('title'); }
   update() {
     this.t++; this.modeT++;
-    if (this.modeT > CONFIG.attractSwitchSeconds * 60) {
-      this.modeT = 0;
-      this.mode = this.mode === 'title' ? 'board' : 'title';
-    }
-    if (Input.pressed('start')) { Sound.sfx('select'); Game.go(new RegisterScene()); return; }
+    if (this.mode === 'board' && (Input.pressed('board') || Input.pressed('back'))) { this.toggleBoard(); return; }
+    if (this.mode === 'title' && Input.pressed('board')) { this.toggleBoard(); return; }
+    if (Input.pressed('start')) { this.startGame(); return; }
     if (Input.pressed('fullscreen')) toggleFullscreen();
     this.updateDemo();
+  }
+  startGame() { Sound.sfx('select'); Game.go(new RegisterScene()); }
+  toggleBoard() {
+    Sound.sfx('select');
+    this.mode = this.mode === 'title' ? 'board' : 'title';
+    this.modeT = 0;
+  }
+  // Mausklick (Koordinaten im 320x180-Spielbild)
+  click(x, y) {
+    if (this.mode === 'board') { this.toggleBoard(); return; }
+    const inBtn = b => x >= b[0] && x <= b[0] + b[2] && y >= b[1] && y <= b[1] + b[3];
+    if (inBtn(TITLE_BTN_START)) this.startGame();
+    else if (inBtn(TITLE_BTN_BOARD)) this.toggleBoard();
   }
   updateDemo() {
     // kleine Demo: der Professor saugt Laborchaos ein
@@ -83,7 +97,7 @@ class TitleScene {
     drawMenuBackground(ctx, this.t);
     if (this.mode === 'board') {
       drawBoards(ctx, this.t, null);
-      if (this.t % 60 < 40) Font.draw(ctx, 'ENTER DRÜCKEN ZUM STARTEN', 160, 170, { color: THEME.gold, align: 'center', outline: '#1a1c2c' });
+      Font.draw(ctx, 'B / ESC = ZURÜCK    ENTER = START', 160, 170, { color: THEME.gold, align: 'center', outline: '#1a1c2c' });
       return;
     }
     // Demo
@@ -102,7 +116,7 @@ class TitleScene {
     ctx.save();
     ctx.translate(-66, -148);
     ctx.scale(2, 2);
-    drawProfessor(ctx, 70, 148, { face: 1, pump: 2, pose: 'idle', shake: (this.t >> 1) % 2, sucking, ppe: {} });
+    drawProfessor(ctx, 70, 148, { face: 1, pump: 2, pose: 'idle', shake: 0, sucking, ppe: {} });
     ctx.restore();
     for (const p of this.pops) Font.draw(ctx, p.text, p.x, p.y, { color: THEME.gold, align: 'center', outline: '#1a1c2c' });
 
@@ -113,14 +127,15 @@ class TitleScene {
     Font.draw(ctx, 'VAKUUM', 160, 18 + bob, { color: THEME.gold, scale: 4, align: 'center', outline: PAL.k });
     Font.draw(ctx, 'PROFESSOR', 160, 50 + bob, { color: '#ffffff', scale: 3, align: 'center', outline: THEME.navy });
     Font.draw(ctx, 'SAUG DAS LABOR-CHAOS WEG!', 160, 77, { color: '#1a1c2c', align: 'center' });
-    if (this.t % 60 < 42) {
-      drawPanel(ctx, 158, 92, 150, 14);
-      Font.draw(ctx, 'ENTER = START', 233, 96, { color: THEME.gold, align: 'center' });
-    }
+    const [sx, sy, sw, sh] = TITLE_BTN_START, [bx, by, bw, bh] = TITLE_BTN_BOARD;
+    drawPanel(ctx, sx, sy, sw, sh);
+    Font.draw(ctx, 'ENTER = START', sx + sw / 2, sy + 4, { color: this.t % 60 < 42 ? THEME.gold : '#ffffff', align: 'center' });
+    drawPanel(ctx, bx, by, bw, bh);
+    Font.draw(ctx, 'B = BESTENLISTE', bx + bw / 2, by + 4, { color: '#c8f2ff', align: 'center' });
     const top = Store.board(todayKey())[0];
     if (top) {
-      Font.draw(ctx, 'HEUTE FÜHRT:', 233, 114, { color: '#1a1c2c', align: 'center' });
-      Font.draw(ctx, top.name + '  ' + top.score, 233, 124, { color: '#d1621a', align: 'center' });
+      Font.draw(ctx, 'HEUTE FÜHRT:', 233, 136, { color: '#1a1c2c', align: 'center' });
+      Font.draw(ctx, top.name + '  ' + top.score, 233, 146, { color: '#d1621a', align: 'center' });
     }
     Font.draw(ctx, CONFIG.eventName, 316, 170, { color: '#ffffff', align: 'right' });
   }
