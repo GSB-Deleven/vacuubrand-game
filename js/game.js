@@ -659,7 +659,6 @@ class PlayScene {
     });
     ctx.fillStyle = '#5d6b80'; ctx.fillRect(153, 100, 1, 32); ctx.fillRect(257, 100, 1, 32);
     Font.draw(ctx, 'PUMPEN', 101, 124, { color: '#ffffff', align: 'center' });
-    Font.draw(ctx, 'INKL. BVC', 101, 133, { color: '#ff8fb8', align: 'center' });
     Font.draw(ctx, 'SCHUTZAUSRÜSTUNG', 205, 124, { color: '#ffffff', align: 'center' });
     Font.draw(ctx, '+10 S', 272, 124, { color: '#7be07b', align: 'center' });
     Font.draw(ctx, 'SAUG IN ' + CONFIG.roundSeconds + ' SEK SO VIEL CHAOS WIE MÖGLICH EIN!', 160, 146, { color: '#ffffff', align: 'center' });
