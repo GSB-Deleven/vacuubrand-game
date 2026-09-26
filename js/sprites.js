@@ -268,6 +268,26 @@ function buildSprites() {
       P.px(5, 3, k); P.px(11, 3, k);
       if (f) { P.rect(3, 8, 1, 2, k); P.rect(14, 8, 1, 2, k); } else { P.rect(2, 8, 1, 2, k); P.rect(15, 8, 1, 2, k); }
     });
+    // Reagenzglas: Randwulst oben, runder Boden, farbige Flüssigkeit
+    SPR['testtube' + sfx] = outlined(11, 19, P => {
+      P.rect(2, 1, 7, 1, '#ffffff');
+      P.rect(3, 2, 5, 10, '#e6f6ff');
+      P.ell(5.5, 12, 2.5, 3, '#e6f6ff');
+      P.rect(3, 8, 5, 4, '#3d9bd8'); P.ell(5.5, 12, 2.5, 3, '#3d9bd8'); P.rect(3, 8, 5, 1, '#8fcbf0');
+      P.rect(4, 3, 1, 4, '#ffffff');
+      P.px(4, 5, k); P.px(7, 5, k);
+      if (f) { P.px(3, 16, k); P.px(7, 16, k); } else { P.px(4, 16, k); P.px(6, 16, k); }
+    });
+    // Eppi: konische Spitze, Snap-Cap seitlich aufgeklappt
+    SPR['eppi' + sfx] = outlined(15, 16, P => {
+      P.rect(3, 3, 6, 1, '#f4f7fa');
+      P.rect(4, 4, 4, 5, '#f4f7fa');
+      P.rect(5, 9, 2, 2, '#f4f7fa'); P.px(5, 11, '#f4f7fa');
+      P.rect(4, 7, 4, 2, '#f9b000'); P.rect(5, 9, 2, 1, '#f9b000');
+      P.rect(9, 2, 1, 2, '#dfe5ec');
+      P.rect(10, f ? 0 : 1, 3, 3, '#dfe5ec');
+      P.px(5, 5, k); P.px(7, 5, k);
+    });
     SPR['ice' + sfx] = outlined(15, 15, P => {
       const c1 = '#e6fbff', c2 = '#8fd8f0';
       P.rect(7, 1, 1, 13, c2); P.rect(1, 7, 13, 1, c2);

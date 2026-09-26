@@ -3,9 +3,9 @@
 // Kacheln:  # Boden   B Wandblock   - VACUU·LAN-Leitung (von unten durchspringbar)
 //           1/2/3 Kolben-Block mit Pumpe   ? Kolben-Block mit Schutzausrüstung
 //           V Kolben-Block mit BVC professional   U leerer Block
-// Gegner:   Zone 1 Filtration: d Filtrat-Tropfen  f Schmutzpartikel  p Filterpapier
+// Gegner:   Zone 1 Filtration: d Filtrat-Tropfen  f Schmutzpartikel  p Filterpapier  t Reagenzglas
 //           Zone 2 Zellkultur: n Nährmedium  e Petrischalen-Schleim  w Wellplatte
-//           Zone 3 Verdampfer: c Lösemitteldampf
+//           Zone 3 Verdampfer: c Lösemitteldampf  y Eppi
 //                              k Rundkolben  h Trockenschrank-Hitze  m Messbecher
 //           Zone 4 Hochvakuum: i Eiskristall  l Schlenk-Kolben  z Argon-Flasche  b Siedeblase
 //           K Dampf-Krake (Boss)   v VACUU·VIEW extended (+10 s)
@@ -34,17 +34,17 @@ const Level = {
     sign(4, 'SPRING VON UNTEN GEGEN\nDEN KOLBEN-BLOCK!');
     brick(7, 6); q(8, 6, '1'); brick(9, 6);
     sign(14, 'LEERTASTE HALTEN\n= SAUGEN!');
-    e('d', 18); e('d', 20); e('f', 24);
+    e('d', 18); e('t', 20); e('f', 24);
     q(26, 6, '?');
     e('p', 29, 6); q(31, 6, '1'); e('f', 33);
     lan(35, 7, 5); e('d', 36, 6); e('f', 38, 6);
     q(37, 3, '?');
     pit(43, 44);
     sign(47, 'ME 1C: IDEAL FÜR\nDIE FILTRATION');
-    e('f', 49); e('d', 51); e('d', 53); e('p', 55, 5); e('p', 58, 6);
+    e('f', 49); e('t', 51); e('d', 53); e('p', 55, 5); e('p', 58, 6);
     brick(61, 9); brick(62, 8, 1, 2);
     e('v', 62, 3);
-    e('d', 66); e('f', 69); e('d', 73); e('p', 76, 6);
+    e('d', 66); e('t', 69); e('d', 73); e('p', 76, 6);
 
     // ---------------- Zone 2: ZELLKULTUR-LABOR (BVC professional) ----------------
     sign(82, 'ZELLKULTUR-LABOR:\nHOL DIR DIE BVC!');
@@ -58,16 +58,16 @@ const Level = {
     // ---------------- Zone 3: VERDAMPFER-LABOR (PC 3001 VARIO select) ----------------
     sign(122, 'PC 3001 VARIO SELECT:\nIDEAL FÜR DEN ROTAVAP');
     q(125, 6, '2');
-    e('k', 128); e('c', 131, 6); e('m', 134); e('h', 138, 6);
+    e('k', 128); e('c', 131, 6); e('y', 134); e('h', 138, 6);
     lan(141, 7, 4); e('k', 142, 6); lan(146, 5, 4); e('h', 147, 3); q(148, 2, '?');
-    e('k', 152); e('m', 155);
+    e('k', 152); e('y', 155);
     pit(158, 159);
     e('c', 162, 5); e('m', 165); e('c', 168, 6);
     e('c', 172, 6);
     brick(174, 9); brick(175, 8, 1, 2); brick(176, 7, 1, 3);
     e('v', 176, 2);
     e('h', 180, 6); e('k', 183); brick(185, 6); q(186, 6, '?'); brick(187, 6);
-    e('m', 189); brick(192, 6); q(193, 6, '3'); brick(194, 6);
+    e('y', 189); brick(192, 6); q(193, 6, '3'); brick(194, 6);
     e('k', 196); e('c', 198, 6);
 
     // ---------------- Zone 4: HOCHVAKUUM-TECHNIKUM (VACUU·PURE 10C) ----------------

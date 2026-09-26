@@ -164,6 +164,7 @@ class AdminScene {
       '<button class="btn" data-act="csvRounds">Alle Runden (CSV/Excel)</button>' +
       '<button class="btn ghost" data-act="backup">Sicherung speichern (JSON)</button>' +
       '<button class="btn ghost" data-act="restore">Sicherung laden</button>' +
+      (typeof REFERENCE_DATA !== 'undefined' ? '<button class="btn ghost" data-act="reference">Referenzdaten laden (Test)</button>' : '') +
       '<input type="file" accept=".json,application/json" class="hidden" data-file></div>' +
       '<p>Dateien landen im Download-Ordner. Tipp: am Ende jedes Messetags exportieren.</p>' +
       (this.exported ? '<div class="export"><p><b>' + escapeHtml(this.exported.filename) + '</b> – falls kein Download gestartet ist (z.B. in der Online-Vorschau): Inhalt kopieren und in Excel bzw. eine Textdatei einfügen.</p>' +
@@ -222,6 +223,11 @@ class AdminScene {
       case 'csvLeads': this.exported = Store.exportLeadsCSV(); this.render('Leads exportiert.'); break;
       case 'csvRounds': this.exported = Store.exportRoundsCSV(); this.render('Runden exportiert.'); break;
       case 'backup': this.exported = Store.exportJSON(); this.render('Sicherung erstellt.'); break;
+      case 'reference': {
+        const res = Store.importJSON(REFERENCE_DATA);
+        this.render('Referenzdaten geladen: ' + res.leads + ' neue Leads, ' + res.rounds + ' neue Runden. Vor der Messe mit «Alle Daten löschen» entfernen!');
+        break;
+      }
       case 'hideExport': this.exported = null; this.render(); break;
       case 'copy': {
         const ta = Overlay.el.querySelector('[data-export]');

@@ -174,6 +174,8 @@ const ENEMY_DEFS = {
   c: { name: 'LÖSEMITTELDAMPF', w: 12, h: 9, weight: 1, points: 150, beh: 'floater', harm: true, spr: 'cloud' },
   k: { name: 'RUNDKOLBEN', w: 10, h: 12, weight: 2, points: 250, beh: 'walker', speed: 0.45, harm: true, spr: 'flask', frames: true },
   h: { name: 'HITZEDAMPF', w: 12, h: 9, weight: 2, points: 250, beh: 'floater', harm: true, spr: 'hotcloud' },
+  t: { name: 'REAGENZGLAS', w: 7, h: 15, weight: 1, points: 150, beh: 'walker', speed: 0.5, harm: true, spr: 'testtube', frames: true, liquid: true },
+  y: { name: 'EPPI', w: 8, h: 13, weight: 2, points: 250, beh: 'hopper', speed: 0.9, harm: true, spr: 'eppi', frames: true },
   m: { name: 'MESSBECHER', w: 10, h: 10, weight: 2, points: 250, beh: 'walker', speed: 0.6, harm: true, spr: 'beaker', frames: true },
   // Hochvakuum
   i: { name: 'EISKRISTALL', w: 12, h: 12, weight: 2, points: 300, beh: 'floater', harm: true, spr: 'ice', frames: true },

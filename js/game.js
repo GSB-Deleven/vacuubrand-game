@@ -210,7 +210,8 @@ class PlayScene {
       this.time -= CONFIG.fallTimePenalty;
       p.x = p.safe.x; p.y = p.safe.y; p.vx = 0; p.vy = 0; p.inv = 90;
       this.popup(p.x, p.y - 20, '-' + CONFIG.fallTimePenalty + ' SEK', '#ff8f8f');
-      Sound.sfx('hurt');
+      Sound.sfx('ouch');
+      this.popup(p.x, p.y - 30, 'AUTSCH!', '#ffffff');
       this.combo = 0;
     }
   }
@@ -491,7 +492,8 @@ class PlayScene {
     this.combo = 0; this.comboT = 0;
     Sound.suckStop(); p.sucking = false;
     this.popup(p.x, p.y - 24, '-' + pen + ' SEK', '#ff8f8f');
-    Sound.sfx('hurt');
+    Sound.sfx('ouch');
+    this.popup(p.x, p.y - 32, 'AUTSCH!', '#ffffff');
   }
 
   updateEffects() {
