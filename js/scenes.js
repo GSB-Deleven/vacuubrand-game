@@ -43,11 +43,57 @@ function drawBoards(ctx, t, highlightId) {
 const TITLE_BTN_START = [158, 92, 150, 14];
 const TITLE_BTN_BOARD = [158, 112, 150, 14];
 
+// Kleine Demo: der Professor saugt Laborchaos ein (läuft während der Anmeldung)
+class DemoStrip {
+  constructor() { this.t = 0; this.items = []; this.pops = []; this.nz = { x: 102, y: 134 }; }
+  update() {
+    this.t++;
+    const nz = this.nz;
+    if (this.t % 45 === 0) {
+      const types = DEMO_SPRITES;
+      const spr = types[Math.floor(hash(this.t) * types.length)];
+      this.items.push({ x: 340, y: 104 + hash(this.t + 3) * 44, spr, v: 0.8, t: 0 });
+    }
+    for (const d of this.items) {
+      d.t++;
+      const dx = nz.x - d.x, dy = nz.y - d.y, len = Math.hypot(dx, dy) || 1;
+      if (d.x < 200) d.v = Math.min(d.v + 0.12, 4);
+      d.x += dx / len * d.v; d.y += dy / len * d.v * (d.x < 200 ? 1 : 0.3);
+      if (len < 6) {
+        d.dead = true;
+        this.pops.push({ x: nz.x + 6, y: nz.y - 16, t: 40, text: '+' + [100, 150, 250, 300][Math.floor(hash(d.t + this.t) * 4)] });
+      }
+    }
+    this.items = this.items.filter(d => !d.dead);
+    for (const p of this.pops) { p.t--; p.y -= 0.4; }
+    this.pops = this.pops.filter(p => p.t > 0);
+  }
+  draw(ctx) {
+    if (this.t % 2 === 0) {
+      for (let i = 0; i < 3; i++) {
+        const along = hash(this.t * 3 + i) * 110, off = (hash(this.t * 5 + i) * 2 - 1) * (8 + along * 0.4);
+        ctx.fillStyle = i % 2 ? '#ffffff' : '#6fcbe8';
+        ctx.fillRect(Math.round(104 + along), Math.round(134 + off), 2, 1);
+      }
+    }
+    for (const d of this.items) {
+      const spr = SPR[d.spr];
+      ctx.drawImage(spr, Math.round(d.x - spr.width / 2), Math.round(d.y - spr.height / 2));
+    }
+    ctx.save();
+    ctx.translate(-66, -148);
+    ctx.scale(2, 2);
+    drawProfessor(ctx, 70, 148, { face: 1, pump: 2, pose: 'idle', shake: 0, sucking: true, ppe: {} });
+    ctx.restore();
+    for (const p of this.pops) Font.draw(ctx, p.text, p.x, p.y, { color: THEME.gold, align: 'center', outline: '#1a1c2c' });
+  }
+}
+const DEMO_SPRITES = ['drop', 'mol_h2o', 'paper', 'mol_o2', 'medium', 'mol_etoh', 'flask', 'testtube', 'mol_n2', 'eppi', 'mol_meoh', 'ice', 'mol_h2o2'];
+
 class TitleScene {
   constructor() {
     this.allowAdmin = true;
     this.t = 0; this.mode = 'title'; this.modeT = 0;
-    this.demo = []; this.pops = [];
   }
   enter() { Sound.music('title'); }
   update() {
@@ -56,7 +102,6 @@ class TitleScene {
     if (this.mode === 'title' && Input.pressed('board')) { this.toggleBoard(); return; }
     if (Input.pressed('start')) { this.startGame(); return; }
     if (Input.pressed('fullscreen')) toggleFullscreen();
-    this.updateDemo();
   }
   startGame() { Sound.sfx('select'); Game.go(new RegisterScene()); }
   toggleBoard() {
@@ -71,28 +116,6 @@ class TitleScene {
     if (inBtn(TITLE_BTN_START)) this.startGame();
     else if (inBtn(TITLE_BTN_BOARD)) this.toggleBoard();
   }
-  updateDemo() {
-    // kleine Demo: der Professor saugt Laborchaos ein
-    const nz = { x: 102, y: 134 };
-    if (this.t % 45 === 0) {
-      const types = ['drop', 'paper', 'medium', 'cloud', 'flask', 'testtube', 'eppi', 'ice'];
-      const spr = types[Math.floor(hash(this.t) * types.length)];
-      this.demo.push({ x: 340, y: 104 + hash(this.t + 3) * 44, spr, v: 0.8, t: 0 });
-    }
-    for (const d of this.demo) {
-      d.t++;
-      const dx = nz.x - d.x, dy = nz.y - d.y, len = Math.hypot(dx, dy) || 1;
-      if (d.x < 200) d.v = Math.min(d.v + 0.12, 4);
-      d.x += dx / len * d.v; d.y += dy / len * d.v * (d.x < 200 ? 1 : 0.3);
-      if (len < 6) {
-        d.dead = true;
-        this.pops.push({ x: nz.x + 6, y: nz.y - 16, t: 40, text: '+' + [100, 150, 250, 300][Math.floor(hash(d.t + this.t) * 4)] });
-      }
-    }
-    this.demo = this.demo.filter(d => !d.dead);
-    for (const p of this.pops) { p.t--; p.y -= 0.4; }
-    this.pops = this.pops.filter(p => p.t > 0);
-  }
   draw(ctx) {
     drawMenuBackground(ctx, this.t);
     if (this.mode === 'board') {
@@ -100,33 +123,20 @@ class TitleScene {
       Font.draw(ctx, 'B / ESC = ZURÜCK    ENTER = START', 160, 170, { color: THEME.gold, align: 'center', outline: '#1a1c2c' });
       return;
     }
-    // Demo
-    const sucking = true;
-    if (this.t % 2 === 0) {
-      for (let i = 0; i < 3; i++) {
-        const along = hash(this.t * 3 + i) * 110, off = (hash(this.t * 5 + i) * 2 - 1) * (8 + along * 0.4);
-        ctx.fillStyle = i % 2 ? '#ffffff' : '#6fcbe8';
-        ctx.fillRect(Math.round(104 + along), Math.round(134 + off), 2, 1);
-      }
-    }
-    for (const d of this.demo) {
-      const spr = SPR[d.spr];
-      ctx.drawImage(spr, Math.round(d.x - spr.width / 2), Math.round(d.y - spr.height / 2));
-    }
-    ctx.save();
-    ctx.translate(-66, -148);
-    ctx.scale(2, 2);
-    drawProfessor(ctx, 70, 148, { face: 1, pump: 2, pose: 'idle', shake: 0, sucking, ppe: {} });
-    ctx.restore();
-    for (const p of this.pops) Font.draw(ctx, p.text, p.x, p.y, { color: THEME.gold, align: 'center', outline: '#1a1c2c' });
-
-    ctx.fillStyle = 'rgba(207,227,239,0.75)';
-    ctx.fillRect(0, 0, VIEW_W, 88);
-    Font.drawLogo(ctx, 160, 5, 1, PAL.k);
-    const bob = Math.round(Math.sin(this.t * 0.05) * 2);
-    Font.draw(ctx, 'VAKUUM', 160, 18 + bob, { color: THEME.gold, scale: 4, align: 'center', outline: PAL.k });
-    Font.draw(ctx, 'PROFESSOR', 160, 50 + bob, { color: '#ffffff', scale: 3, align: 'center', outline: THEME.navy });
-    Font.draw(ctx, 'SAUG DAS LABOR-CHAOS WEG!', 160, 77, { color: '#1a1c2c', align: 'center' });
+    ctx.fillStyle = 'rgba(233,237,242,0.7)';
+    ctx.fillRect(0, 0, VIEW_W, VIEW_H);
+    // Grosses Porträt des Professors, wippt leicht und zwinkert ab und zu
+    const blink = (this.t % 240) > 228;
+    const spr = SPR['portrait' + (blink ? 1 : 0)];
+    const bob = Math.round(Math.sin(this.t * 0.04) * 2);
+    const sc = 3;
+    ctx.drawImage(spr, 6, VIEW_H - spr.height * sc + 4 + bob, spr.width * sc, spr.height * sc);
+    // Titel rechts
+    const cx = 233;
+    Font.drawLogo(ctx, cx, 6, 1, PAL.k);
+    Font.draw(ctx, 'VAKUUM', cx, 20, { color: THEME.gold, scale: 3, align: 'center', outline: PAL.k });
+    Font.draw(ctx, 'PROFESSOR', cx, 46, { color: '#ffffff', scale: 2, align: 'center', outline: THEME.navy });
+    Font.draw(ctx, 'SAUG DAS LABOR-CHAOS WEG!', cx, 72, { color: PAL.k, align: 'center' });
     const [sx, sy, sw, sh] = TITLE_BTN_START, [bx, by, bw, bh] = TITLE_BTN_BOARD;
     drawPanel(ctx, sx, sy, sw, sh);
     Font.draw(ctx, 'ENTER = START', sx + sw / 2, sy + 4, { color: this.t % 60 < 42 ? THEME.gold : '#ffffff', align: 'center' });
@@ -134,10 +144,10 @@ class TitleScene {
     Font.draw(ctx, 'B = BESTENLISTE', bx + bw / 2, by + 4, { color: '#c8f2ff', align: 'center' });
     const top = Store.board(todayKey())[0];
     if (top) {
-      Font.draw(ctx, 'HEUTE FÜHRT:', 233, 136, { color: '#1a1c2c', align: 'center' });
-      Font.draw(ctx, top.name + '  ' + top.score, 233, 146, { color: '#d1621a', align: 'center' });
+      Font.draw(ctx, 'HEUTE FÜHRT:', cx, 136, { color: PAL.k, align: 'center' });
+      Font.draw(ctx, top.name + '  ' + top.score, cx, 146, { color: '#d1621a', align: 'center' });
     }
-    Font.draw(ctx, CONFIG.eventName, 316, 170, { color: '#ffffff', align: 'right' });
+    Font.draw(ctx, CONFIG.eventName, 316, 170, { color: THEME.navy, align: 'right' });
   }
 }
 

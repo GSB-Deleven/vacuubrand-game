@@ -22,7 +22,7 @@ const Overlay = {
 
 // ---------------------------------------------------------------------
 class RegisterScene {
-  constructor() { this.allowAdmin = false; this.t = 0; this.idle = 0; }
+  constructor() { this.allowAdmin = false; this.t = 0; this.idle = 0; this.demo = new DemoStrip(); }
 
   enter() {
     const cfg = CONFIG.registration;
@@ -43,6 +43,7 @@ class RegisterScene {
       '<button type="submit" class="btn">ENTER · LOS GEHT\'S!</button></div>' +
       '<p class="small">' + escapeHtml(cfg.privacyNote) + '</p>' +
       '</form>');
+    Overlay.el.classList.add('top');
     const form = this.form = Overlay.el.querySelector('form');
     form.addEventListener('submit', e => { e.preventDefault(); this.submit(); });
     form.querySelector('[data-act=cancel]').addEventListener('click', () => this.cancel());
@@ -58,6 +59,7 @@ class RegisterScene {
 
   exit() {
     window.removeEventListener('keydown', this.onKey);
+    Overlay.el.classList.remove('top');
     Overlay.hide();
   }
 
@@ -93,12 +95,12 @@ class RegisterScene {
 
   update() {
     this.t++;
+    this.demo.update();
     if (++this.idle > CONFIG.registrationTimeoutSeconds * 60) this.cancel();
   }
   draw(ctx) {
     drawMenuBackground(ctx, this.t);
-    ctx.fillStyle = 'rgba(11,15,31,0.5)';
-    ctx.fillRect(0, 0, VIEW_W, VIEW_H);
+    this.demo.draw(ctx);
   }
 }
 

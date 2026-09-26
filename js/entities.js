@@ -176,6 +176,13 @@ const ENEMY_DEFS = {
   h: { name: 'HITZEDAMPF', w: 12, h: 9, weight: 2, points: 250, beh: 'floater', harm: true, spr: 'hotcloud' },
   t: { name: 'REAGENZGLAS', w: 7, h: 15, weight: 1, points: 150, beh: 'walker', speed: 0.5, harm: true, spr: 'testtube', frames: true, liquid: true },
   y: { name: 'EPPI', w: 8, h: 13, weight: 2, points: 250, beh: 'hopper', speed: 0.9, harm: true, spr: 'eppi', frames: true },
+  // Molekül-Monster (Gase und Dämpfe – genau das, was eine Vakuumpumpe absaugt)
+  H2O: { name: 'H2O', w: 14, h: 12, weight: 1, points: 150, beh: 'floater', harm: true, spr: 'mol_h2o', frames: true, showName: true },
+  O2: { name: 'O2', w: 16, h: 9, weight: 1, points: 150, beh: 'floater', harm: true, spr: 'mol_o2', frames: true, showName: true },
+  N2: { name: 'N2', w: 16, h: 9, weight: 1, points: 150, beh: 'floater', harm: true, spr: 'mol_n2', frames: true, showName: true },
+  H2O2: { name: 'H2O2', w: 20, h: 12, weight: 2, points: 250, beh: 'floater', harm: true, spr: 'mol_h2o2', frames: true, showName: true },
+  MEOH: { name: 'METHANOL', w: 18, h: 15, weight: 2, points: 250, beh: 'floater', harm: true, spr: 'mol_meoh', frames: true, showName: true },
+  ETOH: { name: 'ETHANOL', w: 24, h: 15, weight: 2, points: 300, beh: 'floater', harm: true, spr: 'mol_etoh', frames: true, showName: true },
   m: { name: 'MESSBECHER', w: 10, h: 10, weight: 2, points: 250, beh: 'walker', speed: 0.6, harm: true, spr: 'beaker', frames: true },
   // Hochvakuum
   i: { name: 'EISKRISTALL', w: 12, h: 12, weight: 2, points: 300, beh: 'floater', harm: true, spr: 'ice', frames: true },
@@ -289,6 +296,7 @@ class Item {
   update(scene) {
     this.t++;
     if (this.rising > 0) { this.rising--; this.y -= 1; return; }
+    if (this.pulled > 0) { this.pulled--; this.vy = 0; return; } // wird gerade eingesaugt
     if (this.kind === 'view') return;
     this.vx = this.dir * 0.75;
     this.vy = Math.min(this.vy + 0.3, 5);
@@ -302,6 +310,11 @@ class Item {
   draw(ctx, camX) {
     const spr = this.sprite();
     const bob = this.kind === 'view' ? Math.round(Math.sin(this.t * 0.1) * 2) : 0;
+    if (this.pulled > 0) {
+      const w = Math.round(spr.width * 0.8), h = Math.round(spr.height * 0.8);
+      ctx.drawImage(spr, Math.round(this.x - camX - w / 2), Math.round(this.y - this.h / 2 - h / 2), w, h);
+      return;
+    }
     const x = Math.round(this.x - camX - spr.width / 2), y = Math.round(this.y - spr.height) + bob;
     if (this.t % 20 < 10) {
       ctx.fillStyle = this.kind === 'view' ? '#7be07b' : '#fff3b0';

@@ -505,7 +505,126 @@ function buildSprites() {
     });
   });
 
+  buildMolecules();
+  buildPortrait();
   buildDecor();
+}
+
+// Molekül-Monster als Kugel-Stab-Modelle wie im Chemieunterricht
+// O rot, H weiss, N blau, C dunkelgrau. Augen auf dem Hauptatom.
+const MOLECULES = {
+  mol_h2o: { w: 18, h: 15, eye: 0, atoms: [['O', 9, 6, 4], ['H', 3, 11, 2.5], ['H', 15, 11, 2.5]], bonds: [[0, 1, 1], [0, 2, 1]] },
+  mol_o2: { w: 21, h: 12, eye: 0, atoms: [['O', 5, 6, 3.8], ['O', 15, 6, 3.8]], bonds: [[0, 1, 2]] },
+  mol_n2: { w: 21, h: 12, eye: 0, atoms: [['N', 5, 6, 3.8], ['N', 15, 6, 3.8]], bonds: [[0, 1, 3]] },
+  mol_h2o2: { w: 25, h: 15, eye: 1, atoms: [['H', 3, 4, 2.5], ['O', 9, 8, 3.6], ['O', 16, 6, 3.6], ['H', 21, 11, 2.5]], bonds: [[0, 1, 1], [1, 2, 1], [2, 3, 1]] },
+  mol_meoh: { w: 23, h: 19, eye: 0, atoms: [['C', 8, 10, 3.8], ['O', 15, 10, 3.6], ['H', 3, 6, 2.2], ['H', 3, 14, 2.2], ['H', 8, 3, 2.2], ['H', 19, 15, 2.2]], bonds: [[0, 1, 1], [0, 2, 1], [0, 3, 1], [0, 4, 1], [1, 5, 1]] },
+  mol_etoh: { w: 29, h: 19, eye: 1, atoms: [['C', 7, 10, 3.6], ['C', 14, 8, 3.6], ['O', 21, 10, 3.4], ['H', 3, 6, 2.1], ['H', 3, 14, 2.1], ['H', 14, 2, 2.1], ['H', 13, 15, 2.1], ['H', 25, 15, 2.1]], bonds: [[0, 1, 1], [1, 2, 1], [0, 3, 1], [0, 4, 1], [1, 5, 1], [1, 6, 1], [2, 7, 1]] }
+};
+const ATOM_COL = { O: ['#e04848', '#ff8a8a'], H: ['#f4f7fa', '#ffffff'], N: ['#3d7bd8', '#8fb8f0'], C: ['#4a5160', '#8a93a3'] };
+
+function buildMolecules() {
+  for (const [name, m] of Object.entries(MOLECULES)) {
+    for (let f = 0; f < 2; f++) {
+      SPR[name + (f ? '2' : '')] = outlined(m.w, m.h, P => {
+        const pos = m.atoms.map(([el, x, y, r]) => [x, y + (f && el === 'H' ? (x < m.w / 2 ? -1 : 1) : 0)]);
+        // Stäbe (Bindungen)
+        for (const [i, j, n] of m.bonds) {
+          const [x1, y1] = pos[i], [x2, y2] = pos[j];
+          const steps = Math.ceil(Math.hypot(x2 - x1, y2 - y1));
+          const nx = -(y2 - y1) / (steps || 1), ny = (x2 - x1) / (steps || 1);
+          for (let b = 0; b < n; b++) {
+            const off = (b - (n - 1) / 2) * 2;
+            for (let s = 0; s <= steps; s++) {
+              const t = s / steps;
+              P.px(x1 + (x2 - x1) * t + nx * off, y1 + (y2 - y1) * t + ny * off, '#a7b3c4');
+            }
+          }
+        }
+        // Kugeln (Atome) mit Glanzpunkt
+        m.atoms.forEach(([el, , , r], i) => {
+          const [x, y] = pos[i];
+          const [c, hl] = ATOM_COL[el];
+          P.ell(x, y, r, r, c);
+          P.px(x - r / 2, y - r / 2, hl);
+        });
+        // Augen auf dem Hauptatom
+        const [ex, ey] = pos[m.eye];
+        P.rect(Math.round(ex - 2), Math.round(ey - 1), 1, 2, '#ffffff'); P.rect(Math.round(ex + 1), Math.round(ey - 1), 1, 2, '#ffffff');
+        P.px(Math.round(ex - 2), Math.round(ey), PAL.k); P.px(Math.round(ex + 1), Math.round(ey), PAL.k);
+      });
+    }
+  }
+}
+
+// Grosses Brustbild des Professors für den Startbildschirm (2 Frames: offen / Zwinkern)
+function buildPortrait() {
+  const k = PAL.k, hair = '#f7a531', hairD = '#d4711c', hairL = '#ffc766', skin = '#ffcfa6', skinD = '#e8a47c';
+  for (let f = 0; f < 2; f++) {
+    SPR['portrait' + f] = outlined(48, 48, P => {
+      P.g.translate(4, 4);
+      // wilde Haarspitzen rundherum
+      const spike = (deg, len) => {
+        const a = deg * Math.PI / 180;
+        for (let i = 0; i <= len; i++) {
+          const w = Math.max(1, Math.round(3 - i * 0.45));
+          const x = Math.round(20 + Math.cos(a) * (15 + i)), y = Math.round(13 + Math.sin(a) * (11 + i));
+          P.rect(x - Math.floor(w / 2), y - Math.floor(w / 2), w, w, hair);
+        }
+      };
+      [[-175, 6], [-155, 7], [-135, 5], [-115, 6], [-95, 5], [-75, 6], [-55, 5], [-35, 7], [-15, 6], [5, 5], [175, 5], [160, 4], [20, 4]]
+        .forEach(([d, l]) => spike(d, l));
+      // Kittel und Schultern
+      P.ell(20, 43, 17, 9, '#ffffff');
+      P.rect(3, 38, 34, 6, '#ffffff');
+      P.rect(12, 35, 16, 3, '#ffffff');
+      // Revers
+      for (let i = 0; i < 7; i++) { P.px(14 + i, 36 + i, '#c3cedd'); P.px(25 - i, 36 + i, '#c3cedd'); }
+      P.rect(3, 42, 34, 1, '#dfe5ec');
+      // Hals
+      P.rect(16, 31, 8, 5, skinD);
+      // Fliege in VACUUBRAND-Gelb
+      P.rect(15, 35, 4, 3, '#f9b000'); P.rect(21, 35, 4, 3, '#f9b000'); P.rect(19, 35, 2, 3, '#c98f00');
+      // Haare hinten (wild)
+      P.ell(20, 14, 17, 12, hair);
+      [[5, 10, 5, 6], [35, 10, 5, 6], [8, 4, 5, 4], [32, 4, 5, 4], [20, 2, 8, 4], [13, 2, 4, 3], [27, 2, 4, 3], [4, 18, 3, 6], [36, 18, 3, 6]]
+        .forEach(([x, y, rx, ry]) => P.ell(x, y, rx, ry, hair));
+      [[3, 8], [2, 13], [37, 8], [38, 13], [10, 0], [16, 0], [24, 0], [30, 0], [6, 2], [34, 2]].forEach(([x, y]) => P.rect(x, y, 2, 2, hair));
+      // Ohren
+      P.ell(8.5, 20, 2.5, 3.5, skin); P.ell(31.5, 20, 2.5, 3.5, skin);
+      P.px(8, 20, skinD); P.px(31, 20, skinD);
+      // Gesicht
+      P.ell(20, 20, 11, 12, skin);
+      P.rect(15, 30, 10, 1, skinD);
+      // Stirnfransen
+      [[12, 9, 4, 3], [19, 8, 5, 3], [27, 9, 4, 3]].forEach(([x, y, rx, ry]) => P.ell(x, y, rx, ry, hair));
+      [[11, 11], [16, 11], [22, 10], [28, 11]].forEach(([x, y]) => P.px(x, y, hairD));
+      [[9, 6], [18, 5], [26, 6], [31, 8]].forEach(([x, y]) => P.rect(x, y, 2, 1, hairL));
+      [[6, 12], [33, 12], [14, 4], [24, 4]].forEach(([x, y]) => P.rect(x, y, 1, 2, hairD));
+      // Runde Brille
+      [[14, 18], [26, 18]].forEach(([cx, cy]) => {
+        P.ell(cx, cy, 5, 5, k);
+        P.ell(cx, cy, 4, 4, '#dff4fb');
+        if (f === 0) {
+          P.rect(cx - 1 + (cx < 20 ? 1 : -1), cy - 1, 2, 3, k);
+          P.px(cx - 2, cy - 2, '#ffffff');
+        } else {
+          P.rect(cx - 2, cy + 1, 4, 1, k);
+        }
+      });
+      P.rect(19, 17, 2, 1, k);
+      P.rect(8, 17, 2, 1, k); P.rect(30, 17, 2, 1, k);
+      // Augenbrauen (verrückt hochgezogen)
+      P.rect(10, 11, 6, 1, hairD); P.rect(25, 10, 6, 1, hairD);
+      // Nase und Wangen
+      P.rect(19, 21, 3, 3, skinD); P.px(20, 21, skin);
+      P.ell(10, 25, 2, 1.2, '#ff9d9d'); P.ell(30, 25, 2, 1.2, '#ff9d9d');
+      // breites Grinsen
+      P.ell(20, 26, 6, 3, '#8a2a3a');
+      P.rect(13, 23, 15, 3, skin);
+      P.rect(15, 26, 11, 1, '#ffffff');
+      P.g.setTransform(1, 0, 0, 1, 0, 0);
+    });
+  }
 }
 
 // ---------------------------------------------------------------------
