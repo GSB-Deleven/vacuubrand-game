@@ -130,7 +130,7 @@ class TitleScene {
     const spr = SPR['portrait' + (blink ? 1 : 0)];
     const bob = Math.round(Math.sin(this.t * 0.04) * 2);
     const sc = 3;
-    ctx.drawImage(spr, 6, VIEW_H - spr.height * sc + 4 + bob, spr.width * sc, spr.height * sc);
+    ctx.drawImage(spr, -6, VIEW_H - spr.height * sc + 2 + bob, spr.width * sc, spr.height * sc);
     // Titel rechts
     const cx = 233;
     Font.drawLogo(ctx, cx, 6, 1, PAL.k);
