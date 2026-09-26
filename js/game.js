@@ -259,7 +259,7 @@ class PlayScene {
         this.parts.push({ x: p.x + (Math.random() - 0.5) * 10, y: PIT_SURFACE, vx: (Math.random() - 0.5) * 2.4, vy: -1.5 - Math.random() * 2.2, g: 0.15, t: 30 + Math.random() * 15, c: i % 3 ? st.top : st.mid, s: 2 });
       }
       Sound.sfx('splash');
-      this.showMsg('IN DIE ' + st.name + ' GEFALLEN!', 110, st.top);
+      this.showMsg(st.into + ' GEFALLEN!', 110, st.top);
     }
     if (p.y > lv.H * T + 24) {
       p.splashed = false;
@@ -936,10 +936,10 @@ function ditherPatterns(ctx) {
 
 // Abgründe = Auffangwannen, je Zone eine andere Flüssigkeit
 const PIT_STYLE = [
-  { name: 'FILTRAT-WANNE', deep: '#1f4f8a', mid: '#3a7fcf', top: '#8fd0ff', bubble: '#c8ecff' },
-  { name: 'DESINFEKTIONSBAD', deep: '#8a2f5e', mid: '#d0609a', top: '#ffb0d6', bubble: '#ffe0f0' },
-  { name: 'LÖSEMITTEL-AUFFANGWANNE', deep: '#8a4a10', mid: '#e0861f', top: '#ffc46b', bubble: '#fff0c8' },
-  { name: 'FLÜSSIGSTICKSTOFF', deep: '#3d6f96', mid: '#8fc4e8', top: '#e6f7ff', bubble: '#ffffff', fog: true }
+  { name: 'FILTRAT-WANNE', into: 'IN DIE FILTRAT-WANNE', deep: '#1f4f8a', mid: '#3a7fcf', top: '#8fd0ff', bubble: '#c8ecff' },
+  { name: 'DESINFEKTIONSBAD', into: 'INS DESINFEKTIONSBAD', deep: '#8a2f5e', mid: '#d0609a', top: '#ffb0d6', bubble: '#ffe0f0' },
+  { name: 'LÖSEMITTEL-AUFFANGWANNE', into: 'IN DIE LÖSEMITTEL-AUFFANGWANNE', deep: '#8a4a10', mid: '#e0861f', top: '#ffc46b', bubble: '#fff0c8' },
+  { name: 'FLÜSSIGSTICKSTOFF', into: 'IN DEN FLÜSSIGSTICKSTOFF', deep: '#3d6f96', mid: '#8fc4e8', top: '#e6f7ff', bubble: '#ffffff', fog: true }
 ];
 const PIT_SURFACE = 10 * T + 6; // Flüssigkeitsspiegel (Welt-y)
 

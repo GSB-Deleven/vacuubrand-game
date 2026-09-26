@@ -145,4 +145,6 @@ Die ersten drei gehen direkt im Admin-Bereich, der Rest in einer gut kommentiert
 
 📖 **Anleitung fürs Standpersonal** mit Steuerung, Admin-Bereich, Export und Tipps: [ANLEITUNG.md](ANLEITUNG.md)
 
+🛠️ **Technisches Handbuch** mit Aufbau, Dateien und allen Einstellungen: [TECHNIK.md](TECHNIK.md)
+
 🚀 **Starten:** Doppelklick auf `Spiel starten (Vollbild).bat` oder auf `index.html`
