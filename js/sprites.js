@@ -18,7 +18,6 @@ const ENEMY_SPRITE_NAMES = new Set(['drop', 'dust', 'cloud', 'hotcloud', 'flask'
 function makeCanvas(w, h) {
   const c = document.createElement('canvas');
   c.width = w; c.height = h;
-  c.getContext('2d', { willReadFrequently: true }); // Sprites werden beim Start einmal nachbearbeitet
   return c;
 }
 
@@ -68,10 +67,19 @@ function paint(w, h, fn) {
   return c;
 }
 
+// Pixel einmalig auslesen, ohne das Sprite selbst in den langsamen Lese-Modus zu versetzen
+function readPixels(c) {
+  const tmp = document.createElement('canvas');
+  tmp.width = c.width; tmp.height = c.height;
+  const tg = tmp.getContext('2d', { willReadFrequently: true });
+  tg.drawImage(c, 0, 0);
+  return tg.getImageData(0, 0, c.width, c.height);
+}
+
 function addOutline(c, col) {
   const w = c.width, h = c.height;
   const g = c.getContext('2d');
-  const d = g.getImageData(0, 0, w, h).data;
+  const d = readPixels(c).data;
   const on = (x, y) => x >= 0 && y >= 0 && x < w && y < h && d[(y * w + x) * 4 + 3] > 0;
   g.fillStyle = col;
   for (let y = 0; y < h; y++) {
@@ -93,7 +101,7 @@ function tint(hex, f) {
 // 16-Bit-Look (SNES): Licht von oben links, Schatten unten rechts und farbige Konturen statt Schwarz
 function shade16(c) {
   const w = c.width, h = c.height, g = c.getContext('2d');
-  const img = g.getImageData(0, 0, w, h), d = img.data, src = new Uint8ClampedArray(d);
+  const img = readPixels(c), d = img.data, src = new Uint8ClampedArray(d);
   const at = (x, y) => (y * w + x) * 4;
   const solid = (x, y) => x >= 0 && y >= 0 && x < w && y < h && src[at(x, y) + 3] > 0;
   const ink = (x, y) => { const i = at(x, y); return src[i] < 50 && src[i + 1] < 50 && src[i + 2] < 60; };
@@ -259,13 +267,13 @@ const ENEMY_GRIDS = {
 // Zonen: Anwendungen der Pumpen
 const ZONE_STYLE = [
   { name: 'FILTRATIONSLABOR', wall: '#e9edf2', wall2: '#d5dde6', base: '#b7c6d6', floorTop: '#6d87ab', floor: '#46648c', line: '#34507a', brick: '#f2f5f8', mortar: '#b9c6d4',
-    bench: ['buchner', 'me1c', 'buchner', 'window2'], wall_: ['vacuulan', 'periodic'] },
+    bench: ['buchner', 'me1c', 'buchner', 'window2'], wall_: ['vacuulan', 'shelf', 'signs', 'periodic', 'clock', 'shelf'] },
   { name: 'ZELLKULTUR-LABOR', wall: '#e9f3ea', wall2: '#d4e8d6', base: '#b5d1b8', floorTop: '#7fa38a', floor: '#5c7d66', line: '#44604d', brick: '#f4faf5', mortar: '#b9cfbd',
-    bench: ['hood', 'incubator', 'plates'], wall_: ['vacuulan', 'periodic'] },
+    bench: ['hood', 'incubator', 'plates'], wall_: ['shelf', 'signs', 'vacuulan', 'clock'] },
   { name: 'VERDAMPFER-LABOR', wall: '#efe3cf', wall2: '#e2d2b7', base: '#c7ae88', floorTop: '#8a6a45', floor: '#6b5033', line: '#523b24', brick: '#f5efe4', mortar: '#cbb893',
-    bench: ['rotavap', 'concentrator', 'oven', 'rotavap'], wall_: ['vacuulan', 'periodic'] },
+    bench: ['rotavap', 'concentrator', 'oven', 'rotavap'], wall_: ['vacuulan', 'shelf', 'signs', 'periodic', 'clock'] },
   { name: 'HOCHVAKUUM-TECHNIKUM', wall: '#d9dfea', wall2: '#c5cedd', base: '#8f9bb3', floorTop: '#5a6478', floor: '#3e4658', line: '#2b3140', brick: '#e8ecf2', mortar: '#a9b4c5',
-    bench: ['freezedryer', 'distill', 'turbo'], wall_: ['schlenk', 'vacuulan'] }
+    bench: ['freezedryer', 'distill', 'turbo'], wall_: ['schlenk', 'signs', 'vacuulan', 'clock', 'shelf'] }
 ];
 
 function buildSprites() {
@@ -562,7 +570,7 @@ function buildSprites() {
   buildMolecules();
   // 16-Bit-Schattierung auf alle Figuren, Gegner und Items
   for (const key of Object.keys(SPR)) {
-    if (/^(prof_|boss|pump|bvc|view|ppe_|coin)/.test(key) || ENEMY_SPRITE_NAMES.has(key.replace(/2$/, ''))) shade16(SPR[key]);
+    if (/^(boss|pump|bvc|view|ppe_|coin)/.test(key) || ENEMY_SPRITE_NAMES.has(key.replace(/2$/, ''))) shade16(SPR[key]);
   }
   buildDecor();
 }
@@ -748,6 +756,53 @@ function buildDecor() {
     P.rect(19, 2, 2, 40, '#c3cedd');
     P.rect(15, 18, 2, 6, '#5d6b80'); P.rect(23, 18, 2, 6, '#5d6b80');
     P.rect(6, 6, 8, 6, '#ffd23f'); P.rect(8, 7, 4, 4, '#e04848');
+  });
+  // Regal mit Chemikalienflaschen
+  D.shelf = outlined(58, 30, P => {
+    const cols = ['#e04848', '#3d9bd8', '#7be07b', '#f9b000', '#b48ade', '#ffffff'];
+    for (const sy of [12, 27]) {
+      P.rect(1, sy, 56, 2, '#8a6a45'); P.rect(1, sy, 56, 1, '#a88d66');
+      for (let i = 0; i < 6; i++) {
+        const bx = 3 + i * 9, bh = 6 + ((i * 7 + sy) % 4);
+        const c = cols[(i + sy) % cols.length];
+        P.rect(bx, sy - bh, 6, bh, c === '#ffffff' ? '#dfe5ec' : c);
+        P.rect(bx + 1, sy - bh - 2, 4, 2, '#f4f7fa');
+        P.rect(bx + 1, sy - bh + 2, 4, 2, '#ffffff');
+        P.px(bx + 1, sy - bh + 1, '#ffffff');
+      }
+    }
+  });
+  // Sicherheitsschilder: Warndreieck, Augendusche, Schutzbrille tragen
+  D.signs = paint(46, 16, P => {
+    for (let r = 0; r < 12; r++) P.rect(7 - Math.floor(r / 2), 2 + r, 1 + 2 * Math.floor(r / 2), 1, '#f9b000');
+    P.rect(7, 5, 1, 5, PAL.k); P.px(7, 11, PAL.k);
+    P.rect(16, 2, 12, 12, '#2f9e4f'); P.rect(18, 4, 8, 8, '#ffffff'); P.rect(21, 5, 2, 6, '#2f9e4f'); P.rect(19, 7, 6, 2, '#2f9e4f');
+    P.rect(32, 2, 12, 12, '#1f5fa8'); P.ell(38, 8, 5, 5, '#3d7bd8'); P.rect(34, 7, 3, 2, '#ffffff'); P.rect(39, 7, 3, 2, '#ffffff'); P.rect(37, 7, 2, 1, '#ffffff');
+  });
+  // Laboruhr
+  D.clock = outlined(18, 18, P => {
+    P.ell(9, 9, 8, 8, '#ffffff'); P.ell(9, 9, 8, 8, '#dfe5ec'); P.ell(9, 9, 7, 7, '#ffffff');
+    [[9, 3], [15, 9], [9, 15], [3, 9]].forEach(([x, y]) => P.px(x, y, PAL.k));
+    P.rect(9, 5, 1, 4, PAL.k); P.rect(9, 9, 3, 1, PAL.k); P.px(9, 9, '#e04848');
+  });
+  // Steckdosenleiste mit Gasanschlüssen
+  D.outlets = paint(40, 10, P => {
+    P.rect(0, 2, 40, 7, '#c9d3dc'); P.rect(0, 2, 40, 1, '#eef2f6'); P.rect(0, 8, 40, 1, '#8e98a4');
+    for (let i = 0; i < 3; i++) { P.rect(3 + i * 8, 4, 4, 3, '#eef2f6'); P.px(4 + i * 8, 5, PAL.k); P.px(6 + i * 8, 5, PAL.k); }
+    P.rect(28, 3, 4, 5, '#f9b000'); P.rect(34, 3, 4, 5, '#3d9bd8'); P.rect(29, 1, 2, 2, '#5d6b80'); P.rect(35, 1, 2, 2, '#5d6b80');
+  });
+  // kleine Glaswaren auf dem Labortisch
+  D.glassware = outlined(34, 16, P => {
+    P.rect(2, 6, 6, 9, '#e6f6ff'); P.rect(2, 10, 6, 5, '#7be07b'); P.rect(1, 5, 8, 1, '#ffffff');
+    for (let y = 4; y < 15; y++) { const hw = 1 + (y - 4) * 0.45; P.rect(Math.round(15 - hw), y, Math.round(hw * 2), 1, '#e6f6ff'); }
+    P.rect(13, 1, 4, 4, '#e6f6ff'); P.rect(11, 11, 8, 4, '#f9b000');
+    P.rect(23, 2, 4, 13, '#e6f6ff'); P.rect(23, 8, 4, 7, '#e04848'); P.rect(22, 1, 6, 1, '#ffffff');
+    P.rect(29, 9, 3, 6, '#3b4658'); P.rect(29, 7, 3, 2, '#dfe5ec');
+  });
+  // Deckenleuchte
+  D.lamp = paint(52, 8, P => {
+    P.rect(0, 0, 52, 6, '#8e98a4'); P.rect(1, 1, 50, 4, '#ffffff'); P.rect(1, 4, 50, 1, '#eaf6ff');
+    P.rect(12, 6, 1, 2, '#5d6b80'); P.rect(39, 6, 1, 2, '#5d6b80');
   });
   for (const name of Object.keys(D)) SPR['deco_' + name] = D[name];
 }

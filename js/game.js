@@ -726,6 +726,16 @@ function drawBackground(ctx, camX) {
   ctx.fillStyle = dp.light; ctx.fillRect(0, 34, VIEW_W, 16);
   ctx.fillStyle = dp.dark1; ctx.fillRect(0, 72, VIEW_W, 16);
   ctx.fillStyle = dp.dark2; ctx.fillRect(0, 88, VIEW_W, 16);
+  // Unterschränke unter dem Labortisch: Türen, Schubladen, Griffe (bewegen sich mit 1×)
+  for (let x = -(camX % 48) - 48; x < VIEW_W + 48; x += 48) {
+    const z = ZONE_STYLE[zoneOf(camX + x + 24)];
+    const dk = tint(z.base, 0.82), lt = tint(z.base, 1.12);
+    ctx.fillStyle = dk; ctx.fillRect(x, 108, 1, 40); ctx.fillRect(x + 24, 118, 1, 30);
+    ctx.fillRect(x + 1, 117, 47, 1);
+    ctx.fillStyle = lt; ctx.fillRect(x + 1, 108, 1, 40); ctx.fillRect(x + 25, 118, 1, 30); ctx.fillRect(x + 1, 118, 47, 1);
+    ctx.fillStyle = '#8e98a4'; ctx.fillRect(x + 20, 112, 8, 2); ctx.fillRect(x + 19, 128, 2, 7); ctx.fillRect(x + 28, 128, 2, 7);
+    ctx.fillStyle = '#eef2f6'; ctx.fillRect(x + 20, 112, 8, 1); ctx.fillRect(x + 19, 128, 1, 7); ctx.fillRect(x + 28, 128, 1, 7);
+  }
   // Labortisch-Front: Glanzkante oben, Dither-Schatten unten
   ctx.fillStyle = 'rgba(255,255,255,0.35)'; ctx.fillRect(0, 107, VIEW_W, 1);
   ctx.fillStyle = dp.dark1; ctx.fillRect(0, 124, VIEW_W, 12);
@@ -738,6 +748,12 @@ function drawBackground(ctx, camX) {
   }
   ctx.fillStyle = 'rgba(0,0,0,0.05)';
   for (let y = 12; y < 104; y += 16) ctx.fillRect(0, y, VIEW_W, 1);
+  // Deckenleuchten
+  for (let n = Math.floor(p1 / 120) - 1; n < Math.floor(p1 / 120) + 4; n++) {
+    const lx = n * 120 - p1 + 30;
+    ctx.drawImage(SPR.deco_lamp, lx, 13);
+    ctx.fillStyle = 'rgba(255,255,255,0.10)'; ctx.fillRect(lx - 6, 21, 64, 8);
+  }
   ctx.globalAlpha = 0.45;
   const w1 = 150;
   for (let n = Math.floor(p1 / w1) - 1; n < Math.floor(p1 / w1) + 3; n++) {
@@ -749,17 +765,19 @@ function drawBackground(ctx, camX) {
     ctx.restore(); ctx.globalAlpha = 0.45;
   }
   // Ebene 2 (0.45×): Wand-Deko; Poster zeigt immer die Pumpe des aktuellen Abschnitts
-  const p2 = Math.round(camX * 0.45), w2 = 110, here = zoneOf(camX + VIEW_W / 2);
+  const p2 = Math.round(camX * 0.45), w2 = 78, here = zoneOf(camX + VIEW_W / 2);
   ctx.globalAlpha = 0.6;
   for (let n = Math.floor(p2 / w2) - 1; n < Math.floor(p2 / w2) + 5; n++) {
     const sx = n * w2 - p2;
     let name;
-    if (((n % 3) + 3) % 3 === 0) name = 'poster' + here;
+    if (((n % 4) + 4) % 4 === 0) name = 'poster' + here;
     else {
       const list = ZONE_STYLE[zoneOf(camX + sx + 40)].wall_;
       name = list[((n % list.length) + list.length) % list.length];
     }
-    ctx.drawImage(SPR['deco_' + name], sx, name === 'vacuulan' ? 74 : name === 'schlenk' ? 64 : 34);
+    const wy = { vacuulan: 74, schlenk: 64, shelf: 30, signs: 36, clock: 32, periodic: 34 }[name] || 34;
+    ctx.drawImage(SPR['deco_' + name], sx, wy);
+    if (n % 2 === 0) ctx.drawImage(SPR.deco_outlets, sx + 20, 92);
   }
   // Ebene 3 (0.7×): Laborgeräte auf dem Labortisch
   const p3 = Math.round(camX * 0.7), w3 = 84;
@@ -769,6 +787,7 @@ function drawBackground(ctx, camX) {
     const list = ZONE_STYLE[zoneOf(camX + sx + 42)].bench;
     const spr = SPR['deco_' + list[((n % list.length) + list.length) % list.length]];
     ctx.drawImage(spr, sx + 42 - Math.round(spr.width / 2), 105 - spr.height);
+    if (n % 3 === 1) ctx.drawImage(SPR.deco_glassware, sx - 4, 105 - SPR.deco_glassware.height);
   }
   ctx.globalAlpha = 1;
 }
