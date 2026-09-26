@@ -11,24 +11,57 @@ const CONFIG = {
   adminPin: '1234',            // PIN für den Admin-Bereich – bitte ändern!
 
   hitTimePenalty: 3,           // Sekunden Abzug bei Treffer
+  hitTimePenaltyGoggles: 1,    // ... mit Schutzbrille
   fallTimePenalty: 3,          // Sekunden Abzug beim Runterfallen
   timeBonusPerSecond: 50,      // Punkte pro Restsekunde, wenn das Labor gerettet wurde
   finishBonus: 1000,           // Bonus fürs Erreichen des Ausgangs
-  comboWindow: 1.2,            // Sekunden für Combo-Serien
+  comboWindow: 2.0,            // Sekunden für Combo-Serien (so lange hat man Zeit fürs nächste Einsaugen)
+  comboMax: 8,                 // höchster Combo-Multiplikator
   bossHp: 200,                 // wie lange (Frames) man die Dampf-Krake saugen muss
 
-  attractSwitchSeconds: 9,     // Titelbild <-> Bestenliste wechseln
+  // Saug-Energie und Sprint-Ausdauer
+  suckRegenSeconds: 2.5,       // so lange dauert es, bis die Saug-Energie wieder voll ist
+  overheatResume: 0.3,         // nach Überhitzen erst ab 30 % wieder saugen
+  sprintSeconds: 2.0,          // so lange kann man am Stück sprinten
+  sprintRegenSeconds: 2.5,
+
+  // Items
+  ppeTimeBonus: 2,             // Sekunden für jedes neue Schutzausrüstungs-Teil
+  ppeDuplicateTimeBonus: 1,    // Sekunden, wenn man schon alles hat
+  viewTimeBonus: 10,           // VACUU·VIEW extended = "Zeitvakuum"
+  bvcSeconds: 8,               // BVC gilt im ganzen Zellkultur-Labor; nur falls man sie ausserhalb erwischt: so viele Sekunden
+
   resultAutoReturnSeconds: 25, // Ergebnis-Bildschirm schliesst automatisch
   boardAutoReturnSeconds: 20,
   registrationTimeoutSeconds: 90,
   leaderboardSize: 10,
 
-  // Die Pumpen: 1 = Start-Pumpe, 3 = stärkste. power = maximales Gewicht, das eingesaugt werden kann.
+  // Medaillen am Ende der Runde (Bonuspunkte kommen zum Gesamtergebnis dazu)
+  medals: [
+    { key: 'boss', name: 'KRAKE BEZWUNGEN', bonus: 2000 },
+    { key: 'ppe', name: 'VOLLSCHUTZ', bonus: 1000 },
+    { key: 'nohit', name: 'UNVERLETZT', bonus: 1500 },
+    { key: 'pump', name: 'TOP-PUMPE', bonus: 1000 },
+    { key: 'combo', name: 'COMBO-PROFI', bonus: 1000 },
+    { key: 'view', name: 'ZEITMEISTER', bonus: 500 }
+  ],
+  comboMedal: 5,               // ab dieser Combo-Stufe gibt es die Medaille COMBO-PROFI
+
+  // Die Pumpen: 1 = Start-Pumpe, 3 = stärkste.
+  // power = maximales Gewicht, das eingesaugt werden kann; tank = Sekunden Dauersaugen
   pumps: [
     null,
-    { short: 'ME 1', title: 'MEMBRANPUMPE ME 1', slogan: 'KLEIN, ABER OHO!\nSAUGT TROPFEN, STAUB & DAMPF.', range: 46, power: 1, pull: 1.6 },
-    { short: 'PC 3001', title: 'PC 3001 VARIO SELECT', slogan: 'DER BESTSELLER!\nJETZT SAUGST DU AUCH GLASWARE.', range: 72, power: 2, pull: 2.4 },
-    { short: 'VACUU·PURE', title: 'VACUU·PURE', slogan: 'MAXIMALE SAUGKRAFT!\nNICHTS IST DIR ZU SCHWER.', range: 104, power: 3, pull: 3.4 }
+    { short: 'ME 1C', title: 'MEMBRANPUMPE ME 1C', slogan: 'IDEAL FÜR DIE FILTRATION', range: 46, power: 1, pull: 1.6, tank: 3 },
+    { short: 'PC 3001 VARIO SELECT', title: 'PC 3001 VARIO SELECT', slogan: 'ROTAVAP · VAKUUM-KONZENTRATOR · TROCKENSCHRANK\nMEHR SOG: JETZT AUCH RUNDKOLBEN!', range: 72, power: 2, pull: 2.4, tank: 3.5 },
+    { short: 'VACUU·PURE 10C', title: 'VACUU·PURE 10C', slogan: 'ÖLFREI: GEFRIERTROCKNUNG · SCHLENK · TURBO\nMAXIMALER SOG!', range: 104, power: 3, pull: 3.4, tank: 4 }
+  ],
+
+  // Schutzausrüstung aus den Kolben-Blöcken (in dieser Reihenfolge)
+  ppe: [
+    { key: 'goggles', name: 'SCHUTZBRILLE', text: 'TREFFER KOSTEN NUR NOCH 1 SEKUNDE.' },
+    { key: 'gloves', name: 'HANDSCHUHE', text: 'SOG-LEISTE LÄDT DOPPELT SO SCHNELL.' },
+    { key: 'helmet', name: 'SCHUTZHELM', text: 'GEGNER VON UNTEN WEGKÖPFEN!' },
+    { key: 'shoes', name: 'SICHERHEITSSCHUHE', text: 'AUF GEGNER SPRINGEN ZERSTÖRT SIE!' }
   ],
 
   // Anmeldung vor dem Spiel (Lead-Erfassung)

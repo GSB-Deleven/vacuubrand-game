@@ -22,7 +22,7 @@ const Overlay = {
 
 // ---------------------------------------------------------------------
 class RegisterScene {
-  constructor() { this.allowAdmin = false; this.t = 0; this.idle = 0; }
+  constructor() { this.allowAdmin = false; this.t = 0; this.idle = 0; this.demo = new DemoStrip(); }
 
   enter() {
     const cfg = CONFIG.registration;
@@ -32,6 +32,7 @@ class RegisterScene {
       '" autocomplete="off" spellcheck="false"></label>').join('');
     Overlay.show(
       '<form class="panel reg" novalidate>' +
+      '<div class="logo"><img src="assets/vacuubrand-logo.png" alt="VACUUBRAND"></div>' +
       '<h1>SPIELER-ANMELDUNG</h1>' +
       '<p class="hint">' + escapeHtml(cfg.intro) + '</p>' +
       '<div class="fields">' + fields + '</div>' +
@@ -42,6 +43,7 @@ class RegisterScene {
       '<button type="submit" class="btn">ENTER · LOS GEHT\'S!</button></div>' +
       '<p class="small">' + escapeHtml(cfg.privacyNote) + '</p>' +
       '</form>');
+    Overlay.el.classList.add('top');
     const form = this.form = Overlay.el.querySelector('form');
     form.addEventListener('submit', e => { e.preventDefault(); this.submit(); });
     form.querySelector('[data-act=cancel]').addEventListener('click', () => this.cancel());
@@ -57,6 +59,7 @@ class RegisterScene {
 
   exit() {
     window.removeEventListener('keydown', this.onKey);
+    Overlay.el.classList.remove('top');
     Overlay.hide();
   }
 
@@ -92,12 +95,12 @@ class RegisterScene {
 
   update() {
     this.t++;
+    this.demo.update();
     if (++this.idle > CONFIG.registrationTimeoutSeconds * 60) this.cancel();
   }
   draw(ctx) {
     drawMenuBackground(ctx, this.t);
-    ctx.fillStyle = 'rgba(11,15,31,0.5)';
-    ctx.fillRect(0, 0, VIEW_W, VIEW_H);
+    this.demo.draw(ctx);
   }
 }
 
@@ -151,7 +154,7 @@ class AdminScene {
         '</td><td><button class="btn small danger" data-del="' + escapeHtml(r.id) + '">✕</button></td></tr>';
     }).join('');
     Overlay.show(
-      '<div class="panel admin"><h1>ADMIN · VAKUUM-PROFESSOR</h1>' +
+      '<div class="panel admin"><h1>ADMIN · PROFESSOR VAKUUMUS</h1>' +
       (Store.available ? '' : '<div class="warn">Achtung: Der Browser-Speicher ist nicht verfügbar – Daten gehen beim Schliessen verloren! Bitte regelmässig exportieren.</div>') +
       (note ? '<p class="ok">' + escapeHtml(note) + '</p>' : '') +
       '<h2>Übersicht</h2><p>Heute: <b>' + st.playersToday + '</b> Spieler, <b>' + st.roundsToday + '</b> Runden · Gesamt: <b>' +
@@ -163,8 +166,12 @@ class AdminScene {
       '<button class="btn" data-act="csvRounds">Alle Runden (CSV/Excel)</button>' +
       '<button class="btn ghost" data-act="backup">Sicherung speichern (JSON)</button>' +
       '<button class="btn ghost" data-act="restore">Sicherung laden</button>' +
+      (typeof REFERENCE_DATA !== 'undefined' ? '<button class="btn ghost" data-act="reference">Referenzdaten laden (Test)</button>' : '') +
       '<input type="file" accept=".json,application/json" class="hidden" data-file></div>' +
       '<p>Dateien landen im Download-Ordner. Tipp: am Ende jedes Messetags exportieren.</p>' +
+      (this.exported ? '<div class="export"><p><b>' + escapeHtml(this.exported.filename) + '</b> – falls kein Download gestartet ist (z.B. in der Online-Vorschau): Inhalt kopieren und in Excel bzw. eine Textdatei einfügen.</p>' +
+        '<textarea readonly data-export>' + escapeHtml(this.exported.text.replace(/^\ufeff/, '')) + '</textarea>' +
+        '<div class="row"><button class="btn" data-act="copy">Inhalt kopieren</button><button class="btn ghost" data-act="hideExport">Ausblenden</button></div></div>' : '') +
       '<h2>Einstellungen</h2><form class="row" data-settings>' +
       '<label>Messename<input type="text" name="eventName" maxlength="30" value="' + escapeHtml(CONFIG.eventName) + '"></label>' +
       '<label>Rundenzeit (Sek.)<input type="number" name="roundSeconds" min="30" max="600" value="' + CONFIG.roundSeconds + '"></label>' +
@@ -172,15 +179,19 @@ class AdminScene {
       '<button class="btn" type="submit">Speichern</button></form>' +
       '<h2>Letzte Runden</h2><table><tr><th>Zeit</th><th>Name</th><th>Firma</th><th>E-Mail</th><th>Punkte</th><th></th></tr>' +
       (rows || '<tr><td colspan="6">Noch keine Runden.</td></tr>') + '</table>' +
-      '<h2>Gefahrenzone</h2><div class="row"><button class="btn danger" data-act="wipe">Alle Daten löschen</button></div>' +
+      '<h2>Gefahrenzone</h2><div class="row"><label>Zum Löschen LÖSCHEN eintippen<input type="text" data-wipe autocomplete="off"></label>' +
+      '<button class="btn danger" data-act="wipe">Alle Daten löschen</button></div>' +
       '<div class="buttons" style="margin-top:1em"><button class="btn ghost" data-act="fullscreen">Vollbild an/aus</button>' +
       '<button class="btn ghost" data-act="mute">Ton ' + (Sound.muted ? 'an' : 'aus') + '</button>' +
       '<button class="btn" data-act="close">Schliessen (ESC)</button></div></div>');
 
     const root = Overlay.el;
     root.querySelectorAll('[data-act]').forEach(b => b.addEventListener('click', () => this.action(b.dataset.act)));
+    // Löschen ohne Browser-Dialog (die sind in der Online-Vorschau gesperrt): zweimal klicken
     root.querySelectorAll('[data-del]').forEach(b => b.addEventListener('click', () => {
-      if (window.confirm('Diese Runde wirklich löschen?')) { Store.deleteRound(b.dataset.del); this.render('Runde gelöscht.'); }
+      if (b.dataset.sure) { Store.deleteRound(b.dataset.del); this.render('Runde gelöscht.'); return; }
+      b.dataset.sure = '1';
+      b.textContent = 'Sicher? Nochmals klicken';
     }));
     root.querySelector('[data-settings]').addEventListener('submit', e => {
       e.preventDefault();
@@ -202,7 +213,7 @@ class AdminScene {
         try {
           const res = Store.importJSON(JSON.parse(reader.result));
           this.render('Sicherung geladen: ' + res.leads + ' neue Leads, ' + res.rounds + ' neue Runden.');
-        } catch (err) { window.alert('Fehler: ' + err.message); }
+        } catch (err) { this.render('Fehler: ' + err.message); }
       };
       reader.readAsText(file);
     });
@@ -211,15 +222,32 @@ class AdminScene {
   action(a) {
     switch (a) {
       case 'close': this.close(); break;
-      case 'csvLeads': Store.exportLeadsCSV(); break;
-      case 'csvRounds': Store.exportRoundsCSV(); break;
-      case 'backup': Store.exportJSON(); break;
+      case 'csvLeads': this.exported = Store.exportLeadsCSV(); this.render('Leads exportiert.'); break;
+      case 'csvRounds': this.exported = Store.exportRoundsCSV(); this.render('Runden exportiert.'); break;
+      case 'backup': this.exported = Store.exportJSON(); this.render('Sicherung erstellt.'); break;
+      case 'reference': {
+        const res = Store.importJSON(REFERENCE_DATA);
+        this.render('Referenzdaten geladen: ' + res.leads + ' neue Leads, ' + res.rounds + ' neue Runden. Vor der Messe mit «Alle Daten löschen» entfernen!');
+        break;
+      }
+      case 'hideExport': this.exported = null; this.render(); break;
+      case 'copy': {
+        const ta = Overlay.el.querySelector('[data-export]');
+        ta.focus(); ta.select();
+        let ok = false;
+        try { ok = document.execCommand('copy'); } catch (e) { ok = false; }
+        if (!ok && navigator.clipboard) navigator.clipboard.writeText(ta.value).catch(() => {});
+        const btn = Overlay.el.querySelector('[data-act=copy]');
+        if (btn) btn.textContent = 'Kopiert (sonst markieren + Strg+C)';
+        break;
+      }
       case 'restore': Overlay.el.querySelector('[data-file]').click(); break;
       case 'fullscreen': toggleFullscreen(); break;
       case 'mute': Sound.toggleMute(); this.render(); break;
       case 'wipe': {
-        const v = window.prompt('ALLE Leads und Runden werden gelöscht. Vorher exportiert?\nZum Bestätigen LÖSCHEN eintippen:');
-        if (v && v.trim().toUpperCase() === 'LÖSCHEN') { Store.clearAll(); this.render('Alle Daten gelöscht.'); }
+        const v = Overlay.el.querySelector('[data-wipe]').value;
+        if (v.trim().toUpperCase() === 'LÖSCHEN') { Store.clearAll(); this.exported = null; this.render('Alle Daten gelöscht.'); }
+        else this.render('Nicht gelöscht: Bitte zuerst LÖSCHEN in das Feld eintippen.');
         break;
       }
     }

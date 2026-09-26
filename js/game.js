@@ -1,6 +1,8 @@
 'use strict';
 // Die eigentliche Spielrunde
 const CAM_Y = 12; // die obersten 12 Pixel des Levels liegen unter der Anzeige
+const HUD_H = 24;
+const BVC_ZONE = 1; // Zellkultur-Labor
 
 class PlayScene {
   constructor(lead) {
@@ -10,30 +12,48 @@ class PlayScene {
     const ps = this.level.playerStart;
     this.player = new Player(ps.x * T + 8, (ps.y + 1) * T);
     this.enemies = [];
+    this.items = [];
     this.boss = null;
     for (const s of this.level.spawns) {
       const x = s.x * T + 8, y = (s.y + 1) * T;
       if (s.type === 'K') this.boss = new Boss(x, y);
+      else if (s.type === 'v') this.items.push(new Item('view', 0, x, y, false));
       else this.enemies.push(new Enemy(s.type, x, y));
     }
-    this.items = []; this.parts = []; this.popups = []; this.bumps = [];
+    this.parts = []; this.popups = []; this.bumps = [];
     this.score = 0; this.time = CONFIG.roundSeconds; this.lastSec = Math.ceil(this.time);
-    this.combo = 0; this.comboT = 0; this.captures = 0; this.bestPump = 0;
+    this.combo = 0; this.comboT = 0; this.captures = 0; this.bestPump = 0; this.views = 0;
     this.state = 'howto'; this.stateT = 0; this.t = 0;
-    this.freeze = 0; this.banner = null; this.msg = null; this.heavyT = 0; this.noPumpT = 0; this.lockedT = 0;
+    this.freeze = 0; this.banner = null; this.msg = null;
+    this.heavyT = 0; this.noPumpT = 0; this.lockedT = 0; this.heatT = 0; this.shoeHintT = 0;
     this.camX = 0; this.exitOpen = false; this.zone = 0; this.paused = false;
+    this.maxCombo = 0; this.hits = 0; this.comboPop = 0; this.comboLost = null;
+    this.shakeT = 0; this.shakeMag = 0; this.flashT = 0; this.timeFlash = 0; this.bossMusic = false;
+    this.viewsTotal = this.level.spawns.filter(s => s.type === 'v').length;
   }
 
   enter() { Sound.music(null); }
   exit() { Sound.suckStop(); }
 
   showMsg(text, dur, color) { this.msg = { text, t: dur || 100, color: color || '#ffffff' }; }
-  popup(x, y, text, color) { this.popups.push({ x, y, text, color: color || '#ffffff', t: 50 }); }
+  popup(x, y, text, color) { this.popups.push({ x, y, text, color: color || '#ffffff', t: 36 }); }
   burst(x, y, colors, n) {
     for (let i = 0; i < (n || 8); i++) {
       const a = Math.random() * Math.PI * 2, s = 0.5 + Math.random() * 1.8;
       this.parts.push({ x, y, vx: Math.cos(a) * s, vy: Math.sin(a) * s - 0.6, g: 0.06, t: 25 + Math.random() * 15, c: colors[i % colors.length], s: 2 });
     }
+  }
+  shake(frames, mag) {
+    if (frames >= this.shakeT || mag >= this.shakeMag) { this.shakeT = Math.max(this.shakeT, frames); this.shakeMag = Math.max(this.shakeMag, mag); }
+  }
+  breakCombo() {
+    if (this.combo > 1) this.comboLost = { n: Math.min(this.combo, CONFIG.comboMax), t: 40 };
+    this.combo = 0; this.comboT = 0;
+  }
+  addTime(sec, x, y) {
+    this.time += sec;
+    this.timeFlash = 24;
+    this.popup(x, y, '+' + sec + ' SEK', '#7be07b');
   }
 
   // ------------------------------------------------------------------
@@ -41,22 +61,22 @@ class PlayScene {
     this.t++;
     this.stateT++;
     if (this.paused) {
-      if (Input.pressed('start')) { Sound.music(null); Game.go(new TitleScene()); }
-      else if (Input.pressed('back')) this.paused = false;
+      if (Input.pressed('abort')) { Sound.music(null); Game.go(new TitleScene()); }
+      else if (Input.pressed('pause')) this.paused = false;
       return;
     }
     switch (this.state) {
       case 'howto':
-        if ((this.stateT > 30 && Input.pressed('start')) || this.stateT > 60 * 15) this.setState('count');
+        if ((this.stateT > 30 && Input.pressed('start')) || this.stateT > 60 * 20) this.setState('count');
         if (Input.pressed('back')) Game.go(new TitleScene());
         return;
       case 'count':
         if (this.stateT % 60 === 1 && this.stateT < 180) Sound.sfx('count');
         this.updateEffects();
-        if (this.stateT >= 180) { this.setState('play'); Sound.sfx('go'); Sound.music('game'); }
+        if (this.stateT >= 180) { this.setState('play'); Sound.sfx('go'); Sound.music('zone' + this.zone); }
         return;
       case 'play':
-        if (Input.pressed('back')) { this.paused = true; Sound.suckStop(); this.player.sucking = false; return; }
+        if (Input.pressed('pause')) { this.paused = true; Sound.suckStop(); this.player.sucking = false; return; }
         this.updateWorld();
         return;
       case 'finish':
@@ -70,12 +90,31 @@ class PlayScene {
 
   setState(s) { this.state = s; this.stateT = 0; }
 
+  // Welche Medaillen hat die Runde verdient?
+  earnedMedals() {
+    const p = this.player;
+    const won = {
+      boss: !!(this.boss && this.boss.captured),
+      ppe: p.fullPPE(),
+      nohit: this.hits === 0 && this.captures >= 10,
+      pump: Math.max(this.bestPump, p.pump) >= 3,
+      combo: this.maxCombo >= CONFIG.comboMedal,
+      view: this.viewsTotal > 0 && this.views >= this.viewsTotal
+    };
+    return CONFIG.medals.filter(m => won[m.key]);
+  }
+
   end(finished) {
+    const p = this.player;
     const timeLeft = finished ? Math.ceil(this.time) : 0;
     const timeBonus = finished ? timeLeft * CONFIG.timeBonusPerSecond + CONFIG.finishBonus : 0;
+    const medals = this.earnedMedals();
+    const medalBonus = medals.reduce((s, m) => s + m.bonus, 0);
     Game.go(new ResultScene({
-      lead: this.lead, score: this.score, timeBonus, total: this.score + timeBonus,
-      finished, timeLeft, pump: Math.max(this.bestPump, this.player.pump), captures: this.captures
+      lead: this.lead, score: this.score, timeBonus, medalBonus, medals: medals.map(m => m.key),
+      total: this.score + timeBonus + medalBonus,
+      finished, timeLeft, pump: Math.max(this.bestPump, p.pump), captures: this.captures,
+      ppe: CONFIG.ppe.filter(q => p.ppe[q.key]).length, views: this.views, maxCombo: this.maxCombo
     }));
   }
 
@@ -87,7 +126,7 @@ class PlayScene {
     if (sec !== this.lastSec) {
       this.lastSec = sec;
       if (sec <= 10 && sec > 0) Sound.sfx('beep');
-      if (sec === 10) Sound.fast = true;
+      Sound.fast = sec <= 10;
     }
     if (this.time <= 0) {
       this.time = 0;
@@ -96,10 +135,8 @@ class PlayScene {
       this.setState('timeup');
       return;
     }
-    if (this.comboT > 0 && --this.comboT === 0) this.combo = 0;
-    if (this.heavyT > 0) this.heavyT--;
-    if (this.noPumpT > 0) this.noPumpT--;
-    if (this.lockedT > 0) this.lockedT--;
+    for (const k of ['heavyT', 'noPumpT', 'lockedT', 'heatT', 'shoeHintT']) if (this[k] > 0) this[k]--;
+    if (this.comboT > 0 && --this.comboT === 0) this.breakCombo();
 
     this.updatePlayer();
     this.updateSuction();
@@ -123,7 +160,13 @@ class PlayScene {
     const z = zoneOf(p.x);
     if (z > this.zone) {
       this.zone = z;
-      this.showMsg('ZONE ' + (z + 1) + ': ' + ZONE_STYLE[z].name, 120, '#ffe066');
+      this.showMsg('ZONE ' + (z + 1) + ': ' + ZONE_STYLE[z].name, 130, THEME.gold);
+      if (!this.bossMusic) Sound.music('zone' + z);
+    }
+    // Boss-Arena: eigene Musik
+    if (!this.bossMusic && this.boss && !this.boss.captured && p.x >= this.level.bossArenaX * T) {
+      this.bossMusic = true;
+      Sound.music('boss');
     }
 
     // Ausgang
@@ -147,29 +190,60 @@ class PlayScene {
     if (p.stun > 0) {
       p.stun--;
       p.vx *= 0.92;
+      p.sprinting = false;
     } else {
       dir = (Input.down('left') ? -1 : 0) + (Input.down('right') ? 1 : 0);
-      const sucking = Input.down('suck') && p.pump > 0;
-      const maxV = sucking ? 0.9 : 1.6;
-      if (dir) {
-        p.face = dir;
-        p.vx += dir * 0.18;
-        p.vx = clamp(p.vx, -maxV, maxV);
+      // Ducken
+      if (Input.down('down') && p.onGround) p.ducking = true;
+      else if (p.ducking) {
+        const tx0 = Math.floor((p.x - p.w / 2) / T), tx1 = Math.floor((p.x + p.w / 2 - 0.01) / T), ty = Math.floor((p.y - 14) / T);
+        let free = true;
+        for (let tx = tx0; tx <= tx1; tx++) if (isSolid(lv, tx, ty)) free = false;
+        if (free) p.ducking = false;
+      }
+      p.h = p.ducking ? 10 : 14;
+      // Sprint
+      const sucking = Input.down('suck') && (p.pump > 0 || p.bvcT > 0) && (!p.overheat || p.bvcT > 0);
+      p.sprinting = Input.down('sprint') && dir !== 0 && !p.tired && !p.ducking && !sucking;
+      const maxV = p.ducking ? 0 : sucking ? 0.9 : p.sprinting ? 2.5 : 1.5;
+      if (dir) p.face = dir;
+      if (dir && !p.ducking) {
+        p.vx += dir * (p.sprinting ? 0.24 : 0.18);
       } else {
         p.vx *= p.onGround ? 0.72 : 0.94;
         if (Math.abs(p.vx) < 0.05) p.vx = 0;
       }
-      if (Math.abs(p.vx) > maxV) p.vx *= 0.9;
+      if (Math.abs(p.vx) > maxV) p.vx = Math.sign(p.vx) * Math.max(maxV, Math.abs(p.vx) * (p.onGround ? 0.9 : 0.98));
       if (Input.pressed('jump')) p.jumpBuf = 7;
-      if (p.jumpBuf > 0 && (p.onGround || p.coyote > 0)) {
-        p.vy = -5.8; p.onGround = false; p.coyote = 0; p.jumpBuf = 0;
+      if (p.jumpBuf > 0 && (p.onGround || p.coyote > 0) && !p.ducking) {
+        p.vy = Math.abs(p.vx) > 2 ? -6.2 : -5.8;
+        p.onGround = false; p.coyote = 0; p.jumpBuf = 0;
         Sound.sfx('jump');
       }
-      if (!Input.down('jump') && p.vy < -2.2) p.vy = -2.2;
+      // Loslassen kürzt den Sprung – ein kurzer Tipp reicht aber trotzdem für gut 2 Kacheln
+      if (!Input.down('jump') && p.vy < -4.7) p.vy = -4.7;
+    }
+    // Ausdauer
+    if (p.sprinting && Math.abs(p.vx) > 1.6) {
+      p.stamina -= 1 / (CONFIG.sprintSeconds * 60);
+      if (p.stamina <= 0) { p.stamina = 0; p.tired = true; p.sprinting = false; }
+    } else {
+      p.stamina = Math.min(1, p.stamina + 1 / (CONFIG.sprintRegenSeconds * 60));
+      if (p.tired && p.stamina >= 0.3) p.tired = false;
     }
     if (p.jumpBuf > 0) p.jumpBuf--;
     p.vy = Math.min(p.vy + 0.3, 6);
+    const wasRising = p.vy < 0;
     moveBody(p, lv);
+    // Kopfnuss-Magnet: am höchsten Punkt zählt ein Kolben-Block knapp über dem Kopf auch als Treffer
+    if (wasRising && !p.bump && p.vy >= -0.3) {
+      const ty = Math.floor((p.y - p.h - 5) / T);
+      let best = null;
+      for (const tx of [Math.floor((p.x - p.w / 2) / T), Math.floor((p.x + p.w / 2 - 0.01) / T)]) {
+        if ('123?V'.includes(tileAt(lv, tx, ty)) && (ty + 1) * T >= p.y - p.h - 5 && (!best || Math.abs(tx * T + 8 - p.x) < Math.abs(best.tx * T + 8 - p.x))) best = { tx, ty };
+      }
+      if (best) { p.bump = best; p.vy = 0.5; }
+    }
     if (p.onGround) {
       p.coyote = 6;
       const lt = Math.floor((p.x - p.w / 2) / T), rt = Math.floor((p.x + p.w / 2 - 0.01) / T), ft = Math.floor(p.y / T);
@@ -177,104 +251,188 @@ class PlayScene {
     } else if (p.coyote > 0) p.coyote--;
     if (p.bump) this.bumpBlock(p.bump.tx, p.bump.ty);
     if (p.inv > 0) p.inv--;
+    // In die Auffangwanne gefallen: Platsch!
+    if (!p.splashed && p.vy > 0 && p.y - 4 > PIT_SURFACE && tileAt(lv, Math.floor(p.x / T), 10) === ' ') {
+      p.splashed = true;
+      const st = PIT_STYLE[zoneOf(p.x)];
+      for (let i = 0; i < 14; i++) {
+        this.parts.push({ x: p.x + (Math.random() - 0.5) * 10, y: PIT_SURFACE, vx: (Math.random() - 0.5) * 2.4, vy: -1.5 - Math.random() * 2.2, g: 0.15, t: 30 + Math.random() * 15, c: i % 3 ? st.top : st.mid, s: 2 });
+      }
+      Sound.sfx('splash');
+      this.showMsg(st.into + ' GEFALLEN!', 110, st.top);
+    }
     if (p.y > lv.H * T + 24) {
+      p.splashed = false;
       this.time -= CONFIG.fallTimePenalty;
       p.x = p.safe.x; p.y = p.safe.y; p.vx = 0; p.vy = 0; p.inv = 90;
       this.popup(p.x, p.y - 20, '-' + CONFIG.fallTimePenalty + ' SEK', '#ff8f8f');
-      Sound.sfx('hurt');
-      this.combo = 0;
+      Sound.sfx('ouch');
+      this.popup(p.x, p.y - 30, 'AUTSCH!', '#ffffff');
+      this.hits++;
+      this.breakCombo();
+      this.shake(12, 2);
     }
+  }
+
+  nextPPE() {
+    const p = this.player;
+    const pending = new Set(this.items.filter(i => i.kind === 'ppe').map(i => i.value));
+    const next = CONFIG.ppe.find(q => !p.ppe[q.key] && !pending.has(q.key));
+    return next ? next.key : null;
   }
 
   bumpBlock(tx, ty) {
     const lv = this.level, c = lv.tiles[ty][tx];
     const p = this.player;
-    if (c === '1' || c === '2' || c === '3' || c === '?') {
+    const bx = tx * T + 8, by = (ty + 1) * T;
+    this.bumps.push({ tx, ty, t: 0 });
+    if ('123?V'.includes(c)) {
       lv.tiles[ty][tx] = 'U';
-      this.bumps.push({ tx, ty, t: 0 });
-      const tier = c === '?' ? 0 : Number(c);
-      if (tier > p.pump && !this.items.some(i => i.tier >= tier)) {
-        this.items.push(new Item(tier, tx, ty));
-        Sound.sfx('bump');
+      let item = null;
+      if (c === '?') {
+        const key = this.nextPPE();
+        if (key) item = new Item('ppe', key, bx, by, true);
+      } else if (c === 'V') {
+        item = new Item('bvc', 0, bx, by, true);
+      } else {
+        const tier = Number(c);
+        if (tier > p.pump && !this.items.some(i => i.kind === 'pump' && i.value >= tier)) item = new Item('pump', tier, bx, by, true);
+      }
+      if (item) {
+        this.items.push(item);
+        Sound.sfx('sprout');
       } else {
         this.addScore(200);
-        this.popup(tx * T + 8, ty * T - 8, '+200', '#ffe066');
-        this.parts.push({ x: tx * T + 8, y: ty * T - 6, vx: 0, vy: -3, g: 0.2, t: 26, spr: 'coin' });
+        this.addTime(1, bx, ty * T - 8);
+        this.burst(bx, ty * T - 4, ['#7be07b', '#ffffff'], 6);
         Sound.sfx('coin');
       }
     } else {
-      this.bumps.push({ tx, ty, t: 0 });
       Sound.sfx('bump');
     }
     // Gegner, die auf dem Block stehen, fliegen weg
     for (const e of this.enemies) {
-      if (!e.captured && e.def.stomp && Math.abs(e.x - (tx * T + 8)) < 12 && Math.abs(e.y - ty * T) < 3) {
-        e.alive = false;
-        this.addScore(50);
-        this.burst(e.x, e.y - 4, ['#ffffff', '#c8f2ff'], 6);
+      if (!e.captured && e.def.harm && Math.abs(e.x - bx) < 12 && Math.abs(e.y - ty * T) < 3) {
+        this.destroy(e, 50);
       }
     }
   }
 
   addScore(n) { this.score += n; }
 
+  destroy(e, pts) {
+    e.alive = false;
+    this.addScore(pts);
+    this.popup(e.x, e.y - e.h - 2, '+' + pts, '#ffffff');
+    this.burst(e.x, e.y - e.h / 2, ['#ffffff', '#a7b3c4'], 6);
+    Sound.sfx('stomp');
+  }
+
   inCone(nz, face, range, cx, cy) {
     const along = (cx - nz.x) * face;
     if (along < -6 || along > range) return false;
-    return Math.abs(cy - nz.y) <= 10 + Math.max(0, along) * 0.5;
+    return Math.abs(cy - nz.y) <= 14 + Math.max(0, along) * 0.6;
   }
 
   updateSuction() {
     const p = this.player;
+    const bvc = p.bvcT > 0;
+    if (bvc) {
+      // Im Zellkultur-Labor bleibt die BVC dauerhaft, sonst läuft die Zeit ab
+      if (p.bvcZone) { if (zoneOf(p.x) !== BVC_ZONE) p.bvcT = 0; }
+      else p.bvcT--;
+      if (p.bvcT <= 0) {
+        p.bvcT = 0; p.bvcZone = false;
+        this.showMsg(p.pump ? 'DIE BVC BLEIBT IM ZELLKULTUR-LABOR - WEITER MIT DER PUMPE!' : 'DIE BVC BLEIBT IM ZELLKULTUR-LABOR!', 130, '#ff8fb8');
+        if (p.sucking) { Sound.suckStop(); p.sucking = false; }
+      }
+    }
     const wants = Input.down('suck') && p.stun <= 0;
-    if (wants && p.pump === 0) {
+    const hasTool = p.pump > 0 || bvc;
+    if (wants && !hasTool) {
       if (Input.pressed('suck')) Sound.sfx('puff');
       if (this.noPumpT <= 0) {
         this.noPumpT = 150;
-        this.showMsg('KEINE PUMPE! SPRING GEGEN DEN ?-BLOCK!', 130, '#ffe066');
+        this.showMsg('KEINE PUMPE! SPRING GEGEN DEN KOLBEN-BLOCK!', 130, THEME.gold);
       }
     }
-    const sucking = wants && p.pump > 0;
-    if (sucking && !p.sucking) Sound.suckStart(p.pump);
-    if (!sucking && p.sucking) Sound.suckStop();
-    p.sucking = sucking;
-    if (!sucking) return;
+    if (wants && hasTool && !bvc && p.overheat && Input.pressed('suck') && this.heatT <= 0) {
+      this.heatT = 60;
+      this.showMsg('ÜBERHITZT! KURZ ABKÜHLEN LASSEN...', 70, '#ff8f8f');
+      Sound.sfx('heavy');
+    }
+    const sucking = wants && hasTool && (bvc || !p.overheat);
+    const cfg = CONFIG.pumps[p.pump] || { range: 0, power: 0, pull: 1.5, tank: 3 };
+    if (sucking && !bvc) {
+      p.energy -= 1 / (cfg.tank * 60);
+      if (p.energy <= 0) {
+        p.energy = 0; p.overheat = true;
+        this.heatT = 60;
+        this.showMsg('ÜBERHITZT! KURZ ABKÜHLEN LASSEN...', 90, '#ff8f8f');
+        Sound.sfx('overheat');
+      }
+    } else if (!sucking) {
+      p.energy = Math.min(1, p.energy + (p.ppe.gloves ? 2 : 1) / (CONFIG.suckRegenSeconds * 60));
+      if (p.overheat && p.energy >= CONFIG.overheatResume) p.overheat = false;
+    }
+    const active = sucking && (bvc || !p.overheat);
+    if (active && !p.sucking) Sound.suckStart(bvc ? 2 : p.pump);
+    if (!active && p.sucking) Sound.suckStop();
+    p.sucking = active;
+    if (!active) return;
 
-    const cfg = CONFIG.pumps[p.pump];
     const nz = p.nozzle();
+    const range = bvc ? Math.max(cfg.range, 84) : cfg.range;
+    const pull = bvc ? Math.max(cfg.pull, 2.4) : cfg.pull;
     // Saug-Streifen
-    for (let i = 0; i < p.pump + 1; i++) {
-      const along = 8 + Math.random() * cfg.range;
+    const lvl = bvc ? 3 : p.pump;
+    for (let i = 0; i < lvl + 1; i++) {
+      const along = 8 + Math.random() * range;
       const off = (Math.random() * 2 - 1) * (8 + along * 0.45);
       const sx = nz.x + p.face * along, sy = Math.min(nz.y + off, p.y - 2);
       const dx = nz.x - sx, dy = nz.y - sy, len = Math.hypot(dx, dy) || 1;
-      const sp = 2.2 + p.pump * 0.8;
-      this.parts.push({ x: sx, y: sy, vx: dx / len * sp, vy: dy / len * sp, g: 0, t: Math.floor(len / sp), c: i % 2 ? '#ffffff' : '#c8f2ff', s: 1, streak: true });
+      const sp = 2.2 + lvl * 0.8;
+      const col = bvc ? (i % 2 ? '#ffffff' : '#ff8fb8') : (i % 2 ? '#ffffff' : '#c8f2ff');
+      this.parts.push({ x: sx, y: sy, vx: dx / len * sp, vy: dy / len * sp, g: 0, t: Math.floor(len / sp), c: col, s: 1, streak: true });
     }
     for (const e of this.enemies) {
       if (!e.active || !e.alive || e.captured) continue;
-      if (!this.inCone(nz, p.face, cfg.range, e.x, e.y - e.h / 2)) continue;
-      if (e.def.weight <= cfg.power) {
+      if (!this.inCone(nz, p.face, range, e.x, e.y - e.h / 2)) continue;
+      const liquid = bvc && e.def.liquid;
+      if (liquid || e.def.weight <= cfg.power) {
         e.pulledNow = true;
-        e.pullV = Math.min(e.pullV + 0.09 * cfg.pull, 0.8 + cfg.pull * 1.2);
+        e.pullV = liquid ? Math.min(e.pullV + 0.5, 6) : Math.min(e.pullV + 0.09 * pull, 0.8 + pull * 1.2);
         const dx = nz.x - e.x, dy = nz.y - (e.y - e.h / 2), len = Math.hypot(dx, dy) || 1;
         e.x += dx / len * Math.min(e.pullV, len);
         e.y += dy / len * Math.min(e.pullV, len);
-        if (len < 8) this.capture(e);
+        if (len < 8) this.capture(e, liquid);
       } else {
         e.shake = 6;
         if (this.heavyT <= 0) {
           this.heavyT = 150;
-          this.showMsg('ZU SCHWER! DU BRAUCHST EINE STÄRKERE PUMPE!', 130, '#ff8f8f');
+          if (bvc && cfg.power < e.def.weight) this.showMsg('DIE BVC SAUGT NUR FLÜSSIGKEITEN!', 120, '#ff8fb8');
+          else this.showMsg('ZU SCHWER! DU BRAUCHST EINE STÄRKERE PUMPE!', 130, '#ff8f8f');
           Sound.sfx('heavy');
         }
       }
     }
+    // Items (Pumpen, Schutzausrüstung, BVC, VACUU·VIEW) lassen sich ebenfalls einsaugen
+    for (const it of this.items) {
+      if (!it.alive || it.rising > 0) continue;
+      if (!this.inCone(nz, p.face, range, it.x, it.y - it.h / 2)) continue;
+      it.pulled = 2;
+      it.pullV = Math.min((it.pullV || 0) + 0.3, 5);
+      const dx = nz.x - it.x, dy = nz.y - (it.y - it.h / 2), len = Math.hypot(dx, dy) || 1;
+      it.x += dx / len * Math.min(it.pullV, len);
+      it.y += dy / len * Math.min(it.pullV, len);
+      if (len < 8) this.collect(it);
+    }
     const b = this.boss;
-    if (b && b.active && b.alive && !b.captured && this.inCone(nz, p.face, cfg.range + 10, b.x, b.y - b.h / 2)) {
+    if (b && b.active && b.alive && !b.captured && this.inCone(nz, p.face, range + 10, b.x, b.y - b.h / 2)) {
       if (cfg.power >= 3) {
         b.suckedNow = true;
         b.shake = 4;
+        this.shake(3, 1);
         if (b.hp > 0) {
           b.hp--;
           b.x += Math.sign(nz.x - b.x) * 0.15;
@@ -286,115 +444,187 @@ class PlayScene {
           if (len < 12) {
             b.captured = true; b.capT = 40;
             this.addScore(3000); this.captures++;
-            this.popup(nz.x, nz.y - 24, '+3000!', '#ffe066');
-            this.burst(nz.x, nz.y, ['#e6dcff', '#c7b5f5', '#ffffff', '#ffe066'], 24);
+            this.popup(nz.x, nz.y - 24, '+3000!', THEME.gold);
+            this.burst(nz.x, nz.y, ['#e6dcff', '#c7b5f5', '#ffffff', THEME.gold], 24);
             this.exitOpen = true;
             this.banner = { title: 'LABOR GERETTET!', sub: 'SCHNELL ZUM AUSGANG →\nRESTZEIT GIBT BONUSPUNKTE!', t: 200 };
             Sound.sfx('boss');
+            this.shake(36, 3); this.flashT = 6;
+            Sound.music('zone3');
           }
         }
       } else if (this.heavyT <= 0) {
         this.heavyT = 150;
-        this.showMsg('DIE KRAKE IST ZU STARK! HOL DIR DIE VACUU·PURE!', 130, '#ff8f8f');
+        this.showMsg('DIE KRAKE IST ZU STARK! HOL DIR DIE VACUU·PURE 10C!', 130, '#ff8f8f');
         Sound.sfx('heavy');
       }
     }
   }
 
-  capture(e) {
+  capture(e, bvcBonus) {
     e.captured = true;
     e.capT = 12;
+    const prev = Math.min(this.combo, CONFIG.comboMax);
     this.combo = this.comboT > 0 ? this.combo + 1 : 1;
     this.comboT = Math.round(CONFIG.comboWindow * 60);
-    const mult = Math.min(this.combo, 5);
+    const lvl = Math.min(this.combo, CONFIG.comboMax);
+    this.maxCombo = Math.max(this.maxCombo, lvl);
+    if (lvl > prev && lvl > 1) { this.comboPop = 8; this.comboLost = null; }
+    if (lvl !== prev && (lvl === 5 || lvl === CONFIG.comboMax)) Sound.sfx('combo', lvl);
+    const mult = lvl * (bvcBonus ? 2 : 1);
     const pts = e.def.points * mult;
     this.addScore(pts);
     this.captures++;
-    this.popup(e.x, e.y - e.h - 4, '+' + pts + (mult > 1 ? ' ×' + mult : ''), mult > 1 ? '#ffe066' : '#ffffff');
-    this.burst(e.x, e.y - e.h / 2, ['#ffffff', '#c8f2ff', '#6fcbe8'], 6);
-    Sound.sfx('capture', e.def.weight);
+    this.popup(e.x, e.y - e.h - 4, '+' + pts + (mult > 1 ? ' ×' + mult : '') + (e.def.showName ? ' ' + e.def.name : ''), mult > 1 ? THEME.gold : '#ffffff');
+    this.burst(e.x, e.y - e.h / 2, bvcBonus ? ['#ffffff', '#ff8fb8'] : ['#ffffff', '#c8f2ff', '#6fcbe8'], 6);
+    Sound.sfx('capture', e.def.weight, lvl);
+  }
+
+  collect(it) {
+    const p = this.player;
+    it.alive = false;
+    this.burst(p.x, p.y - 10, [THEME.gold, '#ffffff', '#7be07b'], 12);
+    if (it.kind === 'pump') {
+      if (it.value > p.pump) {
+        p.pump = it.value;
+        this.bestPump = Math.max(this.bestPump, p.pump);
+        p.energy = 1; p.overheat = false;
+        const cfg = CONFIG.pumps[p.pump];
+        this.banner = { title: cfg.title, sub: cfg.slogan, t: 220, icon: 'pump' + p.pump };
+        this.shake(12, 2); this.flashT = 4;
+        Sound.sfx('upgrade');
+        this.addScore(500);
+        this.popup(p.x, p.y - 26, '+500', THEME.gold);
+        if (p.sucking) Sound.suckStart(p.bvcT > 0 ? 2 : p.pump);
+      } else Sound.sfx('powerup');
+    } else if (it.kind === 'ppe') {
+      const q = CONFIG.ppe.find(x => x.key === it.value);
+      if (!p.ppe[it.value]) {
+        p.ppe[it.value] = true;
+        this.addTime(CONFIG.ppeTimeBonus, p.x, p.y - 26);
+        const full = p.fullPPE();
+        this.banner = { title: full ? 'VOLLSCHUTZ!' : q.name, sub: full ? 'KOMPLETTE SCHUTZAUSRÜSTUNG:\nNICHTS KANN DIR MEHR SCHADEN!' : q.text, t: 190, icon: 'ppe_' + it.value };
+        Sound.sfx(full ? 'fanfare' : 'powerup');
+      } else {
+        this.addTime(CONFIG.ppeDuplicateTimeBonus, p.x, p.y - 26);
+        Sound.sfx('coin');
+      }
+      this.addScore(200);
+    } else if (it.kind === 'bvc') {
+      p.bvcZone = zoneOf(p.x) === BVC_ZONE;
+      p.bvcT = p.bvcZone ? 1 : CONFIG.bvcSeconds * 60;
+      this.banner = { title: 'PUMPE BVC PROFESSIONAL', sub: 'MIT VHC: MEDIENABSAUGUNG\nPUNKTE ×2', t: 220, icon: 'bvc' };
+      this.addScore(300);
+      if (p.sucking) Sound.suckStart(2);
+      Sound.sfx('powerup');
+    } else if (it.kind === 'view') {
+      this.views++;
+      this.addTime(CONFIG.viewTimeBonus, p.x, p.y - 26);
+      this.banner = { title: 'VACUU·VIEW EXTENDED', sub: 'ZEITVAKUUM: +' + CONFIG.viewTimeBonus + ' SEKUNDEN!', t: 180, icon: 'view' };
+      this.addScore(300);
+      Sound.sfx('timebonus');
+    }
   }
 
   checkCollisions() {
     const p = this.player;
-    for (const it of this.items) {
-      if (it.t > 20 && overlap(p, it)) {
-        it.alive = false;
-        if (it.tier > p.pump) {
-          p.pump = it.tier;
-          this.bestPump = Math.max(this.bestPump, p.pump);
-          const cfg = CONFIG.pumps[p.pump];
-          this.banner = { title: cfg.title, sub: cfg.slogan, t: 210, pump: p.pump };
-          this.freeze = 40;
-          this.addScore(500);
-          this.popup(p.x, p.y - 26, '+500', '#ffe066');
-          if (p.sucking) Sound.suckStart(p.pump);
-        }
-        Sound.sfx('powerup');
-        this.burst(p.x, p.y - 10, ['#ffe066', '#ffffff', '#7be07b'], 12);
-      }
-    }
+    for (const it of this.items) if (it.alive && it.rising <= 0 && overlap(p, it)) this.collect(it);
+    const full = p.fullPPE();
     for (const e of this.enemies) {
       if (!e.alive || !e.active || e.captured || e.wasPulled || !e.def.harm) continue;
       if (!overlap(p, e)) continue;
-      if (e.def.stomp && p.vy > 0 && p.y - p.vy <= e.y - e.h + 4) {
-        e.alive = false;
-        p.vy = Input.down('jump') ? -5 : -3.6;
-        this.addScore(50);
-        this.popup(e.x, e.y - e.h - 2, '+50', '#ffffff');
-        this.burst(e.x, e.y - 3, ['#ffffff', '#a7b3c4'], 6);
-        Sound.sfx('stomp');
-      } else this.hurt(e.x);
+      if (full) { this.destroy(e, 50); continue; }
+      const fromAbove = p.vy > 0 && (p.y - p.vy) <= e.y - e.h + 4;
+      const fromBelow = p.vy < 0 && (p.y - p.h - p.vy) >= e.y - 4;
+      if (fromAbove) {
+        if (p.ppe.shoes) {
+          this.destroy(e, 50);
+          p.vy = Input.down('jump') ? -5 : -3.6;
+        } else {
+          p.vy = -3.6;
+          e.safeT = 12; e.shake = 8;
+          Sound.sfx('boing');
+          if (this.shoeHintT <= 0) { this.shoeHintT = 400; this.showMsg('MIT SICHERHEITSSCHUHEN KÖNNTEST DU SIE ZERTRETEN!', 120, THEME.gold); }
+        }
+        continue;
+      }
+      if (fromBelow && p.ppe.helmet) {
+        this.destroy(e, 50);
+        p.vy = 1;
+        continue;
+      }
+      if (e.safeT > 0) continue;
+      this.hurt(e.x);
     }
     const b = this.boss;
-    if (b && b.active && b.alive && !b.captured && b.hp > 0 && overlap(p, b)) this.hurt(b.x);
+    if (!full && b && b.active && b.alive && !b.captured && b.hp > 0 && overlap(p, b)) this.hurt(b.x);
   }
 
   hurt(fromX) {
     const p = this.player;
     if (p.inv > 0) return;
-    this.time -= CONFIG.hitTimePenalty;
-    p.stun = 30; p.inv = 100;
+    const pen = p.ppe.goggles ? CONFIG.hitTimePenaltyGoggles : CONFIG.hitTimePenalty;
+    this.time -= pen;
+    p.stun = 30; p.inv = 100; p.ducking = false; p.h = 14;
     p.vx = (p.x < fromX ? -1 : 1) * 2; p.vy = -2.5;
-    this.combo = 0; this.comboT = 0;
+    this.hits++;
+    this.breakCombo();
+    this.shake(12, 2);
     Sound.suckStop(); p.sucking = false;
-    this.popup(p.x, p.y - 24, '-' + CONFIG.hitTimePenalty + ' SEK', '#ff8f8f');
-    Sound.sfx('hurt');
+    this.popup(p.x, p.y - 24, '-' + pen + ' SEK', '#ff8f8f');
+    Sound.sfx('ouch');
+    this.popup(p.x, p.y - 32, 'AUTSCH!', '#ffffff');
   }
 
   updateEffects() {
     for (const q of this.parts) { q.x += q.vx; q.y += q.vy; q.vy += q.g; q.t--; }
     this.parts = this.parts.filter(q => q.t > 0);
-    for (const q of this.popups) { q.y -= 0.4; q.t--; }
+    for (const q of this.popups) { if (q.t > 26) q.y -= 0.5; q.t--; }
     this.popups = this.popups.filter(q => q.t > 0);
     for (const b of this.bumps) b.t++;
     this.bumps = this.bumps.filter(b => b.t < 8);
     if (this.banner && --this.banner.t <= 0) this.banner = null;
     if (this.msg && --this.msg.t <= 0) this.msg = null;
+    if (this.shakeT > 0 && --this.shakeT === 0) this.shakeMag = 0;
+    for (const k of ['flashT', 'timeFlash', 'comboPop']) if (this[k] > 0) this[k]--;
+    if (this.comboLost && --this.comboLost.t <= 0) this.comboLost = null;
   }
 
   // ------------------------------------------------------------------
   draw(ctx) {
     const camX = Math.round(this.camX);
+    // Bildschirm-Wackeln (nur kurz, bei Boss, Upgrade, Treffer)
+    let ox = 0, oy = 0;
+    if (this.shakeT > 0) {
+      const m = Math.min(this.shakeMag, 1 + Math.floor(this.shakeT / 6));
+      ox = Math.round((Math.random() * 2 - 1) * m); oy = Math.round((Math.random() * 2 - 1) * m);
+      ctx.fillStyle = PAL.k; ctx.fillRect(0, 0, VIEW_W, VIEW_H);
+    }
+    ctx.save();
+    ctx.translate(ox, oy);
     drawBackground(ctx, camX);
     ctx.save();
     ctx.translate(0, -CAM_Y);
     for (const s of this.level.signs) drawSign(ctx, s, camX);
     this.drawDoor(ctx, camX);
-    for (const it of this.items) it.draw(ctx, camX);
+    for (const it of this.items) if (it.rising > 0) it.draw(ctx, camX);
+    drawPitsBack(ctx, this.level, camX, this.t);
     drawTiles(ctx, this.level, camX, this.bumps, this.t);
+    for (const it of this.items) if (it.rising <= 0) it.draw(ctx, camX);
     for (const e of this.enemies) if (e.def.beh === 'static' && e.active) e.draw(ctx, camX);
-    if (this.boss && this.boss.alive && this.boss.active) this.boss.draw(ctx, camX, this.t);
+    if (this.boss && this.boss.alive && this.boss.active) this.boss.draw(ctx, camX);
     for (const e of this.enemies) if (e.def.beh !== 'static' && e.active) e.draw(ctx, camX);
     if (!(this.state === 'finish' && this.stateT > 50)) this.player.draw(ctx, camX, this.t);
+    drawPitsFront(ctx, this.level, camX, this.t);
     for (const q of this.parts) {
-      if (q.spr) { ctx.drawImage(SPR[q.spr], Math.round(q.x - camX - 5), Math.round(q.y - 6)); continue; }
       ctx.fillStyle = q.c;
       if (q.streak) ctx.fillRect(Math.round(q.x - camX), Math.round(q.y), 2, 1);
       else ctx.fillRect(Math.round(q.x - camX), Math.round(q.y), q.s, q.s);
     }
-    for (const q of this.popups) Font.draw(ctx, q.text, Math.round(q.x - camX), Math.round(q.y), { color: q.color, align: 'center', outline: '#1a1c2c' });
+    for (const q of this.popups) Font.draw(ctx, q.text, Math.round(q.x - camX), Math.round(q.y), { color: q.color, align: 'center', outline: PAL.k });
     ctx.restore();
+    ctx.restore();
+    if (this.flashT > 0) { ctx.fillStyle = 'rgba(255,255,255,' + (this.flashT / 8).toFixed(2) + ')'; ctx.fillRect(0, 0, VIEW_W, VIEW_H); }
     this.drawHud(ctx);
     this.drawOverlays(ctx);
   }
@@ -404,54 +634,122 @@ class PlayScene {
     if (x < -20 || x > VIEW_W + 20) return;
     const spr = this.exitOpen ? SPR.doorOpen : SPR.doorLocked;
     ctx.drawImage(spr, x - 10, 10 * T - spr.height);
-    ctx.fillStyle = '#1a1c2c'; ctx.fillRect(x - 14, 10 * T - 46, 28, 10);
+    ctx.fillStyle = PAL.k; ctx.fillRect(x - 14, 10 * T - 46, 28, 10);
     Font.draw(ctx, 'EXIT', x, 10 * T - 44, { color: this.exitOpen ? '#7be07b' : '#ff8f8f', align: 'center' });
+  }
+
+  drawBar(ctx, x, y, w, v, col, label, labelCol) {
+    Font.draw(ctx, label, x, y, { color: labelCol || '#ffffff' });
+    const bx = x + Font.width(label) + 3;
+    ctx.fillStyle = PAL.k; ctx.fillRect(bx, y, w + 2, 7);
+    ctx.fillStyle = '#3b4658'; ctx.fillRect(bx + 1, y + 1, w, 5);
+    ctx.fillStyle = col; ctx.fillRect(bx + 1, y + 1, Math.round(w * clamp(v, 0, 1)), 5);
+    ctx.fillStyle = 'rgba(255,255,255,0.35)'; ctx.fillRect(bx + 1, y + 1, Math.round(w * clamp(v, 0, 1)), 1);
   }
 
   drawHud(ctx) {
     const p = this.player;
-    ctx.fillStyle = 'rgba(16,24,48,0.88)';
-    ctx.fillRect(0, 0, VIEW_W, 12);
+    ctx.fillStyle = 'rgba(52,80,122,0.94)';
+    ctx.fillRect(0, 0, VIEW_W, HUD_H);
+    this.drawTimeBar(ctx);
     Font.draw(ctx, 'PUNKTE ' + pad(this.score, 6), 4, 3, { color: '#ffffff' });
-    const pumpName = p.pump ? CONFIG.pumps[p.pump].short : 'KEINE PUMPE';
-    Font.draw(ctx, pumpName, 160, 3, { color: p.pump ? '#7be07b' : '#a7b3c4', align: 'center' });
+    if (p.bvcT > 0) {
+      Font.draw(ctx, 'BVC PROFESSIONAL' + (p.bvcZone ? '' : ' ' + Math.ceil(p.bvcT / 60) + ' S'), 160, 3, { color: '#ff8fb8', align: 'center' });
+    } else {
+      const pumpName = p.pump ? CONFIG.pumps[p.pump].short : 'KEINE PUMPE';
+      Font.draw(ctx, pumpName, 160, 3, { color: p.pump ? '#7be07b' : '#a7b3c4', align: 'center' });
+    }
     const sec = Math.max(0, Math.ceil(this.time));
     const low = sec <= 10;
     if (!low || this.t % 30 < 20) Font.draw(ctx, 'ZEIT ' + pad(sec, 3), 316, 3, { color: low ? '#ff6b6b' : '#ffffff', align: 'right' });
-    if (this.combo > 1 && this.comboT > 0) Font.draw(ctx, 'COMBO ×' + Math.min(this.combo, 5), 4, 15, { color: '#ffe066', outline: '#1a1c2c' });
+    // Leisten
+    const heat = p.overheat && p.bvcT <= 0;
+    const sogCol = p.bvcT > 0 ? '#ff8fb8' : heat ? (this.t % 20 < 10 ? '#e04848' : '#ff8f8f') : '#3aa0e8';
+    this.drawBar(ctx, 4, 14, 50, p.bvcT > 0 ? 1 : p.energy, sogCol, heat ? 'HEISS' : 'SOG', heat ? '#ff8f8f' : '#ffffff');
+    this.drawBar(ctx, 96, 14, 40, p.stamina, p.tired ? '#8795a8' : '#7be07b', 'SPRINT');
+    // Schutzausrüstung (bei Vollschutz goldener Rahmen)
+    if (p.fullPPE()) {
+      ctx.fillStyle = THEME.gold; ctx.fillRect(240, 11, 76, 12);
+      ctx.fillStyle = THEME.navyDark; ctx.fillRect(241, 12, 74, 10);
+    }
+    CONFIG.ppe.forEach((q, i) => {
+      const spr = SPR['ppe_' + q.key];
+      const x = 244 + i * 18, y = 13 + Math.round((10 - spr.height) / 2);
+      ctx.globalAlpha = p.ppe[q.key] ? 1 : 0.25;
+      ctx.drawImage(spr, x, y);
+      ctx.globalAlpha = 1;
+    });
+    this.drawCombo(ctx);
     const b = this.boss;
     if (b && b.active && b.alive && !b.captured) {
-      Font.draw(ctx, 'DAMPF-KRAKE', 160, 16, { color: '#e6dcff', align: 'center', outline: '#1a1c2c' });
-      ctx.fillStyle = '#1a1c2c'; ctx.fillRect(109, 25, 102, 5);
-      ctx.fillStyle = '#7b5fb8'; ctx.fillRect(110, 26, Math.round(100 * b.hp / b.maxHp), 3);
+      Font.draw(ctx, 'DAMPF-KRAKE', 160, HUD_H + 8, { color: '#e6dcff', align: 'center', outline: PAL.k });
+      ctx.fillStyle = PAL.k; ctx.fillRect(109, HUD_H + 17, 102, 5);
+      ctx.fillStyle = '#7b5fb8'; ctx.fillRect(110, HUD_H + 18, Math.round(100 * b.hp / b.maxHp), 3);
     }
   }
 
-  drawOverlays(ctx) {
-    if (this.msg) Font.draw(ctx, this.msg.text, 160, this.boss && this.boss.active && this.boss.alive ? 36 : 22, { color: this.msg.color, align: 'center', outline: '#1a1c2c' });
-    if (this.banner) {
-      const b = this.banner;
-      const lines = b.sub.split('\n').length;
-      const h = 24 + lines * 9, y = 44;
-      drawPanel(ctx, 40, y, 240, h);
-      let tx = 160;
-      if (b.pump) {
-        const spr = SPR['pump' + b.pump];
-        ctx.drawImage(spr, 50, y + Math.round((h - spr.height * 2) / 2), spr.width * 2, spr.height * 2);
-        tx = 176;
-      }
-      Font.draw(ctx, b.title, tx, y + 6, { color: '#ffe066', align: 'center' });
-      Font.draw(ctx, b.sub, tx, y + 18, { color: '#ffffff', align: 'center' });
+  // Zeitleiste unter der Anzeige: läuft von rechts nach links ab
+  drawTimeBar(ctx) {
+    const f = clamp(this.time / CONFIG.roundSeconds, 0, 1), y = HUD_H;
+    ctx.fillStyle = THEME.navyDark; ctx.fillRect(0, y, VIEW_W, 3);
+    const low = this.time <= 10;
+    let col = f > 0.5 ? '#7be07b' : f > 0.25 ? THEME.gold : '#e04848';
+    if (this.timeFlash > 0 && this.timeFlash % 6 < 3) col = '#ffffff';
+    if (!low || this.t % 30 < 20) {
+      const w = Math.round(VIEW_W * f);
+      ctx.fillStyle = col; ctx.fillRect(0, y, w, 3);
+      ctx.fillStyle = 'rgba(255,255,255,0.4)'; ctx.fillRect(0, y, w, 1);
     }
+    ctx.fillStyle = THEME.gold; ctx.fillRect(0, y + 3, VIEW_W, 1);
+  }
+
+  // Gut sichtbarer Combo-Kasten mit ablaufendem Timer
+  drawCombo(ctx) {
+    let n, frac = 0, lost = false;
+    if (this.combo > 1 && this.comboT > 0) {
+      n = Math.min(this.combo, CONFIG.comboMax);
+      frac = this.comboT / Math.round(CONFIG.comboWindow * 60);
+    } else if (this.comboLost) {
+      n = this.comboLost.n; lost = true;
+    } else return;
+    const pop = this.comboPop > 4 ? 2 : this.comboPop > 0 ? 1 : 0;
+    const w = 84 + pop * 2, h = 24 + pop * 2, x = 4 - pop, y = HUD_H + 8 - pop;
+    if (lost) ctx.globalAlpha = Math.min(1, this.comboLost.t / 20);
+    ctx.fillStyle = PAL.k; ctx.fillRect(x - 2, y - 2, w + 4, h + 4);
+    ctx.fillStyle = lost ? '#c9d1dc' : n >= 5 ? (this.t % 20 < 10 ? '#ffffff' : '#ffe9a8') : '#d27410';
+    ctx.fillRect(x - 1, y - 1, w + 2, h + 2);
+    ctx.fillStyle = lost ? '#8795a8' : THEME.gold; ctx.fillRect(x, y, w, h);
+    ctx.fillStyle = lost ? '#a7b3c4' : '#ffd966'; ctx.fillRect(x, y, w, 1);
+    Font.draw(ctx, 'COMBO', x + 4, y + 3, { color: lost ? '#3b4658' : THEME.navy });
+    Font.draw(ctx, '×' + n, x + w - 4, y + 2 - pop, { color: lost ? '#3b4658' : PAL.k, scale: 2, align: 'right' });
+    // Timer-Balken
+    const bx = x + 4, by = y + h - 8, bw = w - 8;
+    if (!lost) {
+      ctx.fillStyle = PAL.k; ctx.fillRect(bx, by, bw, 6);
+      ctx.fillStyle = THEME.navyDark; ctx.fillRect(bx + 1, by + 1, bw - 2, 4);
+    }
+    const blink = !lost && this.comboT < 30 && this.t % 8 < 4;
+    if (!lost && !blink) {
+      ctx.fillStyle = frac > 0.5 ? '#7be07b' : frac > 0.25 ? '#ff9f1a' : '#e04848';
+      ctx.fillRect(bx + 1, by + 1, Math.max(1, Math.round((bw - 2) * frac)), 4);
+      ctx.fillStyle = 'rgba(255,255,255,0.45)'; ctx.fillRect(bx + 1, by + 1, Math.max(1, Math.round((bw - 2) * frac)), 1);
+    }
+    if (lost) Font.draw(ctx, 'VORBEI', bx + bw / 2, by - 1, { color: '#ffffff', align: 'center' });
+    ctx.globalAlpha = 1;
+  }
+
+  drawOverlays(ctx) {
+    // Einblendungen unten im Boden, damit das Spielfeld frei bleibt
+    if (this.banner || this.msg) this.drawFloorBar(ctx);
     if (this.state === 'howto') this.drawHowto(ctx);
     if (this.state === 'count') {
       const n = 3 - Math.floor(this.stateT / 60);
-      Font.draw(ctx, String(n), 160, 70, { color: '#ffe066', scale: 4, align: 'center', outline: '#1a1c2c' });
+      Font.draw(ctx, String(n), 160, 70, { color: THEME.gold, scale: 4, align: 'center', outline: PAL.k });
     }
-    if (this.state === 'play' && this.stateT < 50) Font.draw(ctx, 'LOS!', 160, 70, { color: '#7be07b', scale: 4, align: 'center', outline: '#1a1c2c' });
+    if (this.state === 'play' && this.stateT < 50) Font.draw(ctx, 'LOS!', 160, 70, { color: '#7be07b', scale: 4, align: 'center', outline: PAL.k });
     if (this.state === 'timeup') {
       drawPanel(ctx, 70, 64, 180, 34);
-      Font.draw(ctx, 'ZEIT ABGELAUFEN!', 160, 76, { color: '#ffe066', align: 'center' });
+      Font.draw(ctx, 'ZEIT ABGELAUFEN!', 160, 76, { color: THEME.gold, align: 'center' });
     }
     if (this.state === 'finish') {
       drawPanel(ctx, 60, 60, 200, 44);
@@ -460,53 +758,77 @@ class PlayScene {
     }
     if (this.paused) {
       drawPanel(ctx, 60, 55, 200, 60);
-      Font.draw(ctx, 'PAUSE', 160, 62, { color: '#ffe066', scale: 2, align: 'center' });
-      Font.draw(ctx, 'ESC = WEITERSPIELEN\nENTER = RUNDE ABBRECHEN', 160, 84, { color: '#ffffff', align: 'center' });
+      Font.draw(ctx, 'PAUSE', 160, 62, { color: THEME.gold, scale: 2, align: 'center' });
+      Font.draw(ctx, 'ESC / START = WEITERSPIELEN\nENTER = RUNDE ABBRECHEN', 160, 84, { color: '#ffffff', align: 'center' });
+    }
+  }
+
+  drawFloorBar(ctx) {
+    const camX = Math.round(this.camX), y0 = 10 * T - CAM_Y + 2, h = VIEW_H - y0;
+    // Hintergrund nur über Boden, Gruben bleiben sichtbar
+    ctx.fillStyle = 'rgba(52,80,122,0.88)';
+    for (let sx = -(camX % T); sx < VIEW_W; sx += T) {
+      const tx = Math.floor((camX + sx) / T);
+      if (tileAt(this.level, tx, 10) !== ' ') ctx.fillRect(sx, y0, T, h);
+    }
+    ctx.fillStyle = THEME.gold; ctx.fillRect(0, y0 - 1, VIEW_W, 1);
+    const b = this.banner;
+    if (b) {
+      let tx = 6;
+      if (b.icon) {
+        const spr = SPR[b.icon];
+        ctx.drawImage(spr, 6, y0 + Math.round((h - spr.height) / 2));
+        tx = 12 + spr.width;
+      }
+      Font.draw(ctx, b.title, tx, y0 + 2, { color: THEME.gold });
+      Font.draw(ctx, b.sub.split('\n').slice(0, 2).join('\n'), tx, y0 + 11, { color: '#ffffff' });
+    } else if (this.msg) {
+      Font.draw(ctx, this.msg.text, 160, y0 + Math.round((h - 7) / 2), { color: this.msg.color, align: 'center' });
     }
   }
 
   drawHowto(ctx) {
-    drawPanel(ctx, 24, 18, 272, 150);
-    Font.draw(ctx, 'SO GEHT\'S', 160, 24, { color: '#ffe066', scale: 2, align: 'center' });
-    const rows = [
-      ['← →', 'LAUFEN'],
-      ['LEERTASTE', 'SPRINGEN'],
-      ['X HALTEN', 'SAUGEN']
-    ];
-    rows.forEach((r, i) => {
-      const y = 46 + i * 12;
-      drawKey(ctx, 118, y - 2, r[0]);
-      Font.draw(ctx, r[1], 128, y, { color: '#ffffff' });
+    drawPanel(ctx, 16, 8, 288, 164);
+    Font.draw(ctx, 'SO GEHT\'S', 160, 13, { color: THEME.gold, scale: 2, align: 'center' });
+    const left = [['←  →', 'LAUFEN'], ['↑', 'SPRINGEN'], ['↓', 'DUCKEN']];
+    const right = [['LEERTASTE', 'SAUGEN'], ['SHIFT/CTRL', 'SPRINTEN'], ['CONTROLLER', 'GEHT AUCH']];
+    left.forEach((r, i) => { drawKey(ctx, 88, 33 + i * 13, r[0]); Font.draw(ctx, r[1], 94, 35 + i * 13, { color: '#ffffff' }); });
+    right.forEach((r, i) => { drawKey(ctx, 232, 33 + i * 13, r[0]); Font.draw(ctx, r[1], 238, 35 + i * 13, { color: '#ffffff' }); });
+    Font.draw(ctx, 'SOG + SPRINT SIND BEGRENZT: LEISTEN BEACHTEN!', 160, 75, { color: '#c8f2ff', align: 'center' });
+    ctx.fillStyle = THEME.gold; ctx.fillRect(28, 86, 264, 1);
+    Font.draw(ctx, 'KOLBEN-BLÖCKE VON UNTEN ANSPRINGEN:', 160, 91, { color: THEME.gold, align: 'center' });
+    // Block + Inhalte
+    ctx.drawImage(SPR.q0, 30, 104);
+    const icons = ['pump1', 'pump2', 'pump3', 'bvc', 'ppe_goggles', 'ppe_gloves', 'ppe_helmet', 'ppe_shoes', 'view'];
+    icons.forEach((n, i) => {
+      const spr = SPR[n];
+      const x = 62 + i * 26;
+      ctx.drawImage(spr, Math.round(x - spr.width / 2), 120 - spr.height);
     });
-    Font.draw(ctx, '?-BLÖCKE VON UNTEN ANSPRINGEN\n= BESSERE PUMPE = MEHR SAUGKRAFT!', 160, 88, { color: '#c8f2ff', align: 'center' });
-    const pumps = [1, 2, 3];
-    pumps.forEach((n, i) => {
-      const x = 92 + i * 56;
-      const spr = SPR['pump' + n];
-      ctx.drawImage(spr, x - spr.width / 2, 122 - spr.height);
-      Font.draw(ctx, CONFIG.pumps[n].short, x, 125, { color: '#ffffff', align: 'center' });
-      if (i < 2) Font.draw(ctx, '→', x + 28, 112, { color: '#ffe066', align: 'center' });
-    });
-    Font.draw(ctx, 'SAUG IN ' + CONFIG.roundSeconds + ' SEKUNDEN SO VIEL WIE MÖGLICH EIN!', 160, 140, { color: '#ffffff', align: 'center' });
-    if (this.t % 50 < 35) Font.draw(ctx, 'ENTER = START', 160, 155, { color: '#ffe066', align: 'center' });
+    ctx.fillStyle = '#5d6b80'; ctx.fillRect(153, 100, 1, 32); ctx.fillRect(257, 100, 1, 32);
+    Font.draw(ctx, 'PUMPEN', 101, 124, { color: '#ffffff', align: 'center' });
+    Font.draw(ctx, 'SCHUTZAUSRÜSTUNG', 205, 124, { color: '#ffffff', align: 'center' });
+    Font.draw(ctx, '+10 S', 272, 124, { color: '#7be07b', align: 'center' });
+    Font.draw(ctx, 'SAUG IN ' + CONFIG.roundSeconds + ' SEK SO VIEL CHAOS WIE MÖGLICH EIN!', 160, 146, { color: '#ffffff', align: 'center' });
+    if (this.t % 50 < 35) Font.draw(ctx, 'ENTER = START', 160, 160, { color: THEME.gold, align: 'center' });
   }
 }
 
 // ---------------------------------------------------------------------
 // Zeichenhilfen (auch vom Titelbildschirm genutzt)
 function drawPanel(ctx, x, y, w, h) {
-  ctx.fillStyle = '#1a1c2c'; ctx.fillRect(x - 2, y - 2, w + 4, h + 4);
+  ctx.fillStyle = PAL.k; ctx.fillRect(x - 2, y - 2, w + 4, h + 4);
   ctx.fillStyle = '#ffffff'; ctx.fillRect(x - 1, y - 1, w + 2, h + 2);
-  ctx.fillStyle = '#10204a'; ctx.fillRect(x, y, w, h);
+  ctx.fillStyle = THEME.navy; ctx.fillRect(x, y, w, h);
 }
 
 function drawKey(ctx, rightX, y, label) {
   const w = Font.width(label) + 6;
   const x = rightX - w;
-  ctx.fillStyle = '#1a1c2c'; ctx.fillRect(x - 1, y - 1, w + 2, 12);
+  ctx.fillStyle = PAL.k; ctx.fillRect(x - 1, y - 1, w + 2, 12);
   ctx.fillStyle = '#e8eef5'; ctx.fillRect(x, y, w, 10);
   ctx.fillStyle = '#a7b3c4'; ctx.fillRect(x, y + 9, w, 1);
-  Font.draw(ctx, label, x + 3, y + 2, { color: '#1a1c2c' });
+  Font.draw(ctx, label, x + 3, y + 2, { color: PAL.k });
 }
 
 function drawSign(ctx, s, camX) {
@@ -515,87 +837,186 @@ function drawSign(ctx, s, camX) {
   const h = lines.length * 9 + 5;
   const cx = s.x * T + 8 - camX;
   if (cx + w / 2 < 0 || cx - w / 2 > VIEW_W) return;
-  const bx = Math.round(cx - w / 2), by = 36;
+  const bx = Math.round(cx - w / 2), by = 52;
   ctx.fillStyle = '#6b3f22'; ctx.fillRect(cx - 1, by + h, 3, 160 - by - h);
-  ctx.fillStyle = '#1a1c2c'; ctx.fillRect(bx - 1, by - 1, w + 2, h + 2);
+  ctx.fillStyle = PAL.k; ctx.fillRect(bx - 1, by - 1, w + 2, h + 2);
   ctx.fillStyle = '#fff6d5'; ctx.fillRect(bx, by, w, h);
-  Font.draw(ctx, s.text, bx + 4, by + 3, { color: '#1a1c2c' });
+  Font.draw(ctx, s.text, bx + 4, by + 3, { color: PAL.k });
 }
 
 function drawBackground(ctx, camX) {
-  // Wandfarbe je Zone
-  for (let i = 0; i < 3; i++) {
-    const x0 = Level.ZONE_STARTS[i] * T - camX;
-    const x1 = (i < 2 ? Level.ZONE_STARTS[i + 1] * T : Level.WIDTH * T) - camX;
+  const zs = Level.ZONE_STARTS, BENCH = 124;
+  for (let i = 0; i < zs.length; i++) {
+    const x0 = zs[i] * T - camX;
+    const x1 = (i < zs.length - 1 ? zs[i + 1] * T : Level.WIDTH * T) - camX;
     if (x1 < 0 || x0 > VIEW_W) continue;
     const z = ZONE_STYLE[i];
     ctx.fillStyle = z.wall; ctx.fillRect(x0, 0, x1 - x0, VIEW_H);
-    ctx.fillStyle = z.base; ctx.fillRect(x0, 106, x1 - x0, 42);
-    ctx.fillStyle = z.wall2; ctx.fillRect(x0, 105, x1 - x0, 2);
+    ctx.fillStyle = z.base; ctx.fillRect(x0, BENCH + 2, x1 - x0, 148 - BENCH - 2);
+    ctx.fillStyle = z.wall2; ctx.fillRect(x0, BENCH, x1 - x0, 2);
   }
-  // Fliesenraster (Parallax)
-  const px = Math.round(camX * 0.5);
-  for (let x = -(px % 16); x < VIEW_W; x += 16) {
+  // 16-Bit-Verlauf mit Dithering: oben heller, unten dunkler
+  const dp = ditherPatterns(ctx);
+  ctx.fillStyle = 'rgba(255,255,255,0.18)'; ctx.fillRect(0, 12, VIEW_W, 22);
+  ctx.fillStyle = dp.light; ctx.fillRect(0, 34, VIEW_W, 16);
+  ctx.fillStyle = dp.dark1; ctx.fillRect(0, 92, VIEW_W, 16);
+  ctx.fillStyle = dp.dark2; ctx.fillRect(0, 108, VIEW_W, 16);
+  // Unterschränke unter dem Labortisch (bewegen sich mit 1×)
+  for (let x = -(camX % 32) - 32; x < VIEW_W + 32; x += 32) {
+    const z = ZONE_STYLE[zoneOf(camX + x + 16)];
+    const dk = tint(z.base, 0.86), lt = tint(z.base, 1.08);
+    ctx.fillStyle = dk; ctx.fillRect(x, BENCH + 2, 1, 22); ctx.fillRect(x + 16, BENCH + 9, 1, 15); ctx.fillRect(x + 1, BENCH + 8, 31, 1);
+    ctx.fillStyle = lt; ctx.fillRect(x + 1, BENCH + 2, 1, 22); ctx.fillRect(x + 1, BENCH + 9, 31, 1);
+    ctx.fillStyle = '#a9b3be'; ctx.fillRect(x + 13, BENCH + 4, 6, 1); ctx.fillRect(x + 13, BENCH + 14, 1, 4); ctx.fillRect(x + 19, BENCH + 14, 1, 4);
+  }
+  ctx.fillStyle = 'rgba(255,255,255,0.3)'; ctx.fillRect(0, BENCH + 2, VIEW_W, 1);
+  ctx.fillStyle = dp.dark1; ctx.fillRect(0, 140, VIEW_W, 8);
+  // Ebene 1 (ganz hinten, 0.2×): Fliesen, Deckenleuchten und Fenster
+  const p1 = Math.round(camX * 0.2);
+  for (let x = -(p1 % 8); x < VIEW_W; x += 8) {
     ctx.fillStyle = ZONE_STYLE[zoneOf(camX + x)].wall2;
-    ctx.fillRect(x, 12, 1, 93);
+    ctx.fillRect(x, 12, 1, BENCH - 12);
   }
-  for (let y = 12; y < 105; y += 16) {
-    ctx.fillStyle = 'rgba(0,0,0,0.05)';
-    ctx.fillRect(0, y, VIEW_W, 1);
+  ctx.fillStyle = 'rgba(0,0,0,0.04)';
+  for (let y = 12; y < BENCH; y += 8) ctx.fillRect(0, y, VIEW_W, 1);
+  for (let n = Math.floor(p1 / 70) - 1; n < Math.floor(p1 / 70) + 6; n++) {
+    const lx = n * 70 - p1 + 20;
+    ctx.drawImage(SPR.deco_lamp, lx, 13);
   }
-  // Deko (Parallax)
-  const step = 88;
-  const n0 = Math.floor(px / step) - 1;
-  for (let n = n0; n < n0 + 6; n++) {
-    const sx = n * step - px;
-    const z = zoneOf(camX + sx + 20);
-    drawDecor(ctx, sx, n, z);
+  ctx.globalAlpha = 0.35;
+  const w1 = 90;
+  for (let n = Math.floor(p1 / w1) - 1; n < Math.floor(p1 / w1) + 5; n++) {
+    const wx = n * w1 - p1 + 30;
+    ctx.drawImage(SPR.deco_window, wx, 40);
+    ctx.save(); ctx.globalAlpha = 0.12; ctx.fillStyle = '#ffffff';
+    ctx.beginPath(); ctx.moveTo(wx + 1, 61); ctx.lineTo(wx + 22, 61); ctx.lineTo(wx + 44, BENCH); ctx.lineTo(wx + 23, BENCH); ctx.closePath(); ctx.fill();
+    ctx.restore(); ctx.globalAlpha = 0.35;
+  }
+  // Ebene 2 (0.45×): Wand-Deko; Poster zeigt immer die Pumpe des aktuellen Abschnitts
+  const p2 = Math.round(camX * 0.45), w2 = 52, here = zoneOf(camX + VIEW_W / 2);
+  ctx.globalAlpha = 0.45;
+  for (let n = Math.floor(p2 / w2) - 1; n < Math.floor(p2 / w2) + 8; n++) {
+    const sx = n * w2 - p2;
+    let name;
+    if (((n % 6) + 6) % 6 === 0) name = 'poster' + here;
+    else {
+      const list = ZONE_STYLE[zoneOf(camX + sx + 20)].wall_;
+      name = list[((n % list.length) + list.length) % list.length];
+    }
+    const spr = SPR['deco_' + name];
+    const wy = { vacuulan: 98, schlenk: 90, shelf: 70, signs: 76, clock: 66, periodic: 72 }[name] || 36;
+    ctx.drawImage(spr, sx, wy);
+    if (n % 3 === 0) ctx.drawImage(SPR.deco_outlets, sx + 26, 110);
+  }
+  // Ebene 3 (0.7×): Laborgeräte auf dem Labortisch
+  const p3 = Math.round(camX * 0.7), w3 = 46;
+  ctx.globalAlpha = 0.6;
+  for (let n = Math.floor(p3 / w3) - 1; n < Math.floor(p3 / w3) + 9; n++) {
+    const sx = n * w3 - p3;
+    const list = ZONE_STYLE[zoneOf(camX + sx + 23)].bench;
+    const spr = SPR['deco_' + list[((n % list.length) + list.length) % list.length]];
+    ctx.drawImage(spr, sx + 23 - Math.round(spr.width / 2), BENCH - spr.height);
+    if (n % 3 === 1) ctx.drawImage(SPR.deco_glassware, sx - 2, BENCH - SPR.deco_glassware.height);
+  }
+  ctx.globalAlpha = 1;
+}
+
+// Dither-Muster (einmal erzeugt) für SNES-typische Farbverläufe
+let DITHER = null;
+function ditherPatterns(ctx) {
+  if (DITHER) return DITHER;
+  const mk = (fn) => { const c = makeCanvas(4, 4), g = c.getContext('2d'); fn(g); return ctx.createPattern(c, 'repeat'); };
+  DITHER = {
+    light: mk(g => { g.fillStyle = 'rgba(255,255,255,0.22)'; g.fillRect(0, 0, 1, 1); g.fillRect(2, 2, 1, 1); }),
+    dark1: mk(g => { g.fillStyle = 'rgba(20,30,50,0.10)'; g.fillRect(0, 0, 1, 1); g.fillRect(2, 2, 1, 1); g.fillRect(2, 0, 1, 1); g.fillRect(0, 2, 1, 1); }),
+    dark2: mk(g => { g.fillStyle = 'rgba(20,30,50,0.10)'; for (let y = 0; y < 4; y++) for (let x = (y % 2); x < 4; x += 2) g.fillRect(x, y, 1, 1); })
+  };
+  return DITHER;
+}
+
+// Abgründe = Auffangwannen, je Zone eine andere Flüssigkeit
+const PIT_STYLE = [
+  { name: 'FILTRAT-WANNE', into: 'IN DIE FILTRAT-WANNE', deep: '#1f4f8a', mid: '#3a7fcf', top: '#8fd0ff', bubble: '#c8ecff' },
+  { name: 'DESINFEKTIONSBAD', into: 'INS DESINFEKTIONSBAD', deep: '#8a2f5e', mid: '#d0609a', top: '#ffb0d6', bubble: '#ffe0f0' },
+  { name: 'LÖSEMITTEL-AUFFANGWANNE', into: 'IN DIE LÖSEMITTEL-AUFFANGWANNE', deep: '#8a4a10', mid: '#e0861f', top: '#ffc46b', bubble: '#fff0c8' },
+  { name: 'FLÜSSIGSTICKSTOFF', into: 'IN DEN FLÜSSIGSTICKSTOFF', deep: '#3d6f96', mid: '#8fc4e8', top: '#e6f7ff', bubble: '#ffffff', fog: true }
+];
+const PIT_SURFACE = 10 * T + 6; // Flüssigkeitsspiegel (Welt-y)
+
+function pitSpans(level, camX) {
+  const spans = [];
+  const tx0 = Math.max(0, Math.floor(camX / T) - 1), tx1 = Math.min(level.W - 1, tx0 + Math.ceil(VIEW_W / T) + 2);
+  let a = null;
+  for (let tx = tx0; tx <= tx1 + 1; tx++) {
+    const pit = tx <= tx1 && tileAt(level, tx, 10) === ' ' && tileAt(level, tx, 11) === ' ';
+    if (pit && a === null) a = tx;
+    if (!pit && a !== null) { spans.push([a, tx - 1]); a = null; }
+  }
+  return spans;
+}
+
+// Becken hinten: Innenwand, Flüssigkeit, Bläschen, Warnschild
+function drawPitsBack(ctx, level, camX, t) {
+  for (const [a, b] of pitSpans(level, camX)) {
+    const st = PIT_STYLE[zoneOf(a * T)];
+    const x0 = a * T - camX, w = (b - a + 1) * T, yb = VIEW_H + CAM_Y;
+    ctx.fillStyle = '#3b4658'; ctx.fillRect(x0, 10 * T, w, yb - 10 * T);
+    ctx.fillStyle = '#5d6b80'; ctx.fillRect(x0, 10 * T, w, 2);
+    ctx.fillStyle = st.deep; ctx.fillRect(x0, PIT_SURFACE, w, yb - PIT_SURFACE);
+    ctx.fillStyle = st.mid; ctx.fillRect(x0, PIT_SURFACE + 2, w, 5);
+    // Wellen
+    for (let x = 0; x < w; x++) {
+      const wy = Math.round(Math.sin((x + a * T) * 0.35 + t * 0.12) * 1.2);
+      ctx.fillStyle = st.top; ctx.fillRect(x0 + x, PIT_SURFACE + wy, 1, 2);
+    }
+    // Bläschen
+    for (let i = 0; i < 4; i++) {
+      const bx = x0 + 3 + ((i * 11 + a * 7) % Math.max(1, w - 6));
+      const ph = (t * 0.4 + i * 17) % 20;
+      ctx.fillStyle = st.bubble; ctx.fillRect(bx, Math.round(yb - 4 - ph), 2, 2);
+    }
+    // Edelstahl-Beckenwände
+    for (const wx of [x0, x0 + w - 2]) {
+      ctx.fillStyle = '#c9d1dc'; ctx.fillRect(wx, 10 * T, 2, yb - 10 * T);
+      ctx.fillStyle = '#8795a8'; ctx.fillRect(wx + (wx === x0 ? 1 : 0), 10 * T, 1, yb - 10 * T);
+    }
+    // Warnschild am linken Rand
+    const sx = x0 - 12, sy = 10 * T - 13;
+    ctx.fillStyle = '#6b7788'; ctx.fillRect(sx + 4, sy + 7, 1, 6);
+    ctx.fillStyle = PAL.k;
+    for (let r = 0; r < 8; r++) ctx.fillRect(sx + 4 - Math.floor(r / 2) - 1, sy + r, Math.floor(r / 2) * 2 + 3, 1);
+    ctx.fillStyle = THEME.gold;
+    for (let r = 1; r < 7; r++) ctx.fillRect(sx + 4 - Math.floor((r - 1) / 2), sy + r, Math.floor((r - 1) / 2) * 2 + 1, 1);
+    ctx.fillStyle = PAL.k; ctx.fillRect(sx + 4, sy + 3, 1, 2); ctx.fillRect(sx + 4, sy + 6, 1, 1);
   }
 }
 
-function drawDecor(ctx, x, n, zone) {
-  const kind = Math.floor(hash(n + 11) * 5);
-  const k = '#1a1c2c';
-  if (kind === 0) { // Fenster
-    ctx.fillStyle = k; ctx.fillRect(x, 26, 44, 40);
-    ctx.fillStyle = '#ffffff'; ctx.fillRect(x + 1, 27, 42, 38);
-    ctx.fillStyle = zone === 2 ? '#bfe8f0' : '#9fd8f5'; ctx.fillRect(x + 3, 29, 38, 34);
-    ctx.fillStyle = '#ffffff'; ctx.fillRect(x + 8, 36, 12, 4); ctx.fillRect(x + 12, 33, 6, 3);
-    ctx.fillStyle = '#ffffff'; ctx.fillRect(x + 21, 29, 2, 34); ctx.fillRect(x + 3, 45, 38, 2);
-  } else if (kind === 1) { // Regal mit Flaschen
-    const cols = ['#7be07b', '#3aa0e8', '#ffa53a', '#e04848', '#c8f2ff', '#b4f7d4'];
-    for (const sy of [58, 86]) {
-      ctx.fillStyle = '#6b3f22'; ctx.fillRect(x, sy, 56, 3);
-      for (let i = 0; i < 6; i++) {
-        const c = cols[Math.floor(hash(n * 13 + i + sy) * cols.length)];
-        const bh = 8 + Math.floor(hash(n * 7 + i + sy) * 6);
-        const bx = x + 3 + i * 9;
-        ctx.fillStyle = k; ctx.fillRect(bx - 1, sy - bh - 1, 7, bh + 1);
-        ctx.fillStyle = c; ctx.fillRect(bx, sy - bh + 3, 5, bh - 3);
-        ctx.fillStyle = '#e8eef5'; ctx.fillRect(bx + 1, sy - bh, 3, 3);
-      }
+// Becken vorne: Warnstreifen an der Kante, halbtransparente Flüssigkeit (Spieler taucht ein), Nebel
+function drawPitsFront(ctx, level, camX, t) {
+  for (const [a, b] of pitSpans(level, camX)) {
+    const st = PIT_STYLE[zoneOf(a * T)];
+    const x0 = a * T - camX, w = (b - a + 1) * T, yb = VIEW_H + CAM_Y;
+    ctx.globalAlpha = 0.55;
+    ctx.fillStyle = st.mid; ctx.fillRect(x0 + 2, PIT_SURFACE + 2, w - 4, yb - PIT_SURFACE - 2);
+    ctx.globalAlpha = 1;
+    for (let x = 2; x < w - 2; x++) {
+      const wy = Math.round(Math.sin((x + a * T) * 0.35 + t * 0.12) * 1.2);
+      ctx.fillStyle = st.top; ctx.fillRect(x0 + x, PIT_SURFACE + wy, 1, 1);
     }
-  } else if (kind === 2) { // Poster
-    ctx.fillStyle = k; ctx.fillRect(x, 40, 66, 24);
-    ctx.fillStyle = '#ffffff'; ctx.fillRect(x + 1, 41, 64, 22);
-    Font.draw(ctx, 'VACUUBRAND', x + 4, 44, { color: '#1f5fa8' });
-    ctx.fillStyle = '#3aa0e8'; ctx.fillRect(x + 4, 54, 58, 2);
-    ctx.fillStyle = '#a7b3c4'; ctx.fillRect(x + 4, 58, 40, 2);
-  } else if (kind === 3) { // Rohre
-    ctx.fillStyle = '#8795a8'; ctx.fillRect(x + 10, 12, 6, 94);
-    ctx.fillStyle = '#b8c4d4'; ctx.fillRect(x + 11, 12, 2, 94);
-    ctx.fillStyle = '#8795a8'; ctx.fillRect(x + 10, 70, 60, 6);
-    ctx.fillStyle = '#b8c4d4'; ctx.fillRect(x + 10, 71, 60, 2);
-    ctx.fillStyle = '#5d6b80'; ctx.fillRect(x + 8, 40, 10, 4); ctx.fillRect(x + 40, 68, 4, 10);
-    ctx.fillStyle = '#e04848'; ctx.fillRect(x + 20, 64, 8, 3); ctx.fillRect(x + 23, 67, 2, 3);
-  } else { // Periodensystem
-    ctx.fillStyle = k; ctx.fillRect(x, 34, 58, 34);
-    ctx.fillStyle = '#ffffff'; ctx.fillRect(x + 1, 35, 56, 32);
-    const cols = ['#ffb3b3', '#b3d9ff', '#c8f2c8', '#fff0a8'];
-    for (let r = 0; r < 5; r++) for (let c = 0; c < 9; c++) {
-      if (r === 0 && c > 0 && c < 8) continue;
-      if (r === 1 && c > 1 && c < 6) continue;
-      ctx.fillStyle = cols[(r + c) % 4]; ctx.fillRect(x + 3 + c * 6, 38 + r * 6, 5, 5);
+    if (st.fog) {
+      ctx.globalAlpha = 0.35; ctx.fillStyle = '#ffffff';
+      for (let i = 0; i < 5; i++) {
+        const fx = x0 + ((i * 9 + t * 0.3) % (w + 10)) - 5, fy = PIT_SURFACE - 3 - ((t * 0.2 + i * 5) % 8);
+        ctx.fillRect(Math.round(fx), Math.round(fy), 6, 2); ctx.fillRect(Math.round(fx) + 1, Math.round(fy) - 1, 4, 1);
+      }
+      ctx.globalAlpha = 1;
+    }
+    // gelb-schwarze Warnstreifen auf der Bodenkante links und rechts
+    for (const ex of [x0 - T, x0 + w]) {
+      for (let x = 0; x < T; x++) for (let y = 0; y < 3; y++) {
+        ctx.fillStyle = ((x + y) >> 2) % 2 ? PAL.k : THEME.gold;
+        ctx.fillRect(ex + x, 10 * T + y, 1, 1);
+      }
     }
   }
 }
@@ -612,7 +1033,7 @@ function drawTiles(ctx, level, camX, bumps, t) {
       let spr;
       if (c === '#') spr = isSolid(level, tx, ty - 1) ? SPR['ground' + z] : SPR['groundTop' + z];
       else if (c === 'B') spr = SPR['brick' + z];
-      else if (c === '-') spr = SPR.platform;
+      else if (c === '-') spr = SPR['platform' + (tx % 3 === 1 ? 1 : 0)];
       else if (c === 'U') spr = SPR.used;
       else spr = SPR['q' + qf];
       let oy = 0;
