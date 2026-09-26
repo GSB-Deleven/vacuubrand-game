@@ -38,7 +38,7 @@ const Level = {
     e('d', 18); e('t', 20); e('f', 24);
     q(26, 6, '?');
     e('p', 29, 6); q(31, 6, '1'); e('f', 33);
-    lan(35, 7, 5); e('d', 36, 6); e('f', 38, 6);
+    lan(32, 8, 2); lan(35, 7, 5); e('d', 36, 6); e('f', 38, 6);
     q(37, 3, '?');
     e('H2O', 40, 4);
     pit(43, 44);
@@ -52,7 +52,7 @@ const Level = {
     sign(82, 'ZELLKULTUR-LABOR:\nHOL DIR DIE BVC!');
     brick(85, 6); q(86, 6, 'V'); brick(87, 6);
     e('n', 90); e('e', 93); e('H2O2', 95, 5); e('w', 96); e('n', 99);
-    lan(101, 7, 4); e('e', 102, 6); q(103, 3, '?');
+    lan(98, 8, 2); lan(101, 7, 4); e('e', 102, 6); q(103, 3, '?');
     e('n', 105, 9); e('w', 107); e('n', 110); e('d', 112); e('e', 114); e('H2O2', 111, 5); e('w', 116);
     brick(115, 6); q(116, 6, '2'); brick(117, 6);
     e('e', 118);
@@ -61,7 +61,7 @@ const Level = {
     sign(122, 'PC 3001 VARIO SELECT:\nIDEAL FÜR DEN ROTAVAP');
     q(125, 6, '2');
     e('k', 128); e('c', 131, 6); e('y', 134); e('h', 138, 6);
-    lan(141, 7, 4); e('k', 142, 6); lan(146, 5, 4); e('h', 147, 3); q(148, 2, '?');
+    lan(138, 8, 2); lan(141, 7, 4); e('k', 142, 6); lan(146, 5, 4); e('h', 147, 3); q(148, 2, '?');
     e('k', 152); e('y', 155);
     pit(158, 159);
     e('MEOH', 157, 5); e('c', 162, 5); e('m', 165); e('ETOH', 167, 4); e('c', 168, 6);
@@ -76,7 +76,7 @@ const Level = {
     sign(202, 'VACUU·PURE 10C:\nIDEAL FÜR ÖLFREIE TROCKNUNG');
     q(205, 6, '3');
     e('i', 208, 6); e('N2', 210, 4); e('z', 211); e('l', 214);
-    lan(217, 7, 3); lan(221, 5, 3); e('i', 222, 3); q(222, 2, '?');
+    lan(214, 8, 2); lan(217, 7, 3); lan(221, 5, 3); e('i', 222, 3); q(222, 2, '?');
     e('b', 226, 7); e('O2', 228, 4); e('l', 229); e('i', 232, 5);
     pit(235, 236);
     e('z', 239); e('N2', 240, 5); e('b', 241, 6); e('O2', 245, 4); e('H2O', 249, 3); e('d', 243); e('l', 246); e('i', 249, 6);
@@ -86,6 +86,8 @@ const Level = {
     e('K', 267, 7);
     brick(279, 0, 1, 10);
 
+    fixReach(tiles, spawns);
+
     return {
       W, H, tiles, spawns, signs,
       playerStart: { x: 2, y: 9 },
@@ -94,6 +96,31 @@ const Level = {
     };
   }
 };
+
+// Sorgt dafür, dass alles erreichbar bleibt – auch wenn man oben Positionen ändert:
+// Schwebende Gegner höchstens 2 Kacheln, VACUU·VIEW höchstens 3 Kacheln über der nächsten Standfläche.
+function standRow(tiles, x, fromRow) {
+  let best = null;
+  for (const dx of [0, -1, 1]) {
+    if (dx !== 0 && best !== null) break; // Nachbarspalten nur, wenn direkt darunter nichts ist (Grube)
+    const xx = x + dx;
+    if (xx < 0 || xx >= tiles[0].length) continue;
+    for (let y = fromRow + 1; y < tiles.length; y++) {
+      if (tiles[y][xx] !== ' ') { if (best === null || y < best) best = y; break; }
+    }
+  }
+  return best;
+}
+function fixReach(tiles, spawns) {
+  for (const s of spawns) {
+    const def = typeof ENEMY_DEFS !== 'undefined' ? ENEMY_DEFS[s.type] : null;
+    const maxGap = s.type === 'v' ? 3 : def && def.beh === 'floater' ? 2 : null;
+    if (maxGap === null) continue;
+    const surf = standRow(tiles, s.x, s.y);
+    if (surf === null) continue;
+    while (surf - s.y - 1 > maxGap && tiles[s.y + 1][s.x] === ' ') s.y++;
+  }
+}
 
 function zoneOf(worldX) {
   const tx = worldX / T, zs = Level.ZONE_STARTS;

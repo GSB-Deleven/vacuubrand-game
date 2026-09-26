@@ -220,7 +220,8 @@ class PlayScene {
         p.onGround = false; p.coyote = 0; p.jumpBuf = 0;
         Sound.sfx('jump');
       }
-      if (!Input.down('jump') && p.vy < -2.2) p.vy = -2.2;
+      // Loslassen kürzt den Sprung – ein kurzer Tipp reicht aber trotzdem für gut 2 Kacheln
+      if (!Input.down('jump') && p.vy < -4.7) p.vy = -4.7;
     }
     // Ausdauer
     if (p.sprinting && Math.abs(p.vx) > 1.6) {
@@ -232,7 +233,17 @@ class PlayScene {
     }
     if (p.jumpBuf > 0) p.jumpBuf--;
     p.vy = Math.min(p.vy + 0.3, 6);
+    const wasRising = p.vy < 0;
     moveBody(p, lv);
+    // Kopfnuss-Magnet: am höchsten Punkt zählt ein Kolben-Block knapp über dem Kopf auch als Treffer
+    if (wasRising && !p.bump && p.vy >= -0.3) {
+      const ty = Math.floor((p.y - p.h - 5) / T);
+      let best = null;
+      for (const tx of [Math.floor((p.x - p.w / 2) / T), Math.floor((p.x + p.w / 2 - 0.01) / T)]) {
+        if ('123?V'.includes(tileAt(lv, tx, ty)) && (ty + 1) * T >= p.y - p.h - 5 && (!best || Math.abs(tx * T + 8 - p.x) < Math.abs(best.tx * T + 8 - p.x))) best = { tx, ty };
+      }
+      if (best) { p.bump = best; p.vy = 0.5; }
+    }
     if (p.onGround) {
       p.coyote = 6;
       const lt = Math.floor((p.x - p.w / 2) / T), rt = Math.floor((p.x + p.w / 2 - 0.01) / T), ft = Math.floor(p.y / T);
@@ -240,7 +251,18 @@ class PlayScene {
     } else if (p.coyote > 0) p.coyote--;
     if (p.bump) this.bumpBlock(p.bump.tx, p.bump.ty);
     if (p.inv > 0) p.inv--;
+    // In die Auffangwanne gefallen: Platsch!
+    if (!p.splashed && p.vy > 0 && p.y - 4 > PIT_SURFACE && tileAt(lv, Math.floor(p.x / T), 10) === ' ') {
+      p.splashed = true;
+      const st = PIT_STYLE[zoneOf(p.x)];
+      for (let i = 0; i < 14; i++) {
+        this.parts.push({ x: p.x + (Math.random() - 0.5) * 10, y: PIT_SURFACE, vx: (Math.random() - 0.5) * 2.4, vy: -1.5 - Math.random() * 2.2, g: 0.15, t: 30 + Math.random() * 15, c: i % 3 ? st.top : st.mid, s: 2 });
+      }
+      Sound.sfx('splash');
+      this.showMsg('IN DIE ' + st.name + ' GEFALLEN!', 110, st.top);
+    }
     if (p.y > lv.H * T + 24) {
+      p.splashed = false;
       this.time -= CONFIG.fallTimePenalty;
       p.x = p.safe.x; p.y = p.safe.y; p.vx = 0; p.vy = 0; p.inv = 90;
       this.popup(p.x, p.y - 20, '-' + CONFIG.fallTimePenalty + ' SEK', '#ff8f8f');
@@ -309,7 +331,7 @@ class PlayScene {
   inCone(nz, face, range, cx, cy) {
     const along = (cx - nz.x) * face;
     if (along < -6 || along > range) return false;
-    return Math.abs(cy - nz.y) <= 10 + Math.max(0, along) * 0.5;
+    return Math.abs(cy - nz.y) <= 14 + Math.max(0, along) * 0.6;
   }
 
   updateSuction() {
@@ -586,12 +608,14 @@ class PlayScene {
     for (const s of this.level.signs) drawSign(ctx, s, camX);
     this.drawDoor(ctx, camX);
     for (const it of this.items) if (it.rising > 0) it.draw(ctx, camX);
+    drawPitsBack(ctx, this.level, camX, this.t);
     drawTiles(ctx, this.level, camX, this.bumps, this.t);
     for (const it of this.items) if (it.rising <= 0) it.draw(ctx, camX);
     for (const e of this.enemies) if (e.def.beh === 'static' && e.active) e.draw(ctx, camX);
     if (this.boss && this.boss.alive && this.boss.active) this.boss.draw(ctx, camX);
     for (const e of this.enemies) if (e.def.beh !== 'static' && e.active) e.draw(ctx, camX);
     if (!(this.state === 'finish' && this.stateT > 50)) this.player.draw(ctx, camX, this.t);
+    drawPitsFront(ctx, this.level, camX, this.t);
     for (const q of this.parts) {
       ctx.fillStyle = q.c;
       if (q.streak) ctx.fillRect(Math.round(q.x - camX), Math.round(q.y), 2, 1);
@@ -908,6 +932,93 @@ function ditherPatterns(ctx) {
     dark2: mk(g => { g.fillStyle = 'rgba(20,30,50,0.10)'; for (let y = 0; y < 4; y++) for (let x = (y % 2); x < 4; x += 2) g.fillRect(x, y, 1, 1); })
   };
   return DITHER;
+}
+
+// Abgründe = Auffangwannen, je Zone eine andere Flüssigkeit
+const PIT_STYLE = [
+  { name: 'FILTRAT-WANNE', deep: '#1f4f8a', mid: '#3a7fcf', top: '#8fd0ff', bubble: '#c8ecff' },
+  { name: 'DESINFEKTIONSBAD', deep: '#8a2f5e', mid: '#d0609a', top: '#ffb0d6', bubble: '#ffe0f0' },
+  { name: 'LÖSEMITTEL-AUFFANGWANNE', deep: '#8a4a10', mid: '#e0861f', top: '#ffc46b', bubble: '#fff0c8' },
+  { name: 'FLÜSSIGSTICKSTOFF', deep: '#3d6f96', mid: '#8fc4e8', top: '#e6f7ff', bubble: '#ffffff', fog: true }
+];
+const PIT_SURFACE = 10 * T + 6; // Flüssigkeitsspiegel (Welt-y)
+
+function pitSpans(level, camX) {
+  const spans = [];
+  const tx0 = Math.max(0, Math.floor(camX / T) - 1), tx1 = Math.min(level.W - 1, tx0 + Math.ceil(VIEW_W / T) + 2);
+  let a = null;
+  for (let tx = tx0; tx <= tx1 + 1; tx++) {
+    const pit = tx <= tx1 && tileAt(level, tx, 10) === ' ' && tileAt(level, tx, 11) === ' ';
+    if (pit && a === null) a = tx;
+    if (!pit && a !== null) { spans.push([a, tx - 1]); a = null; }
+  }
+  return spans;
+}
+
+// Becken hinten: Innenwand, Flüssigkeit, Bläschen, Warnschild
+function drawPitsBack(ctx, level, camX, t) {
+  for (const [a, b] of pitSpans(level, camX)) {
+    const st = PIT_STYLE[zoneOf(a * T)];
+    const x0 = a * T - camX, w = (b - a + 1) * T, yb = VIEW_H + CAM_Y;
+    ctx.fillStyle = '#3b4658'; ctx.fillRect(x0, 10 * T, w, yb - 10 * T);
+    ctx.fillStyle = '#5d6b80'; ctx.fillRect(x0, 10 * T, w, 2);
+    ctx.fillStyle = st.deep; ctx.fillRect(x0, PIT_SURFACE, w, yb - PIT_SURFACE);
+    ctx.fillStyle = st.mid; ctx.fillRect(x0, PIT_SURFACE + 2, w, 5);
+    // Wellen
+    for (let x = 0; x < w; x++) {
+      const wy = Math.round(Math.sin((x + a * T) * 0.35 + t * 0.12) * 1.2);
+      ctx.fillStyle = st.top; ctx.fillRect(x0 + x, PIT_SURFACE + wy, 1, 2);
+    }
+    // Bläschen
+    for (let i = 0; i < 4; i++) {
+      const bx = x0 + 3 + ((i * 11 + a * 7) % Math.max(1, w - 6));
+      const ph = (t * 0.4 + i * 17) % 20;
+      ctx.fillStyle = st.bubble; ctx.fillRect(bx, Math.round(yb - 4 - ph), 2, 2);
+    }
+    // Edelstahl-Beckenwände
+    for (const wx of [x0, x0 + w - 2]) {
+      ctx.fillStyle = '#c9d1dc'; ctx.fillRect(wx, 10 * T, 2, yb - 10 * T);
+      ctx.fillStyle = '#8795a8'; ctx.fillRect(wx + (wx === x0 ? 1 : 0), 10 * T, 1, yb - 10 * T);
+    }
+    // Warnschild am linken Rand
+    const sx = x0 - 12, sy = 10 * T - 13;
+    ctx.fillStyle = '#6b7788'; ctx.fillRect(sx + 4, sy + 7, 1, 6);
+    ctx.fillStyle = PAL.k;
+    for (let r = 0; r < 8; r++) ctx.fillRect(sx + 4 - Math.floor(r / 2) - 1, sy + r, Math.floor(r / 2) * 2 + 3, 1);
+    ctx.fillStyle = THEME.gold;
+    for (let r = 1; r < 7; r++) ctx.fillRect(sx + 4 - Math.floor((r - 1) / 2), sy + r, Math.floor((r - 1) / 2) * 2 + 1, 1);
+    ctx.fillStyle = PAL.k; ctx.fillRect(sx + 4, sy + 3, 1, 2); ctx.fillRect(sx + 4, sy + 6, 1, 1);
+  }
+}
+
+// Becken vorne: Warnstreifen an der Kante, halbtransparente Flüssigkeit (Spieler taucht ein), Nebel
+function drawPitsFront(ctx, level, camX, t) {
+  for (const [a, b] of pitSpans(level, camX)) {
+    const st = PIT_STYLE[zoneOf(a * T)];
+    const x0 = a * T - camX, w = (b - a + 1) * T, yb = VIEW_H + CAM_Y;
+    ctx.globalAlpha = 0.55;
+    ctx.fillStyle = st.mid; ctx.fillRect(x0 + 2, PIT_SURFACE + 2, w - 4, yb - PIT_SURFACE - 2);
+    ctx.globalAlpha = 1;
+    for (let x = 2; x < w - 2; x++) {
+      const wy = Math.round(Math.sin((x + a * T) * 0.35 + t * 0.12) * 1.2);
+      ctx.fillStyle = st.top; ctx.fillRect(x0 + x, PIT_SURFACE + wy, 1, 1);
+    }
+    if (st.fog) {
+      ctx.globalAlpha = 0.35; ctx.fillStyle = '#ffffff';
+      for (let i = 0; i < 5; i++) {
+        const fx = x0 + ((i * 9 + t * 0.3) % (w + 10)) - 5, fy = PIT_SURFACE - 3 - ((t * 0.2 + i * 5) % 8);
+        ctx.fillRect(Math.round(fx), Math.round(fy), 6, 2); ctx.fillRect(Math.round(fx) + 1, Math.round(fy) - 1, 4, 1);
+      }
+      ctx.globalAlpha = 1;
+    }
+    // gelb-schwarze Warnstreifen auf der Bodenkante links und rechts
+    for (const ex of [x0 - T, x0 + w]) {
+      for (let x = 0; x < T; x++) for (let y = 0; y < 3; y++) {
+        ctx.fillStyle = ((x + y) >> 2) % 2 ? PAL.k : THEME.gold;
+        ctx.fillRect(ex + x, 10 * T + y, 1, 1);
+      }
+    }
+  }
 }
 
 function drawTiles(ctx, level, camX, bumps, t) {
