@@ -142,8 +142,11 @@ class TitleScene {
     Font.draw(ctx, 'B = BESTENLISTE', bx + bw / 2, by + 4, { color: '#c8f2ff', align: 'center' });
     const top = Store.board(todayKey())[0];
     if (top) {
-      Font.draw(ctx, 'HEUTE FÜHRT:', cx, 136, { color: PAL.k, align: 'center' });
-      Font.draw(ctx, top.name + '  ' + top.score, cx, 146, { color: '#d1621a', align: 'center' });
+      const line = top.name + '  ' + top.score;
+      const pw = Math.max(Font.width('HEUTE FÜHRT:'), Font.width(line)) + 10;
+      drawPanel(ctx, Math.round(cx - pw / 2), 133, pw, 22);
+      Font.draw(ctx, 'HEUTE FÜHRT:', cx, 135, { color: '#c8f2ff', align: 'center' });
+      Font.draw(ctx, line, cx, 145, { color: THEME.gold, align: 'center' });
     }
     Font.draw(ctx, CONFIG.eventName, 316, 170, { color: '#ffffff', align: 'right' });
   }
