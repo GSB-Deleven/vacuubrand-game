@@ -609,17 +609,17 @@ function buildHair() {
       const a = deg * Math.PI / 180, dx = Math.cos(a), dy = Math.sin(a);
       for (let i = 0; i <= len * 2; i++) {
         const d = i / 2, w = base * (1 - d / (len + 0.5));
-        const px = cx + dx * (5 + d), py = cy + dy * (3.5 + d);
+        const px = cx + dx * (4 + d), py = cy + 1 + dy * (2.5 + d);
         for (let k = -w / 2; k <= w / 2; k += 0.5) P.px(px - dy * k, py + dx * k, hair);
         if (d > 1.5 && d < len - 1.5) P.px(px, py, hairD);
       }
     };
     // Haarvolumen auf dem Kopf und seitlich (kompakt, die Spitzen machen die Frisur)
-    P.ell(cx, cy + 0.5, 6.5, 3.5, hair);
-    P.ell(cx - 8, cy + 3, 2.5, 3, hair); P.ell(cx + 8, cy + 3, 2.5, 3, hair);
+    P.ell(cx, cy + 1.5, 5.5, 2.5, hair);
+    P.ell(cx - 7, cy + 3.5, 1.5, 2, hair); P.ell(cx + 7, cy + 3.5, 1.5, 2, hair);
     // abstehende, spitze Strähnen wie beim Pin
-    [[-165, 4, 2.5], [-138, 5, 3], [-112, 4, 2.5], [-90, 5, 3], [-68, 4, 2.5], [-42, 5, 3], [-15, 4, 2.5],
-     [185, 3, 2], [-5, 3, 2]].forEach(([d, l, b]) => spike(d, l, b));
+    [[-165, 5, 2.5], [-138, 6, 2.5], [-112, 5, 2.5], [-90, 6, 2.5], [-68, 5, 2.5], [-42, 6, 2.5], [-15, 5, 2.5],
+     [185, 4, 2], [-5, 4, 2]].forEach(([d, l, b]) => spike(d, l, b));
     // Glanzstellen
     [[cx - 3, cy - 3], [cx + 1, cy - 4], [cx - 6, cy - 1], [cx + 5, cy - 2]].forEach(([x, y]) => P.px(x, y, hairL));
     // Gesicht freilassen
