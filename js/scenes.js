@@ -144,9 +144,15 @@ class TitleScene {
     if (top) {
       const line = top.name + '  ' + top.score;
       const pw = Math.max(Font.width('HEUTE FÜHRT:'), Font.width(line)) + 10;
-      drawPanel(ctx, Math.round(cx - pw / 2), 133, pw, 22);
-      Font.draw(ctx, 'HEUTE FÜHRT:', cx, 135, { color: '#c8f2ff', align: 'center' });
-      Font.draw(ctx, line, cx, 145, { color: THEME.gold, align: 'center' });
+      // Goldenes Siegerschild, damit es sich von den blauen Knöpfen abhebt
+      const px = Math.round(cx - pw / 2);
+      ctx.fillStyle = PAL.k; ctx.fillRect(px - 2, 131, pw + 4, 26);
+      ctx.fillStyle = '#ffffff'; ctx.fillRect(px - 1, 132, pw + 2, 24);
+      ctx.fillStyle = THEME.gold; ctx.fillRect(px, 133, pw, 22);
+      ctx.fillStyle = '#ffd966'; ctx.fillRect(px, 133, pw, 1);
+      ctx.fillStyle = '#d27410'; ctx.fillRect(px, 154, pw, 1);
+      Font.draw(ctx, 'HEUTE FÜHRT:', cx, 135, { color: THEME.navy, align: 'center' });
+      Font.draw(ctx, line, cx, 145, { color: PAL.k, align: 'center' });
     }
     Font.draw(ctx, CONFIG.eventName, 316, 170, { color: '#ffffff', align: 'right' });
   }
