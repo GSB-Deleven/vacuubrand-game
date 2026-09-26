@@ -136,19 +136,8 @@ Rundenzeit, Punkte, Zeitabzüge, Saug-Energie, Sprint, Item-Boni, Pumpen-Namen u
 Schutzausrüstung, Anmeldefelder und Texte.
 Datei mit einem Texteditor öffnen, ändern, speichern, im Browser **F5** drücken.
 
-## Technik (für Neugierige)
+## Technik
 
-Reines HTML + JavaScript + Canvas, keine Frameworks, keine Installation, keine Internetverbindung.
-Pixelart und Sound werden direkt im Code erzeugt.
-
-| Datei | Inhalt |
-|---|---|
-| `js/config.js` | Einstellungen |
-| `js/level.js` | Levelaufbau (Blöcke, Gegner, Schilder) |
-| `js/entities.js` | Professor, Gegner, Pumpen, Boss |
-| `js/game.js` | Spielrunde, Saug-Mechanik, Anzeige |
-| `js/scenes.js` | Titelbild, Ergebnis, Bestenliste |
-| `js/ui.js` | Anmeldeformular, Admin-Bereich |
-| `js/storage.js` | Speicherung, Bestenliste, CSV-Export |
-| `js/sprites.js`, `js/font.js`, `js/sound.js` | Pixelgrafik, Schrift, 8-Bit-Sound |
-| `assets/vacuubrand-logo.png` | Logo für das Anmeldeformular |
+Reines HTML + JavaScript + Canvas, keine Installation, keine Internetverbindung.
+Alles Technische (Aufbau, Dateien, Spielmechanik, Datenformat, Anpassungen) steht in **[TECHNIK.md](TECHNIK.md)**,
+alle Spieltexte mit Korrekturvorschlägen in **[TEXTE.md](TEXTE.md)**.

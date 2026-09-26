@@ -59,7 +59,7 @@ const CONFIG = {
   // Schutzausrüstung aus den Kolben-Blöcken (in dieser Reihenfolge)
   ppe: [
     { key: 'goggles', name: 'SCHUTZBRILLE', text: 'TREFFER KOSTEN NUR NOCH 1 SEKUNDE.' },
-    { key: 'gloves', name: 'HANDSCHUHE', text: 'SAUG-ENERGIE LÄDT DOPPELT SO SCHNELL.' },
+    { key: 'gloves', name: 'HANDSCHUHE', text: 'SOG-LEISTE LÄDT DOPPELT SO SCHNELL.' },
     { key: 'helmet', name: 'SCHUTZHELM', text: 'GEGNER VON UNTEN WEGKÖPFEN!' },
     { key: 'shoes', name: 'SICHERHEITSSCHUHE', text: 'AUF GEGNER SPRINGEN ZERSTÖRT SIE!' }
   ],
