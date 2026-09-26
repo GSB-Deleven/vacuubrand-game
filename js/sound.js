@@ -169,6 +169,12 @@ const Sound = {
       case 'go': this.tone(880, 0.35, { vol: 0.22 }); break;
       case 'select': this.tone(660, 0.06, { vol: 0.2 }); this.tone(990, 0.1, { delay: 0.06, vol: 0.2 }); break;
       case 'timeup': [784, 659, 523, 392].forEach((f, i) => this.tone(f, 0.22, { delay: i * 0.16, vol: 0.22, type: 'triangle' })); break;
+      case 'splash': {
+        this.noise(0.35, { freq: 900, to: 250, vol: 0.35 });
+        this.tone(300, 0.15, { to: 120, type: 'sine', vol: 0.3 });
+        [0.12, 0.2, 0.3].forEach((d, i) => this.tone(900 + i * 250, 0.05, { delay: d, type: 'sine', vol: 0.12 }));
+        break;
+      }
       case 'combo': {
         const top = arg >= 8;
         (top ? [784, 988, 1175, 1568, 1976] : [659, 784, 988, 1319]).forEach((f, i) => this.tone(f, 0.08, { delay: i * 0.05, vol: 0.15 }));

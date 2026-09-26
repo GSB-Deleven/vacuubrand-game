@@ -251,7 +251,7 @@ class Enemy {
       }
       case 'floater':
         this.x = this.baseX + Math.sin(this.t * 0.02) * 24;
-        this.y = this.baseY + Math.sin(this.t * 0.06) * 6;
+        this.y = this.baseY + Math.sin(this.t * 0.06) * 8;
         break;
       case 'static':
         this.vy = Math.min(this.vy + 0.3, 5);
