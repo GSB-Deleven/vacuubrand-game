@@ -560,19 +560,22 @@ function buildMolecules() {
 function buildPortrait() {
   const k = PAL.k, hair = '#f7a531', hairD = '#d4711c', hairL = '#ffc766', skin = '#ffcfa6', skinD = '#e8a47c';
   for (let f = 0; f < 2; f++) {
-    SPR['portrait' + f] = outlined(48, 48, P => {
-      P.g.translate(4, 4);
-      // wilde Haarspitzen rundherum
-      const spike = (deg, len) => {
-        const a = deg * Math.PI / 180;
-        for (let i = 0; i <= len; i++) {
-          const w = Math.max(1, Math.round(3 - i * 0.45));
-          const x = Math.round(20 + Math.cos(a) * (15 + i)), y = Math.round(13 + Math.sin(a) * (11 + i));
-          P.rect(x - Math.floor(w / 2), y - Math.floor(w / 2), w, w, hair);
+    SPR['portrait' + f] = outlined(56, 56, P => {
+      P.g.translate(8, 10);
+      // abstehende Haarspitzen wie beim Maskottchen: einzelne, spitz zulaufende Strähnen
+      const spike = (deg, len, base) => {
+        const a = deg * Math.PI / 180, dx = Math.cos(a), dy = Math.sin(a);
+        const r0 = 9;
+        for (let i = 0; i <= len * 2; i++) {
+          const d = i / 2;
+          const w = base * (1 - d / (len + 1));
+          const cx = 20 + dx * (r0 + d), cy = 12 + dy * (r0 * 0.8 + d);
+          for (let k = -w / 2; k <= w / 2; k += 0.5) P.px(cx - dy * k, cy + dx * k, hair);
+          if (d > 1 && d < len - 1) P.px(cx, cy, hairD);
         }
       };
-      [[-175, 6], [-155, 7], [-135, 5], [-115, 6], [-95, 5], [-75, 6], [-55, 5], [-35, 7], [-15, 6], [5, 5], [175, 5], [160, 4], [20, 4]]
-        .forEach(([d, l]) => spike(d, l));
+      [[-170, 8, 5], [-150, 10, 5], [-128, 9, 5], [-108, 11, 5], [-88, 9, 5], [-68, 11, 5], [-48, 9, 5], [-28, 10, 5], [-8, 8, 5],
+       [175, 7, 4], [160, 6, 4], [8, 7, 4], [22, 6, 4]].forEach(([d, l, w]) => spike(d, l, w));
       // Kittel und Schultern
       P.ell(20, 43, 17, 9, '#ffffff');
       P.rect(3, 38, 34, 6, '#ffffff');
@@ -584,11 +587,9 @@ function buildPortrait() {
       P.rect(16, 31, 8, 5, skinD);
       // Fliege in VACUUBRAND-Gelb
       P.rect(15, 35, 4, 3, '#f9b000'); P.rect(21, 35, 4, 3, '#f9b000'); P.rect(19, 35, 2, 3, '#c98f00');
-      // Haare hinten (wild)
-      P.ell(20, 14, 17, 12, hair);
-      [[5, 10, 5, 6], [35, 10, 5, 6], [8, 4, 5, 4], [32, 4, 5, 4], [20, 2, 8, 4], [13, 2, 4, 3], [27, 2, 4, 3], [4, 18, 3, 6], [36, 18, 3, 6]]
-        .forEach(([x, y, rx, ry]) => P.ell(x, y, rx, ry, hair));
-      [[3, 8], [2, 13], [37, 8], [38, 13], [10, 0], [16, 0], [24, 0], [30, 0], [6, 2], [34, 2]].forEach(([x, y]) => P.rect(x, y, 2, 2, hair));
+      // Haaransatz (Kappe)
+      P.ell(20, 12, 13, 9, hair);
+      P.ell(9, 16, 4, 6, hair); P.ell(31, 16, 4, 6, hair);
       // Ohren
       P.ell(8.5, 20, 2.5, 3.5, skin); P.ell(31.5, 20, 2.5, 3.5, skin);
       P.px(8, 20, skinD); P.px(31, 20, skinD);
