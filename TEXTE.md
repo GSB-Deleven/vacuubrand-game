@@ -1,9 +1,11 @@
 # ✏️ Professor Vakuumus: alle Spieltexte
 
-Hier stehen alle Texte, die man im Spiel sieht, mit Ort, aktuellem Text und meinem Vorschlag.
+> 📌 **Offene Aufgabe fürs Marketing:** alle Texte prüfen und freigeben oder umschreiben. Die Vorschläge unten sind ein Ausgangspunkt, keine Vorgabe.
+
+Hier stehen alle Texte, die man im Spiel sieht, mit Ort, aktuellem Text und einem Vorschlag.
 
 - ✅ **erledigt**: eindeutige Fehler, schon korrigiert
-- ❓ **Vorschlag**: bitte prüfen und mit Ja, Nein oder eigenem Text antworten. Ich setze es danach um
+- ❓ **Vorschlag**: bitte prüfen und mit Ja, Nein oder eigenem Text antworten
 - ⚪ **passt**: kein Änderungsbedarf gesehen
 
 Die Pixelschrift kann nur **Grossbuchstaben**, eine Zeile hat Platz für ca. **50 Zeichen**. Bei Schildern und Bannern sind es 2 Zeilen. Tiefgestellte Zahlen (H₂O) und Sonderzeichen wie ⚠ kennt die Schrift nicht.
