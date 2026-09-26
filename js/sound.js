@@ -110,6 +110,21 @@ const Sound = {
       }
       case 'stomp': this.tone(220, 0.12, { to: 80, type: 'triangle', vol: 0.4 }); break;
       case 'hurt': this.tone(400, 0.3, { to: 90, type: 'sawtooth', vol: 0.2 }); break;
+      case 'ouch': {
+        // comichaftes "Au-tsch": Vokal "au" (Sägezahn durch gleitenden Formant-Filter) + gezischtes "tsch"
+        const c = this.ctx, t = c.currentTime;
+        const osc = c.createOscillator(); osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(420, t); osc.frequency.exponentialRampToValueAtTime(220, t + 0.2);
+        const f = c.createBiquadFilter(); f.type = 'bandpass'; f.Q.value = 4;
+        f.frequency.setValueAtTime(900, t); f.frequency.exponentialRampToValueAtTime(480, t + 0.2);
+        const g = c.createGain();
+        g.gain.setValueAtTime(0.0008, t); g.gain.exponentialRampToValueAtTime(0.9, t + 0.02);
+        g.gain.setValueAtTime(0.9, t + 0.14); g.gain.exponentialRampToValueAtTime(0.0008, t + 0.21);
+        osc.connect(f); f.connect(g); g.connect(this.sfxBus);
+        osc.start(t); osc.stop(t + 0.25);
+        this.noise(0.13, { delay: 0.2, freq: 4500, q: 1.2, vol: 0.35, filter: 'bandpass' });
+        break;
+      }
       case 'powerup': [523, 659, 784, 1047, 784, 1047, 1319].forEach((f, i) => this.tone(f, 0.09, { delay: i * 0.07, vol: 0.16 })); break;
       case 'puff': this.noise(0.25, { freq: 600, to: 200, vol: 0.25 }); break;
       case 'heavy': this.tone(110, 0.15, { vol: 0.14 }); this.tone(98, 0.15, { delay: 0.15, vol: 0.14 }); break;

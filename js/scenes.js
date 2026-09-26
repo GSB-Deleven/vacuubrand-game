@@ -75,7 +75,7 @@ class TitleScene {
     // kleine Demo: der Professor saugt Laborchaos ein
     const nz = { x: 102, y: 134 };
     if (this.t % 45 === 0) {
-      const types = ['drop', 'paper', 'medium', 'cloud', 'flask', 'ice'];
+      const types = ['drop', 'paper', 'medium', 'cloud', 'flask', 'testtube', 'eppi', 'ice'];
       const spr = types[Math.floor(hash(this.t) * types.length)];
       this.demo.push({ x: 340, y: 104 + hash(this.t + 3) * 44, spr, v: 0.8, t: 0 });
     }

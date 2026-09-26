@@ -83,6 +83,7 @@ Auf dem Titelbild **Strg + Shift + A** drücken, PIN eingeben (Standard **1234**
 - **Leads (CSV/Excel)** und **Alle Runden (CSV/Excel)** exportieren → landen im Download-Ordner
 - **Sicherung speichern / laden** (JSON) – z.B. um Daten auf einen anderen Laptop zu übertragen
 - Messename, Rundenzeit und PIN ändern
+- **Referenzdaten laden (Test):** lädt die Testrunden vom 26.09.2026 (Ordner `daten/`: JSON und CSV-Beispiele), um Bestenliste und Export auszuprobieren – vor der Messe mit „Alle Daten löschen“ wieder entfernen
 - Einzelne Runden löschen (✕ zweimal klicken), **alle Daten löschen** nach der Messe (LÖSCHEN ins Feld tippen)
 - Nach jedem Export erscheint der Inhalt zusätzlich in einem Textfeld mit „Inhalt kopieren“ – praktisch, falls der Browser keinen Download erlaubt (z.B. in der Online-Vorschau)
 
