@@ -97,7 +97,7 @@ const PROF_HEAD = [
   '.uksskkssskkskU.',
   'uuksklekkklekkUu',
   '.uksskkssskkskU.',
-  '.uksrssssrssSSk.',
+  '.uksssssssssSSk.',
   '..kssmmmmmsssk..',
   '...' + 'k'.repeat(10) + '...'
 ];
@@ -618,7 +618,6 @@ function buildPortrait() {
       P.rect(10, 11, 6, 1, hairD); P.rect(25, 10, 6, 1, hairD);
       // Nase und Wangen
       P.rect(19, 21, 3, 3, skinD); P.px(20, 21, skin);
-      P.ell(10, 25, 2, 1.2, '#ff9d9d'); P.ell(30, 25, 2, 1.2, '#ff9d9d');
       // breites Grinsen
       P.ell(20, 26, 6, 3, '#8a2a3a');
       P.rect(13, 23, 15, 3, skin);
