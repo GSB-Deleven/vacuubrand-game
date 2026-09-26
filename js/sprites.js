@@ -590,12 +590,45 @@ function buildSprites() {
     });
   });
 
+  buildHair();
   buildMolecules();
   // 16-Bit-Schattierung auf alle Figuren, Gegner und Items
   for (const key of Object.keys(SPR)) {
     if (/^(boss|pump|bvc|view|ppe_|coin)/.test(key) || ENEMY_SPRITE_NAMES.has(key.replace(/2$/, ''))) shade16(SPR[key]);
   }
   buildDecor();
+}
+
+// Grosse, abstehende Haare wie beim Maskottchen-Pin (wird über den Kopf gelegt).
+// Überlagerung: 22×18, Kopf der Figur beginnt bei (3, 6).
+function buildHair() {
+  const hair = '#f9a825', hairD = '#d27410', hairL = '#ffd966';
+  const c = paint(30, 24, P => {
+    const cx = 15, cy = 13;
+    const spike = (deg, len, base) => {
+      const a = deg * Math.PI / 180, dx = Math.cos(a), dy = Math.sin(a);
+      for (let i = 0; i <= len * 2; i++) {
+        const d = i / 2, w = base * (1 - d / (len + 0.5));
+        const px = cx + dx * (5 + d), py = cy + dy * (3.5 + d);
+        for (let k = -w / 2; k <= w / 2; k += 0.5) P.px(px - dy * k, py + dx * k, hair);
+        if (d > 1.5 && d < len - 1.5) P.px(px, py, hairD);
+      }
+    };
+    // Haarvolumen auf dem Kopf und seitlich (kompakt, die Spitzen machen die Frisur)
+    P.ell(cx, cy, 7, 3.8, hair);
+    P.ell(cx - 8, cy + 3, 2.5, 3, hair); P.ell(cx + 8, cy + 3, 2.5, 3, hair);
+    // abstehende, spitze Strähnen wie beim Pin
+    [[-170, 7, 3], [-148, 8, 3], [-124, 7, 3], [-100, 8, 3], [-78, 7, 3], [-55, 8, 3], [-32, 7, 3], [-10, 7, 3],
+     [185, 6, 2.5], [5, 6, 2.5], [165, 4, 2], [25, 4, 2]].forEach(([d, l, b]) => spike(d, l, b));
+    // Glanzstellen
+    [[cx - 3, cy - 3], [cx + 1, cy - 4], [cx - 6, cy - 1], [cx + 5, cy - 2]].forEach(([x, y]) => P.px(x, y, hairL));
+    // Gesicht freilassen
+    P.g.clearRect(cx - 6, cy + 2, 12, 10);
+    P.g.clearRect(cx - 5, cy + 1, 10, 1);
+  });
+  addOutline(c, '#5a2a08');
+  SPR.prof_hair = c;
+  SPR.prof_hair_L = flipCanvas(c);
 }
 
 // Molekül-Monster als Kugel-Stab-Modelle wie im Chemieunterricht

@@ -121,6 +121,8 @@ function drawProfessor(ctx, x, y, o) {
     ctx.fillRect(bx - 2, by - 2, 20, spr.height + 4);
   }
   ctx.drawImage(spr, bx, by);
+  // grosse, abstehende Haare (wie beim Pin)
+  ctx.drawImage(SPR['prof_hair' + (face < 0 ? '_L' : '')], bx - 7, by - 10);
 
   // Schutzbrille und Helm
   if (ppe.goggles) {
