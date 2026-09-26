@@ -168,16 +168,23 @@ class ResultScene {
     if (this.test) return; // Testrunde (ADMIN): wird nicht gespeichert
     Store.addRound({
       leadId: res.lead.id, score: res.total, base: res.score, timeBonus: res.timeBonus,
-      finished: res.finished, timeLeft: res.timeLeft, pump: res.pump, captures: res.captures, ppe: res.ppe, views: res.views
+      finished: res.finished, timeLeft: res.timeLeft, pump: res.pump, captures: res.captures, ppe: res.ppe, views: res.views,
+      medals: res.medals || [], medalBonus: res.medalBonus || 0, maxCombo: res.maxCombo || 0
     });
     this.best = Store.bestOf(res.lead.id);
     this.rankDay = Store.rank(res.lead.id, todayKey());
     this.rankAll = Store.rank(res.lead.id, null);
     this.newBest = this.best === res.total;
   }
-  enter() { Sound.music(null); }
+  enter() { Sound.music(null); this.medalShown = 0; }
   update() {
     this.t++;
+    // Medaillen ploppen nacheinander auf
+    const got = this.res.medals || [];
+    if (this.medalShown < got.length && this.t >= 80 + this.medalShown * 14) {
+      this.medalShown++;
+      Sound.sfx('coin');
+    }
     if ((this.t > 60 && Input.pressed('start')) || this.t > CONFIG.resultAutoReturnSeconds * 60) {
       Sound.sfx('select');
       Game.go(new BoardScene(this.res.lead.id));
@@ -186,35 +193,61 @@ class ResultScene {
   draw(ctx) {
     const r = this.res;
     drawMenuBackground(ctx, this.t);
-    drawPanel(ctx, 36, 10, 248, 160);
-    Font.draw(ctx, r.finished ? 'LABOR GERETTET!' : 'ZEIT ABGELAUFEN!', 160, 17, { color: r.finished ? '#7be07b' : THEME.gold, scale: 2, align: 'center' });
-    Font.draw(ctx, displayName(r.lead), 160, 38, { color: '#c8f2ff', align: 'center' });
+    drawPanel(ctx, 8, 8, 304, 164);
+    Font.draw(ctx, r.finished ? 'LABOR GERETTET!' : 'ZEIT ABGELAUFEN!', 160, 13, { color: r.finished ? '#7be07b' : THEME.gold, scale: 2, align: 'center' });
+    Font.draw(ctx, displayName(r.lead), 160, 32, { color: '#c8f2ff', align: 'center' });
     const k = Math.min(1, this.t / 70);
+    const got = r.medals || [];
     const rows = [
       ['EINGESAUGT', String(r.captures)],
-      ['BESTE PUMPE', r.pump ? CONFIG.pumps[r.pump].short : '-'],
+      ['PUMPE', r.pump ? CONFIG.pumps[r.pump].short : '-'],
+      ['SCHUTZ', (r.ppe || 0) + '/4'],
+      ['BESTE COMBO', r.maxCombo > 1 ? '×' + r.maxCombo : '-'],
       ['PUNKTE', String(Math.round(r.score * k))],
-      ['SCHUTZAUSRÜSTUNG', (r.ppe || 0) + '/4'],
-      ['ZEITBONUS', r.finished ? String(Math.round(r.timeBonus * k)) : '-']
+      ['ZEITBONUS', r.finished ? String(Math.round(r.timeBonus * k)) : '-'],
+      ['MEDAILLEN', r.medalBonus ? '+' + Math.round(r.medalBonus * k) : '-']
     ];
     rows.forEach((row, i) => {
-      const y = 49 + i * 10;
-      Font.draw(ctx, row[0], 50, y, { color: '#ffffff' });
-      Font.draw(ctx, row[1], 270, y, { color: '#ffffff', align: 'right' });
+      const y = 44 + i * 9;
+      Font.draw(ctx, row[0], 18, y, { color: '#ffffff' });
+      Font.draw(ctx, row[1], 180, y, { color: i === 6 && r.medalBonus ? THEME.gold : '#ffffff', align: 'right' });
     });
-    ctx.fillStyle = '#3aa0e8'; ctx.fillRect(50, 99, 220, 1);
-    Font.draw(ctx, 'GESAMT', 50, 105, { color: THEME.gold, scale: 2 });
-    Font.draw(ctx, String(Math.round(r.total * k)), 270, 105, { color: THEME.gold, scale: 2, align: 'right' });
+    ctx.fillStyle = '#3aa0e8'; ctx.fillRect(18, 108, 162, 1);
+    Font.draw(ctx, 'GESAMT', 18, 112, { color: THEME.gold, scale: 2 });
+    Font.draw(ctx, String(Math.round(r.total * k)), 180, 112, { color: THEME.gold, scale: 2, align: 'right' });
+    // Medaillen-Spalte: verdiente leuchten, die anderen zeigen, was noch möglich ist
+    ctx.fillStyle = '#5a7aa3'; ctx.fillRect(190, 42, 1, 84);
+    Font.draw(ctx, 'MEDAILLEN', 250, 44, { color: THEME.gold, align: 'center' });
+    CONFIG.medals.forEach((m, i) => {
+      const y = 55 + i * 12;
+      const idx = got.indexOf(m.key);
+      const on = idx >= 0 && idx < (this.medalShown || 0);
+      const pop = on && this.t < 80 + idx * 14 + 6;
+      drawMedal(ctx, 198, y - 2 - (pop ? 1 : 0), on);
+      Font.draw(ctx, m.name, 210, y, { color: on ? '#ffffff' : '#7f93b0' });
+    });
     if (this.t > 70 && this.test) {
-      Font.draw(ctx, 'TESTRUNDE - NICHT IN DER BESTENLISTE', 160, 128, { color: '#c8f2ff', align: 'center' });
+      Font.draw(ctx, 'TESTRUNDE - NICHT IN DER BESTENLISTE', 160, 134, { color: '#c8f2ff', align: 'center' });
     } else if (this.t > 70) {
       const rankTxt = 'PLATZ ' + (this.rankDay || '-') + ' HEUTE  ·  PLATZ ' + (this.rankAll || '-') + ' GESAMT';
-      Font.draw(ctx, rankTxt, 160, 128, { color: '#ffffff', align: 'center' });
-      if (!this.newBest) Font.draw(ctx, 'DEIN BESTWERT: ' + this.best, 160, 139, { color: '#c8f2ff', align: 'center' });
-      else if (this.rankDay === 1 && this.t % 30 < 20) Font.draw(ctx, '★ TAGESBESTWERT! ★', 160, 139, { color: '#ffd23f', align: 'center' });
+      Font.draw(ctx, rankTxt, 160, 134, { color: '#ffffff', align: 'center' });
+      if (!this.newBest) Font.draw(ctx, 'DEIN BESTWERT: ' + this.best, 160, 145, { color: '#c8f2ff', align: 'center' });
+      else if (this.rankDay === 1 && this.t % 30 < 20) Font.draw(ctx, '★ TAGESBESTWERT! ★', 160, 145, { color: '#ffd23f', align: 'center' });
     }
-    if (this.t > 60 && this.t % 50 < 35) Font.draw(ctx, 'ENTER = BESTENLISTE', 160, 156, { color: THEME.gold, align: 'center' });
+    if (this.t > 60 && this.t % 50 < 35) Font.draw(ctx, 'ENTER = BESTENLISTE', 160, 159, { color: THEME.gold, align: 'center' });
   }
+}
+
+// Kleine Pixel-Medaille (9×10): Band oben, runde Plakette unten
+function drawMedal(ctx, x, y, on) {
+  const band = on ? THEME.navyDark : '#50617c', band2 = on ? '#e04848' : '#5d6b80';
+  const rim = on ? '#d27410' : '#5d6b80', face = on ? THEME.gold : '#6f809b', hi = on ? '#ffe9a8' : '#8795a8';
+  ctx.fillStyle = band; ctx.fillRect(x + 1, y, 3, 4); ctx.fillRect(x + 5, y, 3, 4);
+  ctx.fillStyle = band2; ctx.fillRect(x + 2, y, 1, 4); ctx.fillRect(x + 6, y, 1, 4);
+  ctx.fillStyle = PAL.k; ctx.fillRect(x + 2, y + 3, 5, 7); ctx.fillRect(x + 1, y + 4, 7, 5);
+  ctx.fillStyle = rim; ctx.fillRect(x + 3, y + 4, 3, 5); ctx.fillRect(x + 2, y + 5, 5, 3);
+  ctx.fillStyle = face; ctx.fillRect(x + 3, y + 5, 3, 3);
+  ctx.fillStyle = hi; ctx.fillRect(x + 3, y + 5, 1, 1);
 }
 
 class BoardScene {

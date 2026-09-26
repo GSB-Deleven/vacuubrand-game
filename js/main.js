@@ -20,11 +20,21 @@ const Game = {
   },
   update() {
     this.t++;
+    Input.pollPads();
+    if (Input.padToast > 0) Input.padToast--;
     if (Input.pressed('mute')) Sound.toggleMute();
     this.scene.update();
     Sound.update();
   },
-  draw(ctx) { this.scene.draw(ctx); }
+  draw(ctx) {
+    this.scene.draw(ctx);
+    if (Input.padToast > 0 && !Overlay.visible) {
+      const txt = 'CONTROLLER VERBUNDEN';
+      const w = Font.width(txt) + 10;
+      drawPanel(ctx, 160 - w / 2, 163, w, 11);
+      Font.draw(ctx, txt, 160, 165, { color: '#7be07b', align: 'center' });
+    }
+  }
 };
 
 (function start() {
