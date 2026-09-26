@@ -9,8 +9,11 @@ function noteFreq(n) {
 }
 
 const _ = null;
+// Kurzschreibweise für Melodien: Noten mit Leerzeichen getrennt, '.' = Pause
+const seq = str => str.trim().split(/\s+/).map(n => n === '.' ? null : n);
 const SONGS = {
-  game: {
+  // Zone 1: Filtrationslabor – flott, Dur
+  zone0: {
     step: 0.15, leadType: 'square', drums: true,
     lead: ['C5', _, 'E5', 'G5', _, 'E5', 'C5', _, 'D5', _, 'F5', 'A5', _, 'F5', 'D5', _,
            'E5', _, 'G5', 'C6', _, 'G5', 'E5', _, 'F5', 'E5', 'D5', 'C5', _, 'G4', _, _,
@@ -20,6 +23,38 @@ const SONGS = {
            'C3', _, 'C3', _, 'E3', _, 'E3', _, 'F3', _, 'G3', _, 'C3', _, 'G2', _,
            'A2', _, 'A2', _, 'E2', _, 'E2', _, 'G2', _, 'G2', _, 'D3', _, 'D3', _,
            'C3', _, 'E3', _, 'F3', _, 'G3', _, 'C3', _, 'G2', _, 'C3', _, _, _]
+  },
+  // Zone 2: Zellkultur-Labor – ruhiger, weich
+  zone1: {
+    step: 0.19, leadType: 'triangle', drums: false,
+    lead: seq(`E5 . G5 . A5 . . . G5 . E5 . D5 . . .   C5 . D5 . E5 . G5 . A5 . . . . . . .
+               A5 . C6 . B5 . A5 . G5 . E5 . D5 . . .   E5 . D5 . C5 . D5 . E5 . . . . . . .`),
+    bass: seq(`A2 . . . E3 . . . F2 . . . C3 . . .   A2 . . . E3 . . . G2 . . . D3 . . .
+               F2 . . . C3 . . . G2 . . . D3 . . .   A2 . . . E3 . . . A2 . . . . . . .`)
+  },
+  // Zone 3: Verdampfer-Labor – treibend
+  zone2: {
+    step: 0.13, leadType: 'square', drums: true,
+    lead: seq(`D5 . D5 F5 . A5 . F5   G5 . F5 E5 . D5 . .   C5 . C5 E5 . G5 . E5   F5 . E5 D5 . C5 . .
+               D5 F5 A5 D6 . A5 F5 .   A#4 D5 F5 A#5 . F5 D5 .   C5 E5 G5 C6 . G5 E5 .   A4 C#5 E5 A5 . E5 C#5 .`),
+    bass: seq(`D3 . D3 D3 . D3 . .   A#2 . A#2 A#2 . A#2 . .   C3 . C3 C3 . C3 . .   A2 . A2 A2 . A2 . .
+               D3 . D3 D3 . D3 . .   A#2 . A#2 A#2 . A#2 . .   C3 . C3 C3 . C3 . .   A2 . A2 A2 . C#3 . .`)
+  },
+  // Zone 4: Hochvakuum-Technikum – etwas mystisch
+  zone3: {
+    step: 0.17, leadType: 'triangle', drums: true,
+    lead: seq(`E5 . B4 . G5 . F#5 .   E5 . . . B4 . . .   D5 . A4 . F#5 . E5 .   D5 . . . A4 . . .
+               C5 . G5 . E5 . C6 .   B5 . . . G5 . . .   A5 . F#5 . D#5 . B4 .   E5 . . . . . . .`),
+    bass: seq(`E2 . . . E3 . . .   E2 . . . E3 . . .   D2 . . . D3 . . .   D2 . . . D3 . . .
+               C2 . . . C3 . . .   G2 . . . G2 . . .   B2 . . . B2 . . .   E2 . . . E3 . . .`)
+  },
+  // Boss: Dampf-Krake
+  boss: {
+    step: 0.115, leadType: 'square', drums: true,
+    lead: seq(`E5 . E5 . D#5 . E5 .   G5 . F#5 . E5 . B4 .   C5 . C5 . B4 . C5 .   E5 . D#5 . C5 . A4 .
+               E5 F#5 G5 . F#5 G5 A5 .   B5 . A5 . G5 . F#5 .   G5 F#5 E5 . D#5 E5 F#5 .   E5 . . . B4 . . .`),
+    bass: seq(`E2 E3 E2 E3 E2 E3 E2 E3   E2 E3 E2 E3 E2 E3 E2 E3   C2 C3 C2 C3 C2 C3 C2 C3   A1 A2 A1 A2 B1 B2 B1 B2
+               E2 E3 E2 E3 E2 E3 E2 E3   G2 G3 G2 G3 G2 G3 G2 G3   C2 C3 C2 C3 B1 B2 B1 B2   E2 E3 E2 E3 E2 . . .`)
   },
   title: {
     step: 0.2, leadType: 'triangle', drums: false,
@@ -95,14 +130,15 @@ const Sound = {
     src.start(t); src.stop(t + dur + 0.05);
   },
 
-  sfx(name, arg) {
+  sfx(name, arg, arg2) {
     if (!this.ctx) return;
     switch (name) {
       case 'jump': this.tone(260, 0.16, { to: 620, vol: 0.16 }); break;
       case 'bump': this.tone(140, 0.08, { type: 'triangle', vol: 0.35 }); this.noise(0.06, { freq: 400, vol: 0.2 }); break;
       case 'coin': this.tone(988, 0.07, { vol: 0.16 }); this.tone(1319, 0.25, { delay: 0.07, vol: 0.16 }); break;
       case 'capture': {
-        const base = 520 + (arg || 1) * 120;
+        // Tonhöhe steigt mit der Combo-Stufe (arg2)
+        const base = (520 + (arg || 1) * 120) * Math.pow(2, Math.min((arg2 || 1) - 1, 7) / 12);
         this.tone(base, 0.06, { vol: 0.2 });
         this.tone(base * 1.5, 0.12, { delay: 0.05, vol: 0.2 });
         this.noise(0.08, { freq: 3000, vol: 0.15 });
@@ -110,6 +146,21 @@ const Sound = {
       }
       case 'stomp': this.tone(220, 0.12, { to: 80, type: 'triangle', vol: 0.4 }); break;
       case 'hurt': this.tone(400, 0.3, { to: 90, type: 'sawtooth', vol: 0.2 }); break;
+      case 'ouch': {
+        // comichaftes "Au-tsch": Vokal "au" (Sägezahn durch gleitenden Formant-Filter) + gezischtes "tsch"
+        const c = this.ctx, t = c.currentTime;
+        const osc = c.createOscillator(); osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(420, t); osc.frequency.exponentialRampToValueAtTime(220, t + 0.2);
+        const f = c.createBiquadFilter(); f.type = 'bandpass'; f.Q.value = 4;
+        f.frequency.setValueAtTime(900, t); f.frequency.exponentialRampToValueAtTime(480, t + 0.2);
+        const g = c.createGain();
+        g.gain.setValueAtTime(0.0008, t); g.gain.exponentialRampToValueAtTime(0.9, t + 0.02);
+        g.gain.setValueAtTime(0.9, t + 0.14); g.gain.exponentialRampToValueAtTime(0.0008, t + 0.21);
+        osc.connect(f); f.connect(g); g.connect(this.sfxBus);
+        osc.start(t); osc.stop(t + 0.25);
+        this.noise(0.13, { delay: 0.2, freq: 4500, q: 1.2, vol: 0.35, filter: 'bandpass' });
+        break;
+      }
       case 'powerup': [523, 659, 784, 1047, 784, 1047, 1319].forEach((f, i) => this.tone(f, 0.09, { delay: i * 0.07, vol: 0.16 })); break;
       case 'puff': this.noise(0.25, { freq: 600, to: 200, vol: 0.25 }); break;
       case 'heavy': this.tone(110, 0.15, { vol: 0.14 }); this.tone(98, 0.15, { delay: 0.15, vol: 0.14 }); break;
@@ -118,6 +169,24 @@ const Sound = {
       case 'go': this.tone(880, 0.35, { vol: 0.22 }); break;
       case 'select': this.tone(660, 0.06, { vol: 0.2 }); this.tone(990, 0.1, { delay: 0.06, vol: 0.2 }); break;
       case 'timeup': [784, 659, 523, 392].forEach((f, i) => this.tone(f, 0.22, { delay: i * 0.16, vol: 0.22, type: 'triangle' })); break;
+      case 'splash': {
+        this.noise(0.35, { freq: 900, to: 250, vol: 0.35 });
+        this.tone(300, 0.15, { to: 120, type: 'sine', vol: 0.3 });
+        [0.12, 0.2, 0.3].forEach((d, i) => this.tone(900 + i * 250, 0.05, { delay: d, type: 'sine', vol: 0.12 }));
+        break;
+      }
+      case 'combo': {
+        const top = arg >= 8;
+        (top ? [784, 988, 1175, 1568, 1976] : [659, 784, 988, 1319]).forEach((f, i) => this.tone(f, 0.08, { delay: i * 0.05, vol: 0.15 }));
+        this.noise(0.2, { delay: 0.1, freq: 6000, vol: 0.08, filter: 'highpass' });
+        break;
+      }
+      case 'upgrade': {
+        // kurze Fanfare beim Pumpen-Upgrade
+        [[523, 0], [659, 0.08], [784, 0.16], [1047, 0.24], [784, 0.4], [1047, 0.48]].forEach(([f, d], i) => this.tone(f, i === 5 ? 0.4 : 0.09, { delay: d, vol: 0.17 }));
+        this.tone(262, 0.6, { delay: 0.24, type: 'triangle', vol: 0.3 });
+        break;
+      }
       case 'fanfare': {
         const d = [0, 0.12, 0.24, 0.36, 0.52, 0.68, 0.8, 0.96];
         [523, 523, 523, 659, 784, 659, 784, 1047].forEach((f, i) => this.tone(f, i === 7 ? 0.6 : 0.12, { delay: d[i], vol: 0.18 }));
@@ -127,6 +196,10 @@ const Sound = {
       case 'bossappear': this.tone(110, 0.6, { type: 'sawtooth', to: 55, vol: 0.18 }); this.tone(116, 0.6, { type: 'sawtooth', to: 58, vol: 0.18 }); break;
       case 'door': [392, 523, 659, 784].forEach((f, i) => this.tone(f, 0.1, { delay: i * 0.08, vol: 0.18 })); break;
       case 'spit': this.noise(0.15, { freq: 1200, to: 400, vol: 0.2 }); break;
+      case 'sprout': [262, 330, 392, 523].forEach((f, i) => this.tone(f, 0.08, { delay: i * 0.05, vol: 0.14, type: 'triangle' })); break;
+      case 'overheat': this.noise(0.5, { freq: 3000, to: 500, vol: 0.25 }); this.tone(300, 0.4, { to: 120, vol: 0.12 }); break;
+      case 'boing': this.tone(180, 0.15, { to: 420, type: 'triangle', vol: 0.3 }); break;
+      case 'timebonus': [659, 784, 988, 1319, 1568].forEach((f, i) => this.tone(f, 0.1, { delay: i * 0.06, vol: 0.16 })); break;
     }
   },
 
