@@ -132,6 +132,29 @@ function shade16(c) {
   return c;
 }
 
+// Pixelart auf halbe Grösse: je 2×2 Pixel wird die häufigste Farbe übernommen
+function halfSize(c) {
+  const w = c.width, h = c.height, src = readPixels(c).data;
+  const o = makeCanvas(Math.ceil(w / 2), Math.ceil(h / 2)), g = o.getContext('2d');
+  for (let y = 0; y < h; y += 2) {
+    for (let x = 0; x < w; x += 2) {
+      const count = {};
+      let best = null, bestN = 0, opaque = 0;
+      for (const [dx, dy] of [[0, 0], [1, 0], [0, 1], [1, 1]]) {
+        if (x + dx >= w || y + dy >= h) continue;
+        const i = ((y + dy) * w + x + dx) * 4;
+        if (src[i + 3] < 128) continue;
+        opaque++;
+        const key = src[i] + ',' + src[i + 1] + ',' + src[i + 2];
+        count[key] = (count[key] || 0) + 1;
+        if (count[key] > bestN) { bestN = count[key]; best = key; }
+      }
+      if (opaque >= 2 && best) { g.fillStyle = 'rgb(' + best + ')'; g.fillRect(x / 2, y / 2, 1, 1); }
+    }
+  }
+  return o;
+}
+
 function addPair(name, c) {
   SPR[name] = c;
   SPR[name + '_L'] = flipCanvas(c);
@@ -804,5 +827,6 @@ function buildDecor() {
     P.rect(0, 0, 52, 6, '#8e98a4'); P.rect(1, 1, 50, 4, '#ffffff'); P.rect(1, 4, 50, 1, '#eaf6ff');
     P.rect(12, 6, 1, 2, '#5d6b80'); P.rect(39, 6, 1, 2, '#5d6b80');
   });
-  for (const name of Object.keys(D)) SPR['deco_' + name] = D[name];
+  // Hintergrund auf halbe Grösse bringen, damit er zum Professor passt (Poster bleiben lesbar)
+  for (const name of Object.keys(D)) SPR['deco_' + name] = /^poster/.test(name) ? D[name] : halfSize(D[name]);
 }

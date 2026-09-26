@@ -710,84 +710,78 @@ function drawSign(ctx, s, camX) {
 }
 
 function drawBackground(ctx, camX) {
-  const zs = Level.ZONE_STARTS;
+  const zs = Level.ZONE_STARTS, BENCH = 124;
   for (let i = 0; i < zs.length; i++) {
     const x0 = zs[i] * T - camX;
     const x1 = (i < zs.length - 1 ? zs[i + 1] * T : Level.WIDTH * T) - camX;
     if (x1 < 0 || x0 > VIEW_W) continue;
     const z = ZONE_STYLE[i];
     ctx.fillStyle = z.wall; ctx.fillRect(x0, 0, x1 - x0, VIEW_H);
-    ctx.fillStyle = z.base; ctx.fillRect(x0, 106, x1 - x0, 42);
-    ctx.fillStyle = z.wall2; ctx.fillRect(x0, 104, x1 - x0, 3);
+    ctx.fillStyle = z.base; ctx.fillRect(x0, BENCH + 2, x1 - x0, 148 - BENCH - 2);
+    ctx.fillStyle = z.wall2; ctx.fillRect(x0, BENCH, x1 - x0, 2);
   }
   // 16-Bit-Verlauf mit Dithering: oben heller, unten dunkler
   const dp = ditherPatterns(ctx);
   ctx.fillStyle = 'rgba(255,255,255,0.18)'; ctx.fillRect(0, 12, VIEW_W, 22);
   ctx.fillStyle = dp.light; ctx.fillRect(0, 34, VIEW_W, 16);
-  ctx.fillStyle = dp.dark1; ctx.fillRect(0, 72, VIEW_W, 16);
-  ctx.fillStyle = dp.dark2; ctx.fillRect(0, 88, VIEW_W, 16);
-  // Unterschränke unter dem Labortisch: Türen, Schubladen, Griffe (bewegen sich mit 1×)
-  for (let x = -(camX % 48) - 48; x < VIEW_W + 48; x += 48) {
-    const z = ZONE_STYLE[zoneOf(camX + x + 24)];
-    const dk = tint(z.base, 0.82), lt = tint(z.base, 1.12);
-    ctx.fillStyle = dk; ctx.fillRect(x, 108, 1, 40); ctx.fillRect(x + 24, 118, 1, 30);
-    ctx.fillRect(x + 1, 117, 47, 1);
-    ctx.fillStyle = lt; ctx.fillRect(x + 1, 108, 1, 40); ctx.fillRect(x + 25, 118, 1, 30); ctx.fillRect(x + 1, 118, 47, 1);
-    ctx.fillStyle = '#8e98a4'; ctx.fillRect(x + 20, 112, 8, 2); ctx.fillRect(x + 19, 128, 2, 7); ctx.fillRect(x + 28, 128, 2, 7);
-    ctx.fillStyle = '#eef2f6'; ctx.fillRect(x + 20, 112, 8, 1); ctx.fillRect(x + 19, 128, 1, 7); ctx.fillRect(x + 28, 128, 1, 7);
+  ctx.fillStyle = dp.dark1; ctx.fillRect(0, 92, VIEW_W, 16);
+  ctx.fillStyle = dp.dark2; ctx.fillRect(0, 108, VIEW_W, 16);
+  // Unterschränke unter dem Labortisch (bewegen sich mit 1×)
+  for (let x = -(camX % 32) - 32; x < VIEW_W + 32; x += 32) {
+    const z = ZONE_STYLE[zoneOf(camX + x + 16)];
+    const dk = tint(z.base, 0.86), lt = tint(z.base, 1.08);
+    ctx.fillStyle = dk; ctx.fillRect(x, BENCH + 2, 1, 22); ctx.fillRect(x + 16, BENCH + 9, 1, 15); ctx.fillRect(x + 1, BENCH + 8, 31, 1);
+    ctx.fillStyle = lt; ctx.fillRect(x + 1, BENCH + 2, 1, 22); ctx.fillRect(x + 1, BENCH + 9, 31, 1);
+    ctx.fillStyle = '#a9b3be'; ctx.fillRect(x + 13, BENCH + 4, 6, 1); ctx.fillRect(x + 13, BENCH + 14, 1, 4); ctx.fillRect(x + 19, BENCH + 14, 1, 4);
   }
-  // Labortisch-Front: Glanzkante oben, Dither-Schatten unten
-  ctx.fillStyle = 'rgba(255,255,255,0.35)'; ctx.fillRect(0, 107, VIEW_W, 1);
-  ctx.fillStyle = dp.dark1; ctx.fillRect(0, 124, VIEW_W, 12);
-  ctx.fillStyle = dp.dark2; ctx.fillRect(0, 136, VIEW_W, 12);
-  // Ebene 1 (ganz hinten, 0.2×): Fliesen und Fenster
+  ctx.fillStyle = 'rgba(255,255,255,0.3)'; ctx.fillRect(0, BENCH + 2, VIEW_W, 1);
+  ctx.fillStyle = dp.dark1; ctx.fillRect(0, 140, VIEW_W, 8);
+  // Ebene 1 (ganz hinten, 0.2×): Fliesen, Deckenleuchten und Fenster
   const p1 = Math.round(camX * 0.2);
-  for (let x = -(p1 % 16); x < VIEW_W; x += 16) {
+  for (let x = -(p1 % 8); x < VIEW_W; x += 8) {
     ctx.fillStyle = ZONE_STYLE[zoneOf(camX + x)].wall2;
-    ctx.fillRect(x, 12, 1, 92);
+    ctx.fillRect(x, 12, 1, BENCH - 12);
   }
-  ctx.fillStyle = 'rgba(0,0,0,0.05)';
-  for (let y = 12; y < 104; y += 16) ctx.fillRect(0, y, VIEW_W, 1);
-  // Deckenleuchten
-  for (let n = Math.floor(p1 / 120) - 1; n < Math.floor(p1 / 120) + 4; n++) {
-    const lx = n * 120 - p1 + 30;
+  ctx.fillStyle = 'rgba(0,0,0,0.04)';
+  for (let y = 12; y < BENCH; y += 8) ctx.fillRect(0, y, VIEW_W, 1);
+  for (let n = Math.floor(p1 / 70) - 1; n < Math.floor(p1 / 70) + 6; n++) {
+    const lx = n * 70 - p1 + 20;
     ctx.drawImage(SPR.deco_lamp, lx, 13);
-    ctx.fillStyle = 'rgba(255,255,255,0.10)'; ctx.fillRect(lx - 6, 21, 64, 8);
   }
-  ctx.globalAlpha = 0.45;
-  const w1 = 150;
-  for (let n = Math.floor(p1 / w1) - 1; n < Math.floor(p1 / w1) + 3; n++) {
-    const wx = n * w1 - p1 + 50;
-    ctx.drawImage(SPR.deco_window, wx, 28);
-    // Lichteinfall vom Fenster
-    ctx.save(); ctx.globalAlpha = 0.16; ctx.fillStyle = '#ffffff';
-    ctx.beginPath(); ctx.moveTo(wx + 3, 70); ctx.lineTo(wx + 43, 70); ctx.lineTo(wx + 66, 104); ctx.lineTo(wx + 26, 104); ctx.closePath(); ctx.fill();
-    ctx.restore(); ctx.globalAlpha = 0.45;
+  ctx.globalAlpha = 0.35;
+  const w1 = 90;
+  for (let n = Math.floor(p1 / w1) - 1; n < Math.floor(p1 / w1) + 5; n++) {
+    const wx = n * w1 - p1 + 30;
+    ctx.drawImage(SPR.deco_window, wx, 40);
+    ctx.save(); ctx.globalAlpha = 0.12; ctx.fillStyle = '#ffffff';
+    ctx.beginPath(); ctx.moveTo(wx + 1, 61); ctx.lineTo(wx + 22, 61); ctx.lineTo(wx + 44, BENCH); ctx.lineTo(wx + 23, BENCH); ctx.closePath(); ctx.fill();
+    ctx.restore(); ctx.globalAlpha = 0.35;
   }
   // Ebene 2 (0.45×): Wand-Deko; Poster zeigt immer die Pumpe des aktuellen Abschnitts
-  const p2 = Math.round(camX * 0.45), w2 = 78, here = zoneOf(camX + VIEW_W / 2);
-  ctx.globalAlpha = 0.6;
-  for (let n = Math.floor(p2 / w2) - 1; n < Math.floor(p2 / w2) + 5; n++) {
+  const p2 = Math.round(camX * 0.45), w2 = 52, here = zoneOf(camX + VIEW_W / 2);
+  ctx.globalAlpha = 0.45;
+  for (let n = Math.floor(p2 / w2) - 1; n < Math.floor(p2 / w2) + 8; n++) {
     const sx = n * w2 - p2;
     let name;
-    if (((n % 4) + 4) % 4 === 0) name = 'poster' + here;
+    if (((n % 6) + 6) % 6 === 0) name = 'poster' + here;
     else {
-      const list = ZONE_STYLE[zoneOf(camX + sx + 40)].wall_;
+      const list = ZONE_STYLE[zoneOf(camX + sx + 20)].wall_;
       name = list[((n % list.length) + list.length) % list.length];
     }
-    const wy = { vacuulan: 74, schlenk: 64, shelf: 30, signs: 36, clock: 32, periodic: 34 }[name] || 34;
-    ctx.drawImage(SPR['deco_' + name], sx, wy);
-    if (n % 2 === 0) ctx.drawImage(SPR.deco_outlets, sx + 20, 92);
+    const spr = SPR['deco_' + name];
+    const wy = { vacuulan: 98, schlenk: 90, shelf: 70, signs: 76, clock: 66, periodic: 72 }[name] || 36;
+    ctx.drawImage(spr, sx, wy);
+    if (n % 3 === 0) ctx.drawImage(SPR.deco_outlets, sx + 26, 110);
   }
   // Ebene 3 (0.7×): Laborgeräte auf dem Labortisch
-  const p3 = Math.round(camX * 0.7), w3 = 84;
-  ctx.globalAlpha = 0.8;
-  for (let n = Math.floor(p3 / w3) - 1; n < Math.floor(p3 / w3) + 6; n++) {
+  const p3 = Math.round(camX * 0.7), w3 = 46;
+  ctx.globalAlpha = 0.6;
+  for (let n = Math.floor(p3 / w3) - 1; n < Math.floor(p3 / w3) + 9; n++) {
     const sx = n * w3 - p3;
-    const list = ZONE_STYLE[zoneOf(camX + sx + 42)].bench;
+    const list = ZONE_STYLE[zoneOf(camX + sx + 23)].bench;
     const spr = SPR['deco_' + list[((n % list.length) + list.length) % list.length]];
-    ctx.drawImage(spr, sx + 42 - Math.round(spr.width / 2), 105 - spr.height);
-    if (n % 3 === 1) ctx.drawImage(SPR.deco_glassware, sx - 4, 105 - SPR.deco_glassware.height);
+    ctx.drawImage(spr, sx + 23 - Math.round(spr.width / 2), BENCH - spr.height);
+    if (n % 3 === 1) ctx.drawImage(SPR.deco_glassware, sx - 2, BENCH - SPR.deco_glassware.height);
   }
   ctx.globalAlpha = 1;
 }
