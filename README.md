@@ -1,154 +1,148 @@
-# Professor Vakuumus – das VACUUBRAND Messespiel
+# 🧪 Professor Vakuumus
 
-Ein kleines Retro-Jump'n'Run (Pixelart wie auf dem Game Boy) für den Messestand.
-Der verrückte Professor (oranges Wuschelhaar, runde Brille – wie unser Maskottchen) saugt mit
-seiner Saugpistole das Labor-Chaos weg. Aus den **Kolben-Blöcken** holt er sich immer stärkere Pumpen,
-Schutzausrüstung und Spezial-Geräte. Die Level zeigen die echten Anwendungen der Pumpen:
+### Das VACUUBRAND Messespiel: Besucher an den Stand holen, Produkte zeigen, Kontakte sammeln
 
-| Zone | Gerät | Anwendungen / Gegner |
-|---|---|---|
-| 1 Filtrationslabor | **ME 1C** | Filtration: Filtrat-Tropfen, Partikel, Filterpapier, Reagenzgläser, H₂O |
-| 2 Zellkultur-Labor | **BVC professional** (Spezial) | Medienabsaugung: Nährmedium, Petrischalen-Schleim, Wellplatten, H₂O₂ |
-| 3 Verdampfer-Labor | **PC 3001 VARIO select** | Rotavap, Vakuum-Konzentrator, Trockenschrank: Lösemitteldampf, Hitzedampf, Rundkolben, Messbecher, Eppis, Methanol, Ethanol |
-| 4 Hochvakuum-Technikum | **VACUU·PURE 10C** | Ölfreie Trocknung (Gefriertrocknung, Schlenk-Line, Turbo-Vorvakuum): Eiskristalle, O₂, N₂, H₂O, Schlenk-Kolben, Argon-Flaschen, **Dampf-Krake** (Boss) |
+![Titelbild](docs/1_titel.png)
 
-Die durchspringbaren Plattformen sind **VACUU·LAN**-Leitungen.
+---
 
-**Items aus den Kolben-Blöcken** (laufen wie die Pilze bei Mario davon – hinterher oder einfach einsaugen!):
+## 🎯 Worum geht's?
 
-| Item | Wirkung |
+Professor Vakuumus ist ein kurzes Jump'n'Run im Stil der alten Nintendo-Spiele. Ein verrückter Laborprofessor mit wilden orangen Haaren räumt mit seiner Saugpistole das Labor auf. Auf dem Rücken trägt er eine VACUUBRAND Pumpe, und die wird im Lauf der Runde immer stärker.
+
+Eine Runde dauert **2 Minuten**. Das ist lang genug, dass es Spass macht, und kurz genug, dass am Stand keine Schlange entsteht.
+
+Vor dem Spielen melden sich die Besucher mit Namen, Firma und E-Mail an. Wer die meisten Punkte holt, gewinnt einen Preis.
+
+---
+
+## 💡 Was bringt das VACUUBRAND?
+
+| | |
 |---|---|
-| Pumpe ME 1C → PC 3001 VARIO select → VACUU·PURE 10C | mehr Reichweite, schwerere Sachen einsaugen |
-| Pumpe **BVC professional** (Zellkultur) | im ganzen Zellkultur-Labor: BVC auf dem Rücken, Pistole wird zum **VHC-Handstück**, saugt alle Medien (Wellplatten, Petrischalen, Nährmedium, Tropfen) ohne Energie-Limit mit doppelten Punkten; beim Verlassen des Labors wieder die normale Pumpe |
-| Schutzbrille | Treffer kosten nur 1 statt 3 Sekunden |
-| Handschuhe | Saug-Energie lädt doppelt so schnell |
-| Schutzhelm | Gegner von unten wegköpfen |
-| Sicherheitsschuhe | Gegner durch Draufspringen zerstören |
-| alle 4 = **Vollschutz** | Gegner können nicht mehr schaden |
-| VACUU·VIEW extended (versteckt, 3×) | „Zeitvakuum“: +10 Sekunden |
+| 👀 **Aufmerksamkeit** | Auf dem Bildschirm läuft dauernd eine bunte Demo. Die fällt im Messegang auf und lockt Leute an den Stand. |
+| 📇 **Leads** | Jeder Spieler gibt Vorname, Name, Firma und E-Mail an, mit Einwilligung zur Kontaktaufnahme. Die Anmeldung zum Newsletter ist freiwillig und wird separat erfasst. |
+| 🔬 **Produkte spielerisch erklärt** | Jedes Level ist eine echte Laboranwendung mit der passenden Pumpe. Die Besucher sehen ME 1C, BVC professional, PC 3001 VARIO select und VACUU·PURE 10C im Einsatz. |
+| 💬 **Gesprächseinstieg** | „Welche Pumpe hattest du am Schluss?“ ist ein einfacher Einstieg ins Fachgespräch. |
+| 🏆 **Wiederkommen** | Es gibt eine Tages- und eine Gesamt-Bestenliste. Wer knapp verloren hat, kommt oft nochmals vorbei. |
 
-Jedes neue Schutz-Teil gibt +2 Sekunden. Eine Runde dauert **120 Sekunden**. Wer die Dampf-Krake
-einsaugt und den Ausgang erreicht, bekommt die Restzeit als Bonus. Treffer kosten Zeit (kein Game Over).
-Die verbleibende Zeit läuft zusätzlich als farbige **Zeitleiste** unter der Anzeige ab (grün → gelb → rot).
+---
 
-**Combo:** Wer innerhalb von 2 Sekunden wieder etwas einsaugt, baut eine Serie auf: Punkte ×2, ×3 … bis **×8**.
-Der goldene Combo-Kasten oben links zeigt die Stufe und einen ablaufenden Timer. Ein Treffer beendet die Serie.
+## 🕹️ So läuft das am Stand
 
-**Medaillen** am Ende der Runde (Bonuspunkte zählen zum Gesamtergebnis):
+**1. Anmelden** 📝
+Vorname, Name, Firma, E-Mail und das Häkchen für die Einwilligung. Unter dem Formular saugt der Professor schon mal Laborchaos weg.
 
-| Medaille | Bedingung | Bonus |
+![Anmeldung](docs/2_anmeldung.png)
+
+**2. Spielen** 🎮
+Laufen, springen und saugen, mit Tastatur, Gamepad oder Joystick. Aus den Kolben-Blöcken kommen stärkere Pumpen und Schutzausrüstung.
+
+![Spielszene im Verdampfer-Labor](docs/3_spiel.png)
+
+**3. Ergebnis und Medaillen** 🥇
+Punkte, Zeitbonus, Medaillen und die Platzierung von heute und von der ganzen Messe.
+
+![Ergebnis](docs/6_ergebnis.png)
+
+**4. Bestenliste** 🏆
+Öffentlich erscheint nur „Vorname N.“, also keine vollen Namen und keine Firmen.
+
+![Bestenliste](docs/7_bestenliste.png)
+
+---
+
+## 🧪 Vier Labore, vier Pumpen
+
+| Level | Pumpe | Anwendung im Spiel |
 |---|---|---|
-| Krake bezwungen | Dampf-Krake eingesaugt | +2000 |
-| Vollschutz | alle 4 Schutz-Teile | +1000 |
-| Unverletzt | kein Treffer (mind. 10× eingesaugt) | +1500 |
-| Top-Pumpe | VACUU·PURE 10C erreicht | +1000 |
-| Combo-Profi | Combo ×5 oder höher | +1000 |
-| Zeitmeister | alle 3 VACUU·VIEW gefunden | +500 |
+| 1️⃣ Filtrationslabor | **ME 1C** | Filtration |
+| 2️⃣ Zellkultur-Labor | **BVC professional** mit VHC-Handstück | Medienabsaugung aus Wellplatten und Petrischalen |
+| 3️⃣ Verdampfer-Labor | **PC 3001 VARIO select** | Rotavap, Vakuum-Konzentrator, Trockenschrank |
+| 4️⃣ Hochvakuum-Technikum | **VACUU·PURE 10C** | Ölfreie Trocknung: Gefriertrocknung, Schlenk-Line, Turbo-Vorvakuum |
 
-Jede Zone hat ihre eigene Musik, die Dampf-Krake ein eigenes Boss-Thema.
+Am Schluss wartet die **Dampf-Krake** 🐙. Die schafft nur die VACUU·PURE 10C.
 
-## Starten – ohne Installation, ohne Internet
+![Zellkultur-Labor mit BVC professional](docs/4_zellkultur.png)
 
-1. Den ganzen Ordner auf den Messe-Laptop kopieren (z.B. auf den Desktop).
-2. **Doppelklick auf `Spiel starten (Vollbild).bat`** (öffnet Edge im Vollbild),
-   oder einfach **Doppelklick auf `index.html`** und dann **F11** für Vollbild.
-3. Beenden: **Alt + F4**.
+![Endgegner Dampf-Krake](docs/5_boss.png)
 
-Läuft in Edge, Chrome und Firefox. **Immer denselben Browser und denselben Ordner benutzen**,
-sonst sieht das Spiel die bisherige Bestenliste nicht.
+Die Plattformen im Spiel sind **VACUU·LAN** Leitungen, und die **VACUU·VIEW extended** gibt als „Zeitvakuum“ 10 Sekunden extra. So tauchen weitere Produkte ganz nebenbei auf.
 
-## Steuerung
+---
 
-| Taste | Aktion |
+## ⭐ Was alles drin ist
+
+🔋 **Stärkere Pumpen.** Jede neue Pumpe hat mehr Reichweite und mehr Saugkraft. Beim Upgrade erscheinen Produktname und Anwendung.
+
+🦺 **Schutzausrüstung.** Schutzbrille, Handschuhe, Schutzhelm und Sicherheitsschuhe haben je einen Vorteil im Spiel. Wer alle vier hat, spielt mit „Vollschutz“. Das Thema Laborsicherheit kommt damit ganz nebenbei ins Spiel.
+
+🔥 **Combo-Serien.** Wer schnell hintereinander einsaugt, bekommt bis zu achtfache Punkte. Ein grosser goldener Kasten zeigt die Serie und einen ablaufenden Timer.
+
+🥇 **Sechs Medaillen** mit Bonuspunkten, zum Beispiel „Krake bezwungen“, „Vollschutz“ oder „Unverletzt“. Damit gibt es auch nach einer guten Runde noch etwas zu jagen.
+
+⏱️ **Zeitleiste.** Die restliche Zeit läuft als farbiger Balken ab, von Grün über Gelb zu Rot.
+
+🎵 **8-Bit-Musik und Sound.** Jedes Labor hat eine eigene Melodie, der Endgegner ein eigenes Thema. Wenn der Professor getroffen wird, ruft er „Autsch!“.
+
+🎮 **Tastatur, Gamepad und Joystick.** Ein Xbox- oder USB-Controller wird automatisch erkannt. Das sieht am Stand hochwertiger aus und schont die Laptop-Tastatur.
+
+🔬 **Echte Laborgegner.** Reagenzgläser, Eppis, Rundkolben, Wellplatten, Lösemitteldampf und Moleküle wie H₂O, O₂, N₂ oder Ethanol als Kugelmodelle.
+
+---
+
+## 🏆 Bestenliste und Preise
+
+- **Tages-Bestenliste**, damit es jeden Tag einen Gewinner gibt
+- **Gesamt-Bestenliste** über die ganze Messe für einen Hauptpreis
+- Wer mehrmals spielt, zählt mit seinem besten Ergebnis
+- Das Standpersonal sieht im Admin-Bereich die Top 3 von heute und von der ganzen Messe mit den vollen Kontaktdaten und kann die Gewinner direkt anrufen oder anschreiben
+
+---
+
+## 📇 Leads und Datenschutz 🔒
+
+- Alle Daten bleiben **nur auf dem Messe-Laptop**. Es wird nichts ins Internet geschickt.
+- Export als **Excel-Datei (CSV)**: eine Liste mit allen Kontakten, eine mit allen gespielten Runden. Die Kontakte können danach direkt ins CRM oder an den Vertrieb.
+- Die Einwilligung ist Pflicht, der Newsletter freiwillig und separat angekreuzt.
+- Nach der Messe löscht ein Knopf alle Daten.
+- 👉 Den Einwilligungstext sollte die Datenschutzstelle vor dem ersten Einsatz noch einmal anschauen. Er lässt sich in einer Datei ändern, ohne Programmierkenntnisse.
+
+---
+
+## 💻 Was es braucht
+
+| | |
 |---|---|
-| ← → | laufen |
-| ↑ | springen |
-| ↓ | ducken |
-| Leertaste (halten) | saugen – die **SOG**-Leiste leert sich, danach kurz abkühlen lassen |
-| Shift oder Ctrl (halten) | sprinten – **SPRINT**-Leiste beachten |
-| Enter | Start / bestätigen |
-| Esc | Pause / zurück |
-| M | Ton an/aus |
-| F | Vollbild (auf dem Titelbild) |
-| B | Bestenliste ein/aus (auf dem Titelbild) |
+| 🖥️ Hardware | Ein normaler Firmen-Laptop. Mit einem grossen Bildschirm oder TV daneben wirkt es natürlich am besten. |
+| 🎮 Optional | Ein USB-Gamepad oder Joystick |
+| 📦 Installation | Keine. Ordner kopieren, Doppelklick, läuft. |
+| 🌐 Internet | Nicht nötig, das Spiel läuft komplett offline |
+| 💰 Lizenzen | Keine. Das Spiel ist selbst entwickelt, ohne fremde Software oder Abos. |
 
-**Controller:** Xbox-/USB-Gamepads und einfache USB-Joysticks einfach einstecken, sie werden automatisch erkannt
-(„CONTROLLER VERBUNDEN“; evtl. einmal eine Taste drücken). Die Tastatur funktioniert weiterhin.
+---
 
-| Gamepad (Xbox-Layout) | Joystick | Aktion |
-|---|---|---|
-| Stick / Steuerkreuz | Stick | laufen, ↑ springen, ↓ ducken |
-| A oder Y | Knopf 2 / 3 | springen |
-| B oder X | Feuerknopf | saugen |
-| LB / RB / LT / RT | weitere Knöpfe | sprinten |
-| Start / A | Feuerknopf | Start / weiter |
-| Start oder Back | Knopf 9 / 10 | Pause ein/aus |
+## ⚙️ Anpassbar für jede Messe
 
-Die Anmeldung (Namen eintippen) geht natürlich nur mit Tastatur. Eine Runde abbrechen geht nur mit
-**Esc → Enter** auf der Tastatur, damit Spielende nicht aus Versehen abbrechen.
+- Messename auf dem Startbildschirm (z. B. „ILMAC 2026“)
+- Rundenzeit
+- Admin-PIN
+- Texte der Anmeldung und der Einwilligung
+- Pumpen-Slogans, Punkte und Zeitbonus
 
-**Tipp für den Messe-Laptop:** Wenn jemand 5× Shift drückt, fragt Windows nach der „Einrastfunktion“.
-Abschalten unter *Einstellungen → Barrierefreiheit → Tastatur → Einrastfunktion* (Tastenkombination deaktivieren).
-Sprinten geht auch mit Ctrl.
+Die ersten drei gehen direkt im Admin-Bereich, der Rest in einer gut kommentierten Einstellungsdatei.
 
-## Ablauf am Stand
+---
 
-1. Titelbild mit Demo lockt Besucher an. **B** (oder Klick auf den Knopf) zeigt die Bestenliste.
-2. **Enter** → Anmeldung: Vorname, Name, Firma, E-Mail + Einwilligung (Pflicht), Newsletter (freiwillig).
-3. Kurze Anleitung → Countdown → spielen.
-4. Ergebnis mit Platzierung (heute / ganze Messe) → Bestenliste → zurück zum Titelbild.
+## ✅ Nächste Schritte bis zur Messe
 
-In der öffentlichen Bestenliste erscheint nur **„Vorname N.“**. Wer mehrmals spielt (gleiche E-Mail),
-steht mit seinem besten Ergebnis drin.
+1. 🔒 Einwilligungstext mit dem Datenschutz abstimmen
+2. 🎁 Preise festlegen (Tagespreis und Hauptpreis)
+3. 🖥️ Laptop, Bildschirm und eventuell ein Gamepad organisieren und einmal durchtesten
+4. 🔑 Admin-PIN ändern und das Standpersonal kurz einweisen
 
-## Schnellstart ohne Anmeldung (zum Testen / Vorführen)
+---
 
-Auf dem Titelbild, der Bestenliste oder im Anmeldeformular **Strg + Shift + Enter** drücken:
-Das Spiel startet sofort mit dem Spieler **ADMIN**. Diese Testrunden werden **nicht** gespeichert
-und erscheinen weder in der Bestenliste noch im Export.
+📖 **Anleitung fürs Standpersonal** mit Steuerung, Admin-Bereich, Export und Tipps: [ANLEITUNG.md](ANLEITUNG.md)
 
-## Admin-Bereich (für das Standpersonal)
-
-Auf dem Titelbild **Strg + Shift + A** drücken, PIN eingeben (Standard **1234** – bitte ändern!).
-
-- **Top 3 heute** (Tagespreis) und **Top 3 gesamte Messe** mit vollen Kontaktdaten
-- **Leads (CSV/Excel)** und **Alle Runden (CSV/Excel)** exportieren → landen im Download-Ordner
-- **Sicherung speichern / laden** (JSON) – z.B. um Daten auf einen anderen Laptop zu übertragen
-- Messename, Rundenzeit und PIN ändern
-- **Referenzdaten laden (Test):** lädt die Testrunden vom 26.09.2026 (Ordner `daten/`: JSON und CSV-Beispiele), um Bestenliste und Export auszuprobieren – vor der Messe mit „Alle Daten löschen“ wieder entfernen
-- Einzelne Runden löschen (✕ zweimal klicken), **alle Daten löschen** nach der Messe (LÖSCHEN ins Feld tippen)
-- Nach jedem Export erscheint der Inhalt zusätzlich in einem Textfeld mit „Inhalt kopieren“ – praktisch, falls der Browser keinen Download erlaubt (z.B. in der Online-Vorschau)
-
-**Tipp:** Am Ende jedes Messetags die Leads exportieren. Die Daten liegen nur im Browser-Speicher
-dieses Laptops. Wenn jemand den Browserverlauf/Cookies löscht, sind sie weg.
-
-## Datenschutz
-
-Alle Daten bleiben lokal auf dem Laptop, es wird nichts ins Internet gesendet.
-Einwilligungstext und Hinweise stehen in `js/config.js` und sollten vor der Messe
-kurz mit der Marketing-/Datenschutzstelle abgestimmt werden. Nach der Messe im Admin-Bereich
-**Alle Daten löschen**.
-
-## Anpassen
-
-Die meisten Einstellungen stehen gut kommentiert in **`js/config.js`**:
-Rundenzeit, Punkte, Zeitabzüge, Saug-Energie, Sprint, Item-Boni, Pumpen-Namen und -Slogans,
-Schutzausrüstung, Anmeldefelder und Texte.
-Datei mit einem Texteditor öffnen, ändern, speichern, im Browser **F5** drücken.
-
-## Technik (für Neugierige)
-
-Reines HTML + JavaScript + Canvas, keine Frameworks, keine Installation, keine Internetverbindung.
-Pixelart und Sound werden direkt im Code erzeugt.
-
-| Datei | Inhalt |
-|---|---|
-| `js/config.js` | Einstellungen |
-| `js/level.js` | Levelaufbau (Blöcke, Gegner, Schilder) |
-| `js/entities.js` | Professor, Gegner, Pumpen, Boss |
-| `js/game.js` | Spielrunde, Saug-Mechanik, Anzeige |
-| `js/scenes.js` | Titelbild, Ergebnis, Bestenliste |
-| `js/ui.js` | Anmeldeformular, Admin-Bereich |
-| `js/storage.js` | Speicherung, Bestenliste, CSV-Export |
-| `js/sprites.js`, `js/font.js`, `js/sound.js` | Pixelgrafik, Schrift, 8-Bit-Sound |
-| `assets/vacuubrand-logo.png` | Logo für das Anmeldeformular |
+🚀 **Starten:** Doppelklick auf `Spiel starten (Vollbild).bat` oder auf `index.html`
