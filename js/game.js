@@ -358,6 +358,17 @@ class PlayScene {
         }
       }
     }
+    // Items (Pumpen, Schutzausrüstung, BVC, VACUU·VIEW) lassen sich ebenfalls einsaugen
+    for (const it of this.items) {
+      if (!it.alive || it.rising > 0) continue;
+      if (!this.inCone(nz, p.face, range, it.x, it.y - it.h / 2)) continue;
+      it.pulled = 2;
+      it.pullV = Math.min((it.pullV || 0) + 0.3, 5);
+      const dx = nz.x - it.x, dy = nz.y - (it.y - it.h / 2), len = Math.hypot(dx, dy) || 1;
+      it.x += dx / len * Math.min(it.pullV, len);
+      it.y += dy / len * Math.min(it.pullV, len);
+      if (len < 8) this.collect(it);
+    }
     const b = this.boss;
     if (b && b.active && b.alive && !b.captured && this.inCone(nz, p.face, range + 10, b.x, b.y - b.h / 2)) {
       if (cfg.power >= 3) {
@@ -398,7 +409,7 @@ class PlayScene {
     const pts = e.def.points * mult;
     this.addScore(pts);
     this.captures++;
-    this.popup(e.x, e.y - e.h - 4, '+' + pts + (mult > 1 ? ' ×' + mult : ''), mult > 1 ? THEME.gold : '#ffffff');
+    this.popup(e.x, e.y - e.h - 4, '+' + pts + (mult > 1 ? ' ×' + mult : '') + (e.def.showName ? ' ' + e.def.name : ''), mult > 1 ? THEME.gold : '#ffffff');
     this.burst(e.x, e.y - e.h / 2, bvcBonus ? ['#ffffff', '#ff8fb8'] : ['#ffffff', '#c8f2ff', '#6fcbe8'], 6);
     Sound.sfx('capture', e.def.weight);
   }

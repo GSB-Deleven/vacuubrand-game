@@ -166,3 +166,14 @@ input.bad { border-color: #ff6b6b; }
   border: 2px solid #a9bfd8;
 }
 .admin .export { background: #3d5a82; padding: 0.5em; margin: 0.5em 0; }
+
+/* Anmeldung: Formular oben, darunter läuft die Demo */
+#overlay.top { align-items: flex-start; padding-top: 1.5%; box-sizing: border-box; }
+#overlay.top .reg { font-size: 0.8em; padding: 0.7em 1.2em; max-height: 64%; width: 76%; }
+#overlay.top .reg .logo { margin: -0.7em -1.2em 0.5em; padding: 0.3em; }
+#overlay.top .reg .logo img { height: 3.4em; }
+#overlay.top .reg h1 { margin-bottom: 0.2em; }
+#overlay.top .reg .hint { margin: 0.1em 0 0.4em; }
+#overlay.top .reg .check { margin-top: 0.4em; }
+#overlay.top .reg .err { min-height: 1em; margin-top: 0.3em; }
+#overlay.top .reg .small { margin-top: 0.3em; }

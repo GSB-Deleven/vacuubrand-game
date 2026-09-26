@@ -7,14 +7,14 @@ Schutzausrüstung und Spezial-Geräte. Die Level zeigen die echten Anwendungen d
 
 | Zone | Gerät | Anwendungen / Gegner |
 |---|---|---|
-| 1 Filtrationslabor | **ME 1C** | Filtration: Filtrat-Tropfen, Partikel, Filterpapier |
-| 2 Zellkultur-Labor | **BVC professional** (Spezial) | Medienabsaugung: Nährmedium, Petrischalen-Schleim, Wellplatten |
-| 3 Verdampfer-Labor | **PC 3001 VARIO select** | Rotavap, Vakuum-Konzentrator, Trockenschrank: Lösemitteldampf, Hitzedampf, Rundkolben, Messbecher |
-| 4 Hochvakuum-Technikum | **VACUU·PURE 10C** | Ölfreie Trocknung (Gefriertrocknung, Schlenk-Line, Turbo-Vorvakuum): Eiskristalle, Schlenk-Kolben, Argon-Flaschen, **Dampf-Krake** (Boss) |
+| 1 Filtrationslabor | **ME 1C** | Filtration: Filtrat-Tropfen, Partikel, Filterpapier, Reagenzgläser, H₂O |
+| 2 Zellkultur-Labor | **BVC professional** (Spezial) | Medienabsaugung: Nährmedium, Petrischalen-Schleim, Wellplatten, H₂O₂ |
+| 3 Verdampfer-Labor | **PC 3001 VARIO select** | Rotavap, Vakuum-Konzentrator, Trockenschrank: Lösemitteldampf, Hitzedampf, Rundkolben, Messbecher, Eppis, Methanol, Ethanol |
+| 4 Hochvakuum-Technikum | **VACUU·PURE 10C** | Ölfreie Trocknung (Gefriertrocknung, Schlenk-Line, Turbo-Vorvakuum): Eiskristalle, O₂, N₂, H₂O, Schlenk-Kolben, Argon-Flaschen, **Dampf-Krake** (Boss) |
 
 Die durchspringbaren Plattformen sind **VACUU·LAN**-Leitungen.
 
-**Items aus den Kolben-Blöcken** (laufen wie die Pilze bei Mario davon – hinterher!):
+**Items aus den Kolben-Blöcken** (laufen wie die Pilze bei Mario davon – hinterher oder einfach einsaugen!):
 
 | Item | Wirkung |
 |---|---|

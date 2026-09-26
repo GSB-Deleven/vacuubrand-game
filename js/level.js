@@ -8,6 +8,7 @@
 //           Zone 3 Verdampfer: c Lösemitteldampf  y Eppi
 //                              k Rundkolben  h Trockenschrank-Hitze  m Messbecher
 //           Zone 4 Hochvakuum: i Eiskristall  l Schlenk-Kolben  z Argon-Flasche  b Siedeblase
+//           Moleküle: H2O  O2  N2  H2O2  MEOH (Methanol)  ETOH (Ethanol)
 //           K Dampf-Krake (Boss)   v VACUU·VIEW extended (+10 s)
 const Level = {
   WIDTH: 280,
@@ -39,19 +40,20 @@ const Level = {
     e('p', 29, 6); q(31, 6, '1'); e('f', 33);
     lan(35, 7, 5); e('d', 36, 6); e('f', 38, 6);
     q(37, 3, '?');
+    e('H2O', 40, 4);
     pit(43, 44);
     sign(47, 'ME 1C: IDEAL FÜR\nDIE FILTRATION');
     e('f', 49); e('t', 51); e('d', 53); e('p', 55, 5); e('p', 58, 6);
     brick(61, 9); brick(62, 8, 1, 2);
     e('v', 62, 3);
-    e('d', 66); e('t', 69); e('d', 73); e('p', 76, 6);
+    e('d', 66); e('t', 69); e('d', 73); e('H2O', 71, 5); e('p', 76, 6);
 
     // ---------------- Zone 2: ZELLKULTUR-LABOR (BVC professional) ----------------
     sign(82, 'ZELLKULTUR-LABOR:\nHOL DIR DIE BVC!');
     brick(85, 6); q(86, 6, 'V'); brick(87, 6);
-    e('n', 90); e('e', 93); e('w', 96); e('n', 99);
+    e('n', 90); e('e', 93); e('H2O2', 95, 5); e('w', 96); e('n', 99);
     lan(101, 7, 4); e('e', 102, 6); q(103, 3, '?');
-    e('n', 105, 9); e('w', 107); e('n', 110); e('d', 112); e('e', 114); e('w', 116);
+    e('n', 105, 9); e('w', 107); e('n', 110); e('d', 112); e('e', 114); e('H2O2', 111, 5); e('w', 116);
     brick(115, 6); q(116, 6, '2'); brick(117, 6);
     e('e', 118);
 
@@ -62,22 +64,22 @@ const Level = {
     lan(141, 7, 4); e('k', 142, 6); lan(146, 5, 4); e('h', 147, 3); q(148, 2, '?');
     e('k', 152); e('y', 155);
     pit(158, 159);
-    e('c', 162, 5); e('m', 165); e('c', 168, 6);
+    e('MEOH', 157, 5); e('c', 162, 5); e('m', 165); e('ETOH', 167, 4); e('c', 168, 6);
     e('c', 172, 6);
     brick(174, 9); brick(175, 8, 1, 2); brick(176, 7, 1, 3);
     e('v', 176, 2);
-    e('h', 180, 6); e('k', 183); brick(185, 6); q(186, 6, '?'); brick(187, 6);
+    e('h', 180, 6); e('ETOH', 190, 5); e('MEOH', 184, 4); e('k', 183); brick(185, 6); q(186, 6, '?'); brick(187, 6);
     e('y', 189); brick(192, 6); q(193, 6, '3'); brick(194, 6);
     e('k', 196); e('c', 198, 6);
 
     // ---------------- Zone 4: HOCHVAKUUM-TECHNIKUM (VACUU·PURE 10C) ----------------
     sign(202, 'VACUU·PURE 10C:\nIDEAL FÜR ÖLFREIE TROCKNUNG');
     q(205, 6, '3');
-    e('i', 208, 6); e('z', 211); e('l', 214);
+    e('i', 208, 6); e('N2', 210, 4); e('z', 211); e('l', 214);
     lan(217, 7, 3); lan(221, 5, 3); e('i', 222, 3); q(222, 2, '?');
-    e('b', 226, 7); e('l', 229); e('i', 232, 5);
+    e('b', 226, 7); e('O2', 228, 4); e('l', 229); e('i', 232, 5);
     pit(235, 236);
-    e('z', 239); e('b', 241, 6); e('d', 243); e('l', 246); e('i', 249, 6);
+    e('z', 239); e('N2', 240, 5); e('b', 241, 6); e('O2', 245, 4); e('H2O', 249, 3); e('d', 243); e('l', 246); e('i', 249, 6);
     sign(251, 'ACHTUNG:\nDAMPF-KRAKE!');
     q(255, 6, '3');
     e('v', 259, 5);
