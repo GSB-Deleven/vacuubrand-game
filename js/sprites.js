@@ -616,6 +616,11 @@ function buildHair() {
     };
     // Haarvolumen auf dem Kopf und seitlich (kompakt, die Spitzen machen die Frisur)
     P.ell(cx, cy + 2.5, 5, 1.8, hair);
+    // seitliche Büschel mit kurzer Spitze nach aussen
+    P.ell(cx - 8, cy + 4, 2, 2.5, hair); P.ell(cx + 8, cy + 4, 2, 2.5, hair);
+    P.rect(cx - 11, cy + 3, 2, 2, hair); P.px(cx - 12, cy + 2, hair);
+    P.rect(cx + 10, cy + 3, 2, 2, hair); P.px(cx + 12, cy + 2, hair);
+    P.px(cx - 8, cy + 4, hairD); P.px(cx + 8, cy + 4, hairD);
     // abstehende, spitze Strähnen wie beim Pin
     [[-165, 5, 2], [-138, 6, 2], [-112, 5, 2], [-90, 6, 2], [-68, 5, 2], [-42, 6, 2], [-15, 5, 2],
      [185, 4, 2], [-5, 4, 2]].forEach(([d, l, b]) => spike(d, l, b));
