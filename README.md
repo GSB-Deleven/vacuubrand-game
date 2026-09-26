@@ -140,6 +140,7 @@ Die ersten drei gehen direkt im Admin-Bereich, der Rest in einer gut kommentiert
 2. 🎁 Preise festlegen (Tagespreis und Hauptpreis)
 3. 🖥️ Laptop, Bildschirm und eventuell ein Gamepad organisieren und einmal durchtesten
 4. 🔑 Admin-PIN ändern und das Standpersonal kurz einweisen
+5. ✏️ Spieltexte durch das Marketing prüfen lassen: alle Texte mit Vorschlägen stehen in [TEXTE.md](TEXTE.md)
 
 ---
 
