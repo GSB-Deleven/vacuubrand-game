@@ -138,6 +138,8 @@ const Store = {
       ['Vorname', r => r.lead.firstName], ['Name', r => r.lead.lastName], ['Firma', r => r.lead.company],
       ['E-Mail', r => r.lead.email], ['Einwilligung', r => yn(r.lead.consent)], ['Newsletter', r => yn(r.lead.newsletter)],
       ['Punkte', r => r.score], ['Grundpunkte', r => r.base], ['Zeitbonus', r => r.timeBonus],
+      ['Medaillenbonus', r => r.medalBonus || 0],
+      ['Medaillen', r => (r.medals || []).map(k => (CONFIG.medals.find(m => m.key === k) || { name: k }).name).join(', ')],
       ['Labor gerettet', r => yn(r.finished)], ['Eingesaugt', r => r.captures], ['Beste Pumpe', r => (CONFIG.pumps[r.pump] || {}).short || '-']
     ], rows);
     return this.download('vakuum-professor_runden_' + this.fileStamp() + '.csv', text);

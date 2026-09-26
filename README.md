@@ -29,6 +29,23 @@ Die durchspringbaren Plattformen sind **VACUU·LAN**-Leitungen.
 
 Jedes neue Schutz-Teil gibt +2 Sekunden. Eine Runde dauert **120 Sekunden**. Wer die Dampf-Krake
 einsaugt und den Ausgang erreicht, bekommt die Restzeit als Bonus. Treffer kosten Zeit (kein Game Over).
+Die verbleibende Zeit läuft zusätzlich als farbige **Zeitleiste** unter der Anzeige ab (grün → gelb → rot).
+
+**Combo:** Wer innerhalb von 2 Sekunden wieder etwas einsaugt, baut eine Serie auf: Punkte ×2, ×3 … bis **×8**.
+Der goldene Combo-Kasten oben links zeigt die Stufe und einen ablaufenden Timer. Ein Treffer beendet die Serie.
+
+**Medaillen** am Ende der Runde (Bonuspunkte zählen zum Gesamtergebnis):
+
+| Medaille | Bedingung | Bonus |
+|---|---|---|
+| Krake bezwungen | Dampf-Krake eingesaugt | +2000 |
+| Vollschutz | alle 4 Schutz-Teile | +1000 |
+| Unverletzt | kein Treffer (mind. 10× eingesaugt) | +1500 |
+| Top-Pumpe | VACUU·PURE 10C erreicht | +1000 |
+| Combo-Profi | Combo ×5 oder höher | +1000 |
+| Zeitmeister | alle 3 VACUU·VIEW gefunden | +500 |
+
+Jede Zone hat ihre eigene Musik, die Dampf-Krake ein eigenes Boss-Thema.
 
 ## Starten – ohne Installation, ohne Internet
 
@@ -54,6 +71,21 @@ sonst sieht das Spiel die bisherige Bestenliste nicht.
 | M | Ton an/aus |
 | F | Vollbild (auf dem Titelbild) |
 | B | Bestenliste ein/aus (auf dem Titelbild) |
+
+**Controller:** Xbox-/USB-Gamepads und einfache USB-Joysticks einfach einstecken, sie werden automatisch erkannt
+(„CONTROLLER VERBUNDEN“; evtl. einmal eine Taste drücken). Die Tastatur funktioniert weiterhin.
+
+| Gamepad (Xbox-Layout) | Joystick | Aktion |
+|---|---|---|
+| Stick / Steuerkreuz | Stick | laufen, ↑ springen, ↓ ducken |
+| A oder Y | Knopf 2 / 3 | springen |
+| B oder X | Feuerknopf | saugen |
+| LB / RB / LT / RT | weitere Knöpfe | sprinten |
+| Start / A | Feuerknopf | Start / weiter |
+| Start oder Back | Knopf 9 / 10 | Pause ein/aus |
+
+Die Anmeldung (Namen eintippen) geht natürlich nur mit Tastatur. Eine Runde abbrechen geht nur mit
+**Esc → Enter** auf der Tastatur, damit Spielende nicht aus Versehen abbrechen.
 
 **Tipp für den Messe-Laptop:** Wenn jemand 5× Shift drückt, fragt Windows nach der „Einrastfunktion“.
 Abschalten unter *Einstellungen → Barrierefreiheit → Tastatur → Einrastfunktion* (Tastenkombination deaktivieren).

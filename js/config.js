@@ -15,7 +15,8 @@ const CONFIG = {
   fallTimePenalty: 3,          // Sekunden Abzug beim Runterfallen
   timeBonusPerSecond: 50,      // Punkte pro Restsekunde, wenn das Labor gerettet wurde
   finishBonus: 1000,           // Bonus fürs Erreichen des Ausgangs
-  comboWindow: 1.2,            // Sekunden für Combo-Serien
+  comboWindow: 2.0,            // Sekunden für Combo-Serien (so lange hat man Zeit fürs nächste Einsaugen)
+  comboMax: 8,                 // höchster Combo-Multiplikator
   bossHp: 200,                 // wie lange (Frames) man die Dampf-Krake saugen muss
 
   // Saug-Energie und Sprint-Ausdauer
@@ -34,6 +35,17 @@ const CONFIG = {
   boardAutoReturnSeconds: 20,
   registrationTimeoutSeconds: 90,
   leaderboardSize: 10,
+
+  // Medaillen am Ende der Runde (Bonuspunkte kommen zum Gesamtergebnis dazu)
+  medals: [
+    { key: 'boss', name: 'KRAKE BEZWUNGEN', bonus: 2000 },
+    { key: 'ppe', name: 'VOLLSCHUTZ', bonus: 1000 },
+    { key: 'nohit', name: 'UNVERLETZT', bonus: 1500 },
+    { key: 'pump', name: 'TOP-PUMPE', bonus: 1000 },
+    { key: 'combo', name: 'COMBO-PROFI', bonus: 1000 },
+    { key: 'view', name: 'ZEITMEISTER', bonus: 500 }
+  ],
+  comboMedal: 5,               // ab dieser Combo-Stufe gibt es die Medaille COMBO-PROFI
 
   // Die Pumpen: 1 = Start-Pumpe, 3 = stärkste.
   // power = maximales Gewicht, das eingesaugt werden kann; tank = Sekunden Dauersaugen

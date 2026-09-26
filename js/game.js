@@ -27,6 +27,9 @@ class PlayScene {
     this.freeze = 0; this.banner = null; this.msg = null;
     this.heavyT = 0; this.noPumpT = 0; this.lockedT = 0; this.heatT = 0; this.shoeHintT = 0;
     this.camX = 0; this.exitOpen = false; this.zone = 0; this.paused = false;
+    this.maxCombo = 0; this.hits = 0; this.comboPop = 0; this.comboLost = null;
+    this.shakeT = 0; this.shakeMag = 0; this.flashT = 0; this.timeFlash = 0; this.bossMusic = false;
+    this.viewsTotal = this.level.spawns.filter(s => s.type === 'v').length;
   }
 
   enter() { Sound.music(null); }
@@ -40,8 +43,16 @@ class PlayScene {
       this.parts.push({ x, y, vx: Math.cos(a) * s, vy: Math.sin(a) * s - 0.6, g: 0.06, t: 25 + Math.random() * 15, c: colors[i % colors.length], s: 2 });
     }
   }
+  shake(frames, mag) {
+    if (frames >= this.shakeT || mag >= this.shakeMag) { this.shakeT = Math.max(this.shakeT, frames); this.shakeMag = Math.max(this.shakeMag, mag); }
+  }
+  breakCombo() {
+    if (this.combo > 1) this.comboLost = { n: Math.min(this.combo, CONFIG.comboMax), t: 40 };
+    this.combo = 0; this.comboT = 0;
+  }
   addTime(sec, x, y) {
     this.time += sec;
+    this.timeFlash = 24;
     this.popup(x, y, '+' + sec + ' SEK', '#7be07b');
   }
 
@@ -50,8 +61,8 @@ class PlayScene {
     this.t++;
     this.stateT++;
     if (this.paused) {
-      if (Input.pressed('start') && !Input.pressed('suck')) { Sound.music(null); Game.go(new TitleScene()); }
-      else if (Input.pressed('back')) this.paused = false;
+      if (Input.pressed('abort')) { Sound.music(null); Game.go(new TitleScene()); }
+      else if (Input.pressed('pause')) this.paused = false;
       return;
     }
     switch (this.state) {
@@ -62,10 +73,10 @@ class PlayScene {
       case 'count':
         if (this.stateT % 60 === 1 && this.stateT < 180) Sound.sfx('count');
         this.updateEffects();
-        if (this.stateT >= 180) { this.setState('play'); Sound.sfx('go'); Sound.music('game'); }
+        if (this.stateT >= 180) { this.setState('play'); Sound.sfx('go'); Sound.music('zone' + this.zone); }
         return;
       case 'play':
-        if (Input.pressed('back')) { this.paused = true; Sound.suckStop(); this.player.sucking = false; return; }
+        if (Input.pressed('pause')) { this.paused = true; Sound.suckStop(); this.player.sucking = false; return; }
         this.updateWorld();
         return;
       case 'finish':
@@ -79,14 +90,31 @@ class PlayScene {
 
   setState(s) { this.state = s; this.stateT = 0; }
 
+  // Welche Medaillen hat die Runde verdient?
+  earnedMedals() {
+    const p = this.player;
+    const won = {
+      boss: !!(this.boss && this.boss.captured),
+      ppe: p.fullPPE(),
+      nohit: this.hits === 0 && this.captures >= 10,
+      pump: Math.max(this.bestPump, p.pump) >= 3,
+      combo: this.maxCombo >= CONFIG.comboMedal,
+      view: this.viewsTotal > 0 && this.views >= this.viewsTotal
+    };
+    return CONFIG.medals.filter(m => won[m.key]);
+  }
+
   end(finished) {
     const p = this.player;
     const timeLeft = finished ? Math.ceil(this.time) : 0;
     const timeBonus = finished ? timeLeft * CONFIG.timeBonusPerSecond + CONFIG.finishBonus : 0;
+    const medals = this.earnedMedals();
+    const medalBonus = medals.reduce((s, m) => s + m.bonus, 0);
     Game.go(new ResultScene({
-      lead: this.lead, score: this.score, timeBonus, total: this.score + timeBonus,
+      lead: this.lead, score: this.score, timeBonus, medalBonus, medals: medals.map(m => m.key),
+      total: this.score + timeBonus + medalBonus,
       finished, timeLeft, pump: Math.max(this.bestPump, p.pump), captures: this.captures,
-      ppe: CONFIG.ppe.filter(q => p.ppe[q.key]).length, views: this.views
+      ppe: CONFIG.ppe.filter(q => p.ppe[q.key]).length, views: this.views, maxCombo: this.maxCombo
     }));
   }
 
@@ -108,7 +136,7 @@ class PlayScene {
       return;
     }
     for (const k of ['heavyT', 'noPumpT', 'lockedT', 'heatT', 'shoeHintT']) if (this[k] > 0) this[k]--;
-    if (this.comboT > 0 && --this.comboT === 0) this.combo = 0;
+    if (this.comboT > 0 && --this.comboT === 0) this.breakCombo();
 
     this.updatePlayer();
     this.updateSuction();
@@ -133,6 +161,12 @@ class PlayScene {
     if (z > this.zone) {
       this.zone = z;
       this.showMsg('ZONE ' + (z + 1) + ': ' + ZONE_STYLE[z].name, 130, THEME.gold);
+      if (!this.bossMusic) Sound.music('zone' + z);
+    }
+    // Boss-Arena: eigene Musik
+    if (!this.bossMusic && this.boss && !this.boss.captured && p.x >= this.level.bossArenaX * T) {
+      this.bossMusic = true;
+      Sound.music('boss');
     }
 
     // Ausgang
@@ -212,7 +246,9 @@ class PlayScene {
       this.popup(p.x, p.y - 20, '-' + CONFIG.fallTimePenalty + ' SEK', '#ff8f8f');
       Sound.sfx('ouch');
       this.popup(p.x, p.y - 30, 'AUTSCH!', '#ffffff');
-      this.combo = 0;
+      this.hits++;
+      this.breakCombo();
+      this.shake(12, 2);
     }
   }
 
@@ -374,6 +410,7 @@ class PlayScene {
       if (cfg.power >= 3) {
         b.suckedNow = true;
         b.shake = 4;
+        this.shake(3, 1);
         if (b.hp > 0) {
           b.hp--;
           b.x += Math.sign(nz.x - b.x) * 0.15;
@@ -390,6 +427,8 @@ class PlayScene {
             this.exitOpen = true;
             this.banner = { title: 'LABOR GERETTET!', sub: 'SCHNELL ZUM AUSGANG →\nRESTZEIT GIBT BONUSPUNKTE!', t: 200 };
             Sound.sfx('boss');
+            this.shake(36, 3); this.flashT = 6;
+            Sound.music('zone3');
           }
         }
       } else if (this.heavyT <= 0) {
@@ -403,15 +442,20 @@ class PlayScene {
   capture(e, bvcBonus) {
     e.captured = true;
     e.capT = 12;
+    const prev = Math.min(this.combo, CONFIG.comboMax);
     this.combo = this.comboT > 0 ? this.combo + 1 : 1;
     this.comboT = Math.round(CONFIG.comboWindow * 60);
-    const mult = Math.min(this.combo, 5) * (bvcBonus ? 2 : 1);
+    const lvl = Math.min(this.combo, CONFIG.comboMax);
+    this.maxCombo = Math.max(this.maxCombo, lvl);
+    if (lvl > prev && lvl > 1) { this.comboPop = 8; this.comboLost = null; }
+    if (lvl !== prev && (lvl === 5 || lvl === CONFIG.comboMax)) Sound.sfx('combo', lvl);
+    const mult = lvl * (bvcBonus ? 2 : 1);
     const pts = e.def.points * mult;
     this.addScore(pts);
     this.captures++;
     this.popup(e.x, e.y - e.h - 4, '+' + pts + (mult > 1 ? ' ×' + mult : '') + (e.def.showName ? ' ' + e.def.name : ''), mult > 1 ? THEME.gold : '#ffffff');
     this.burst(e.x, e.y - e.h / 2, bvcBonus ? ['#ffffff', '#ff8fb8'] : ['#ffffff', '#c8f2ff', '#6fcbe8'], 6);
-    Sound.sfx('capture', e.def.weight);
+    Sound.sfx('capture', e.def.weight, lvl);
   }
 
   collect(it) {
@@ -425,11 +469,12 @@ class PlayScene {
         p.energy = 1; p.overheat = false;
         const cfg = CONFIG.pumps[p.pump];
         this.banner = { title: cfg.title, sub: cfg.slogan, t: 220, icon: 'pump' + p.pump };
+        this.shake(12, 2); this.flashT = 4;
+        Sound.sfx('upgrade');
         this.addScore(500);
         this.popup(p.x, p.y - 26, '+500', THEME.gold);
         if (p.sucking) Sound.suckStart(p.bvcT > 0 ? 2 : p.pump);
-      }
-      Sound.sfx('powerup');
+      } else Sound.sfx('powerup');
     } else if (it.kind === 'ppe') {
       const q = CONFIG.ppe.find(x => x.key === it.value);
       if (!p.ppe[it.value]) {
@@ -500,7 +545,9 @@ class PlayScene {
     this.time -= pen;
     p.stun = 30; p.inv = 100; p.ducking = false; p.h = 14;
     p.vx = (p.x < fromX ? -1 : 1) * 2; p.vy = -2.5;
-    this.combo = 0; this.comboT = 0;
+    this.hits++;
+    this.breakCombo();
+    this.shake(12, 2);
     Sound.suckStop(); p.sucking = false;
     this.popup(p.x, p.y - 24, '-' + pen + ' SEK', '#ff8f8f');
     Sound.sfx('ouch');
@@ -516,11 +563,23 @@ class PlayScene {
     this.bumps = this.bumps.filter(b => b.t < 8);
     if (this.banner && --this.banner.t <= 0) this.banner = null;
     if (this.msg && --this.msg.t <= 0) this.msg = null;
+    if (this.shakeT > 0 && --this.shakeT === 0) this.shakeMag = 0;
+    for (const k of ['flashT', 'timeFlash', 'comboPop']) if (this[k] > 0) this[k]--;
+    if (this.comboLost && --this.comboLost.t <= 0) this.comboLost = null;
   }
 
   // ------------------------------------------------------------------
   draw(ctx) {
     const camX = Math.round(this.camX);
+    // Bildschirm-Wackeln (nur kurz, bei Boss, Upgrade, Treffer)
+    let ox = 0, oy = 0;
+    if (this.shakeT > 0) {
+      const m = Math.min(this.shakeMag, 1 + Math.floor(this.shakeT / 6));
+      ox = Math.round((Math.random() * 2 - 1) * m); oy = Math.round((Math.random() * 2 - 1) * m);
+      ctx.fillStyle = PAL.k; ctx.fillRect(0, 0, VIEW_W, VIEW_H);
+    }
+    ctx.save();
+    ctx.translate(ox, oy);
     drawBackground(ctx, camX);
     ctx.save();
     ctx.translate(0, -CAM_Y);
@@ -540,6 +599,8 @@ class PlayScene {
     }
     for (const q of this.popups) Font.draw(ctx, q.text, Math.round(q.x - camX), Math.round(q.y), { color: q.color, align: 'center', outline: PAL.k });
     ctx.restore();
+    ctx.restore();
+    if (this.flashT > 0) { ctx.fillStyle = 'rgba(255,255,255,' + (this.flashT / 8).toFixed(2) + ')'; ctx.fillRect(0, 0, VIEW_W, VIEW_H); }
     this.drawHud(ctx);
     this.drawOverlays(ctx);
   }
@@ -566,7 +627,7 @@ class PlayScene {
     const p = this.player;
     ctx.fillStyle = 'rgba(52,80,122,0.94)';
     ctx.fillRect(0, 0, VIEW_W, HUD_H);
-    ctx.fillStyle = THEME.gold; ctx.fillRect(0, HUD_H, VIEW_W, 1);
+    this.drawTimeBar(ctx);
     Font.draw(ctx, 'PUNKTE ' + pad(this.score, 6), 4, 3, { color: '#ffffff' });
     if (p.bvcT > 0) {
       Font.draw(ctx, 'BVC PROFESSIONAL' + (p.bvcZone ? '' : ' ' + Math.ceil(p.bvcT / 60) + ' S'), 160, 3, { color: '#ff8fb8', align: 'center' });
@@ -594,13 +655,63 @@ class PlayScene {
       ctx.drawImage(spr, x, y);
       ctx.globalAlpha = 1;
     });
-    if (this.combo > 1 && this.comboT > 0) Font.draw(ctx, 'COMBO ×' + Math.min(this.combo, 5), 4, HUD_H + 4, { color: THEME.gold, outline: PAL.k });
+    this.drawCombo(ctx);
     const b = this.boss;
     if (b && b.active && b.alive && !b.captured) {
-      Font.draw(ctx, 'DAMPF-KRAKE', 160, HUD_H + 4, { color: '#e6dcff', align: 'center', outline: PAL.k });
-      ctx.fillStyle = PAL.k; ctx.fillRect(109, HUD_H + 13, 102, 5);
-      ctx.fillStyle = '#7b5fb8'; ctx.fillRect(110, HUD_H + 14, Math.round(100 * b.hp / b.maxHp), 3);
+      Font.draw(ctx, 'DAMPF-KRAKE', 160, HUD_H + 8, { color: '#e6dcff', align: 'center', outline: PAL.k });
+      ctx.fillStyle = PAL.k; ctx.fillRect(109, HUD_H + 17, 102, 5);
+      ctx.fillStyle = '#7b5fb8'; ctx.fillRect(110, HUD_H + 18, Math.round(100 * b.hp / b.maxHp), 3);
     }
+  }
+
+  // Zeitleiste unter der Anzeige: läuft von rechts nach links ab
+  drawTimeBar(ctx) {
+    const f = clamp(this.time / CONFIG.roundSeconds, 0, 1), y = HUD_H;
+    ctx.fillStyle = THEME.navyDark; ctx.fillRect(0, y, VIEW_W, 3);
+    const low = this.time <= 10;
+    let col = f > 0.5 ? '#7be07b' : f > 0.25 ? THEME.gold : '#e04848';
+    if (this.timeFlash > 0 && this.timeFlash % 6 < 3) col = '#ffffff';
+    if (!low || this.t % 30 < 20) {
+      const w = Math.round(VIEW_W * f);
+      ctx.fillStyle = col; ctx.fillRect(0, y, w, 3);
+      ctx.fillStyle = 'rgba(255,255,255,0.4)'; ctx.fillRect(0, y, w, 1);
+    }
+    ctx.fillStyle = THEME.gold; ctx.fillRect(0, y + 3, VIEW_W, 1);
+  }
+
+  // Gut sichtbarer Combo-Kasten mit ablaufendem Timer
+  drawCombo(ctx) {
+    let n, frac = 0, lost = false;
+    if (this.combo > 1 && this.comboT > 0) {
+      n = Math.min(this.combo, CONFIG.comboMax);
+      frac = this.comboT / Math.round(CONFIG.comboWindow * 60);
+    } else if (this.comboLost) {
+      n = this.comboLost.n; lost = true;
+    } else return;
+    const pop = this.comboPop > 4 ? 2 : this.comboPop > 0 ? 1 : 0;
+    const w = 84 + pop * 2, h = 24 + pop * 2, x = 4 - pop, y = HUD_H + 8 - pop;
+    if (lost) ctx.globalAlpha = Math.min(1, this.comboLost.t / 20);
+    ctx.fillStyle = PAL.k; ctx.fillRect(x - 2, y - 2, w + 4, h + 4);
+    ctx.fillStyle = lost ? '#c9d1dc' : n >= 5 ? (this.t % 20 < 10 ? '#ffffff' : '#ffe9a8') : '#d27410';
+    ctx.fillRect(x - 1, y - 1, w + 2, h + 2);
+    ctx.fillStyle = lost ? '#8795a8' : THEME.gold; ctx.fillRect(x, y, w, h);
+    ctx.fillStyle = lost ? '#a7b3c4' : '#ffd966'; ctx.fillRect(x, y, w, 1);
+    Font.draw(ctx, 'COMBO', x + 4, y + 3, { color: lost ? '#3b4658' : THEME.navy });
+    Font.draw(ctx, '×' + n, x + w - 4, y + 2 - pop, { color: lost ? '#3b4658' : PAL.k, scale: 2, align: 'right' });
+    // Timer-Balken
+    const bx = x + 4, by = y + h - 8, bw = w - 8;
+    if (!lost) {
+      ctx.fillStyle = PAL.k; ctx.fillRect(bx, by, bw, 6);
+      ctx.fillStyle = THEME.navyDark; ctx.fillRect(bx + 1, by + 1, bw - 2, 4);
+    }
+    const blink = !lost && this.comboT < 30 && this.t % 8 < 4;
+    if (!lost && !blink) {
+      ctx.fillStyle = frac > 0.5 ? '#7be07b' : frac > 0.25 ? '#ff9f1a' : '#e04848';
+      ctx.fillRect(bx + 1, by + 1, Math.max(1, Math.round((bw - 2) * frac)), 4);
+      ctx.fillStyle = 'rgba(255,255,255,0.45)'; ctx.fillRect(bx + 1, by + 1, Math.max(1, Math.round((bw - 2) * frac)), 1);
+    }
+    if (lost) Font.draw(ctx, 'VORBEI', bx + bw / 2, by - 1, { color: '#ffffff', align: 'center' });
+    ctx.globalAlpha = 1;
   }
 
   drawOverlays(ctx) {
@@ -624,7 +735,7 @@ class PlayScene {
     if (this.paused) {
       drawPanel(ctx, 60, 55, 200, 60);
       Font.draw(ctx, 'PAUSE', 160, 62, { color: THEME.gold, scale: 2, align: 'center' });
-      Font.draw(ctx, 'ESC = WEITERSPIELEN\nENTER = RUNDE ABBRECHEN', 160, 84, { color: '#ffffff', align: 'center' });
+      Font.draw(ctx, 'ESC / START = WEITERSPIELEN\nENTER = RUNDE ABBRECHEN', 160, 84, { color: '#ffffff', align: 'center' });
     }
   }
 
@@ -656,7 +767,7 @@ class PlayScene {
     drawPanel(ctx, 16, 8, 288, 164);
     Font.draw(ctx, 'SO GEHT\'S', 160, 13, { color: THEME.gold, scale: 2, align: 'center' });
     const left = [['←  →', 'LAUFEN'], ['↑', 'SPRINGEN'], ['↓', 'DUCKEN']];
-    const right = [['LEERTASTE', 'SAUGEN'], ['SHIFT/CTRL', 'SPRINTEN']];
+    const right = [['LEERTASTE', 'SAUGEN'], ['SHIFT/CTRL', 'SPRINTEN'], ['CONTROLLER', 'GEHT AUCH']];
     left.forEach((r, i) => { drawKey(ctx, 88, 33 + i * 13, r[0]); Font.draw(ctx, r[1], 94, 35 + i * 13, { color: '#ffffff' }); });
     right.forEach((r, i) => { drawKey(ctx, 232, 33 + i * 13, r[0]); Font.draw(ctx, r[1], 238, 35 + i * 13, { color: '#ffffff' }); });
     Font.draw(ctx, 'SOG + SPRINT SIND BEGRENZT: LEISTEN BEACHTEN!', 160, 75, { color: '#c8f2ff', align: 'center' });
