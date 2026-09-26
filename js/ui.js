@@ -154,7 +154,7 @@ class AdminScene {
         '</td><td><button class="btn small danger" data-del="' + escapeHtml(r.id) + '">✕</button></td></tr>';
     }).join('');
     Overlay.show(
-      '<div class="panel admin"><h1>ADMIN · VAKUUM-PROFESSOR</h1>' +
+      '<div class="panel admin"><h1>ADMIN · PROFESSOR VAKUUMUS</h1>' +
       (Store.available ? '' : '<div class="warn">Achtung: Der Browser-Speicher ist nicht verfügbar – Daten gehen beim Schliessen verloren! Bitte regelmässig exportieren.</div>') +
       (note ? '<p class="ok">' + escapeHtml(note) + '</p>' : '') +
       '<h2>Übersicht</h2><p>Heute: <b>' + st.playersToday + '</b> Spieler, <b>' + st.roundsToday + '</b> Runden · Gesamt: <b>' +

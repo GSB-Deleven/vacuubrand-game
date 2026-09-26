@@ -1,4 +1,4 @@
-# Vakuum-Professor – das VACUUBRAND Messespiel
+# Professor Vakuumus – das VACUUBRAND Messespiel
 
 Ein kleines Retro-Jump'n'Run (Pixelart wie auf dem Game Boy) für den Messestand.
 Der verrückte Professor (oranges Wuschelhaar, runde Brille – wie unser Maskottchen) saugt mit

@@ -131,9 +131,9 @@ class TitleScene {
     ctx.fillRect(0, 0, VIEW_W, 88);
     Font.drawLogo(ctx, 160, 5, 1, PAL.k);
     const bob = Math.round(Math.sin(this.t * 0.05) * 2);
-    Font.draw(ctx, 'VAKUUM', 160, 18 + bob, { color: THEME.gold, scale: 4, align: 'center', outline: PAL.k });
-    Font.draw(ctx, 'PROFESSOR', 160, 50 + bob, { color: '#ffffff', scale: 3, align: 'center', outline: THEME.navy });
-    Font.draw(ctx, 'SAUG DAS LABOR-CHAOS WEG!', 160, 77, { color: PAL.k, align: 'center' });
+    Font.draw(ctx, 'PROFESSOR', 160, 15 + bob, { color: '#ffffff', scale: 3, align: 'center', outline: THEME.navy });
+    Font.draw(ctx, 'VAKUUMUS', 160, 40 + bob, { color: THEME.gold, scale: 4, align: 'center', outline: PAL.k });
+    Font.draw(ctx, 'SAUG DAS LABOR-CHAOS WEG!', 160, 79, { color: PAL.k, align: 'center' });
     const cx = 233;
     const [sx, sy, sw, sh] = TITLE_BTN_START, [bx, by, bw, bh] = TITLE_BTN_BOARD;
     drawPanel(ctx, sx, sy, sw, sh);
