@@ -615,11 +615,11 @@ function buildHair() {
       }
     };
     // Haarvolumen auf dem Kopf und seitlich (kompakt, die Spitzen machen die Frisur)
-    P.ell(cx, cy, 7, 3.8, hair);
+    P.ell(cx, cy + 0.5, 6.5, 3.5, hair);
     P.ell(cx - 8, cy + 3, 2.5, 3, hair); P.ell(cx + 8, cy + 3, 2.5, 3, hair);
     // abstehende, spitze Strähnen wie beim Pin
-    [[-170, 7, 3], [-148, 8, 3], [-124, 7, 3], [-100, 8, 3], [-78, 7, 3], [-55, 8, 3], [-32, 7, 3], [-10, 7, 3],
-     [185, 6, 2.5], [5, 6, 2.5], [165, 4, 2], [25, 4, 2]].forEach(([d, l, b]) => spike(d, l, b));
+    [[-165, 4, 2.5], [-138, 5, 3], [-112, 4, 2.5], [-90, 5, 3], [-68, 4, 2.5], [-42, 5, 3], [-15, 4, 2.5],
+     [185, 3, 2], [-5, 3, 2]].forEach(([d, l, b]) => spike(d, l, b));
     // Glanzstellen
     [[cx - 3, cy - 3], [cx + 1, cy - 4], [cx - 6, cy - 1], [cx + 5, cy - 2]].forEach(([x, y]) => P.px(x, y, hairL));
     // Gesicht freilassen
