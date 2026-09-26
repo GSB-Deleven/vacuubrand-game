@@ -94,10 +94,12 @@ class TitleScene {
   constructor() {
     this.allowAdmin = true;
     this.t = 0; this.mode = 'title'; this.modeT = 0;
+    this.demo = new DemoStrip();
   }
   enter() { Sound.music('title'); }
   update() {
     this.t++; this.modeT++;
+    this.demo.update();
     if (this.mode === 'board' && (Input.pressed('board') || Input.pressed('back'))) { this.toggleBoard(); return; }
     if (this.mode === 'title' && Input.pressed('board')) { this.toggleBoard(); return; }
     if (Input.pressed('start')) { this.startGame(); return; }
@@ -123,20 +125,16 @@ class TitleScene {
       Font.draw(ctx, 'B / ESC = ZURÜCK    ENTER = START', 160, 170, { color: THEME.gold, align: 'center', outline: '#1a1c2c' });
       return;
     }
-    ctx.fillStyle = 'rgba(233,237,242,0.7)';
-    ctx.fillRect(0, 0, VIEW_W, VIEW_H);
-    // Grosses Porträt des Professors, wippt leicht und zwinkert ab und zu
-    const blink = (this.t % 240) > 228;
-    const spr = SPR['portrait' + (blink ? 1 : 0)];
-    const bob = Math.round(Math.sin(this.t * 0.04) * 2);
-    const sc = 3;
-    ctx.drawImage(spr, -6, VIEW_H - spr.height * sc + 2 + bob, spr.width * sc, spr.height * sc);
-    // Titel rechts
+    // Demo: der Professor saugt Laborchaos ein
+    this.demo.draw(ctx);
+    ctx.fillStyle = 'rgba(233,237,242,0.75)';
+    ctx.fillRect(0, 0, VIEW_W, 88);
+    Font.drawLogo(ctx, 160, 5, 1, PAL.k);
+    const bob = Math.round(Math.sin(this.t * 0.05) * 2);
+    Font.draw(ctx, 'VAKUUM', 160, 18 + bob, { color: THEME.gold, scale: 4, align: 'center', outline: PAL.k });
+    Font.draw(ctx, 'PROFESSOR', 160, 50 + bob, { color: '#ffffff', scale: 3, align: 'center', outline: THEME.navy });
+    Font.draw(ctx, 'SAUG DAS LABOR-CHAOS WEG!', 160, 77, { color: PAL.k, align: 'center' });
     const cx = 233;
-    Font.drawLogo(ctx, cx, 6, 1, PAL.k);
-    Font.draw(ctx, 'VAKUUM', cx, 20, { color: THEME.gold, scale: 3, align: 'center', outline: PAL.k });
-    Font.draw(ctx, 'PROFESSOR', cx, 46, { color: '#ffffff', scale: 2, align: 'center', outline: THEME.navy });
-    Font.draw(ctx, 'SAUG DAS LABOR-CHAOS WEG!', cx, 72, { color: PAL.k, align: 'center' });
     const [sx, sy, sw, sh] = TITLE_BTN_START, [bx, by, bw, bh] = TITLE_BTN_BOARD;
     drawPanel(ctx, sx, sy, sw, sh);
     Font.draw(ctx, 'ENTER = START', sx + sw / 2, sy + 4, { color: this.t % 60 < 42 ? THEME.gold : '#ffffff', align: 'center' });
@@ -147,7 +145,7 @@ class TitleScene {
       Font.draw(ctx, 'HEUTE FÜHRT:', cx, 136, { color: PAL.k, align: 'center' });
       Font.draw(ctx, top.name + '  ' + top.score, cx, 146, { color: '#d1621a', align: 'center' });
     }
-    Font.draw(ctx, CONFIG.eventName, 316, 170, { color: THEME.navy, align: 'right' });
+    Font.draw(ctx, CONFIG.eventName, 316, 170, { color: '#ffffff', align: 'right' });
   }
 }
 

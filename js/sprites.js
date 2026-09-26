@@ -506,7 +506,6 @@ function buildSprites() {
   });
 
   buildMolecules();
-  buildPortrait();
   buildDecor();
 }
 
@@ -553,77 +552,6 @@ function buildMolecules() {
         P.px(Math.round(ex - 2), Math.round(ey), PAL.k); P.px(Math.round(ex + 1), Math.round(ey), PAL.k);
       });
     }
-  }
-}
-
-// Grosses Brustbild des Professors für den Startbildschirm (2 Frames: offen / Zwinkern)
-function buildPortrait() {
-  const k = PAL.k, hair = '#f7a531', hairD = '#d4711c', hairL = '#ffc766', skin = '#ffcfa6', skinD = '#e8a47c';
-  for (let f = 0; f < 2; f++) {
-    SPR['portrait' + f] = outlined(56, 56, P => {
-      P.g.translate(8, 10);
-      // abstehende Haarspitzen wie beim Maskottchen: einzelne, spitz zulaufende Strähnen
-      const spike = (deg, len, base) => {
-        const a = deg * Math.PI / 180, dx = Math.cos(a), dy = Math.sin(a);
-        const r0 = 9;
-        for (let i = 0; i <= len * 2; i++) {
-          const d = i / 2;
-          const w = base * (1 - d / (len + 1));
-          const cx = 20 + dx * (r0 + d), cy = 12 + dy * (r0 * 0.8 + d);
-          for (let k = -w / 2; k <= w / 2; k += 0.5) P.px(cx - dy * k, cy + dx * k, hair);
-          if (d > 1 && d < len - 1) P.px(cx, cy, hairD);
-        }
-      };
-      [[-170, 8, 5], [-150, 10, 5], [-128, 9, 5], [-108, 11, 5], [-88, 9, 5], [-68, 11, 5], [-48, 9, 5], [-28, 10, 5], [-8, 8, 5],
-       [175, 7, 4], [160, 6, 4], [8, 7, 4], [22, 6, 4]].forEach(([d, l, w]) => spike(d, l, w));
-      // Kittel und Schultern
-      P.ell(20, 43, 17, 9, '#ffffff');
-      P.rect(3, 38, 34, 6, '#ffffff');
-      P.rect(12, 35, 16, 3, '#ffffff');
-      // Revers
-      for (let i = 0; i < 7; i++) { P.px(14 + i, 36 + i, '#c3cedd'); P.px(25 - i, 36 + i, '#c3cedd'); }
-      P.rect(3, 42, 34, 1, '#dfe5ec');
-      // Hals
-      P.rect(16, 31, 8, 5, skinD);
-      // Fliege in VACUUBRAND-Gelb
-      P.rect(15, 35, 4, 3, '#f9b000'); P.rect(21, 35, 4, 3, '#f9b000'); P.rect(19, 35, 2, 3, '#c98f00');
-      // Haaransatz (Kappe)
-      P.ell(20, 12, 13, 9, hair);
-      P.ell(9, 16, 4, 6, hair); P.ell(31, 16, 4, 6, hair);
-      // Ohren
-      P.ell(8.5, 20, 2.5, 3.5, skin); P.ell(31.5, 20, 2.5, 3.5, skin);
-      P.px(8, 20, skinD); P.px(31, 20, skinD);
-      // Gesicht
-      P.ell(20, 20, 11, 12, skin);
-      P.rect(15, 30, 10, 1, skinD);
-      // Stirnfransen
-      [[12, 9, 4, 3], [19, 8, 5, 3], [27, 9, 4, 3]].forEach(([x, y, rx, ry]) => P.ell(x, y, rx, ry, hair));
-      [[11, 11], [16, 11], [22, 10], [28, 11]].forEach(([x, y]) => P.px(x, y, hairD));
-      [[9, 6], [18, 5], [26, 6], [31, 8]].forEach(([x, y]) => P.rect(x, y, 2, 1, hairL));
-      [[6, 12], [33, 12], [14, 4], [24, 4]].forEach(([x, y]) => P.rect(x, y, 1, 2, hairD));
-      // Runde Brille
-      [[14, 18], [26, 18]].forEach(([cx, cy]) => {
-        P.ell(cx, cy, 5, 5, k);
-        P.ell(cx, cy, 4, 4, '#dff4fb');
-        if (f === 0) {
-          P.rect(cx - 1 + (cx < 20 ? 1 : -1), cy - 1, 2, 3, k);
-          P.px(cx - 2, cy - 2, '#ffffff');
-        } else {
-          P.rect(cx - 2, cy + 1, 4, 1, k);
-        }
-      });
-      P.rect(19, 17, 2, 1, k);
-      P.rect(8, 17, 2, 1, k); P.rect(30, 17, 2, 1, k);
-      // Augenbrauen (verrückt hochgezogen)
-      P.rect(10, 11, 6, 1, hairD); P.rect(25, 10, 6, 1, hairD);
-      // Nase und Wangen
-      P.rect(19, 21, 3, 3, skinD); P.px(20, 21, skin);
-      // breites Grinsen
-      P.ell(20, 26, 6, 3, '#8a2a3a');
-      P.rect(13, 23, 15, 3, skin);
-      P.rect(15, 26, 11, 1, '#ffffff');
-      P.g.setTransform(1, 0, 0, 1, 0, 0);
-    });
   }
 }
 
