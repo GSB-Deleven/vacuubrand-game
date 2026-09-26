@@ -13,10 +13,12 @@ const PAL = {
 const THEME = { navy: '#46648c', navyDark: '#34507a', gold: '#f9b000', light: '#e9edf2', sky: '#7b9cc0', blue: '#4f8fcf', ink: '#1a1c2c' };
 
 const SPR = {};
+const ENEMY_SPRITE_NAMES = new Set(['drop', 'dust', 'cloud', 'hotcloud', 'flask', 'beaker', 'paper', 'medium', 'petri', 'plate', 'ice', 'schlenk', 'bubble', 'cylinder', 'testtube', 'eppi', 'mol_h2o', 'mol_o2', 'mol_n2', 'mol_h2o2', 'mol_meoh', 'mol_etoh']);
 
 function makeCanvas(w, h) {
   const c = document.createElement('canvas');
   c.width = w; c.height = h;
+  c.getContext('2d', { willReadFrequently: true }); // Sprites werden beim Start einmal nachbearbeitet
   return c;
 }
 
@@ -80,6 +82,47 @@ function addOutline(c, col) {
   return c;
 }
 const outlined = (w, h, fn, col) => addOutline(paint(w, h, fn), col || PAL.k);
+
+// Farbe aufhellen/abdunkeln (f > 1 heller, f < 1 dunkler)
+function tint(hex, f) {
+  const n = parseInt(hex.slice(1), 16);
+  const ch = [(n >> 16) & 255, (n >> 8) & 255, n & 255].map(v => Math.round(f >= 1 ? v + (255 - v) * (f - 1) : v * f));
+  return '#' + ch.map(v => Math.max(0, Math.min(255, v)).toString(16).padStart(2, '0')).join('');
+}
+
+// 16-Bit-Look (SNES): Licht von oben links, Schatten unten rechts und farbige Konturen statt Schwarz
+function shade16(c) {
+  const w = c.width, h = c.height, g = c.getContext('2d');
+  const img = g.getImageData(0, 0, w, h), d = img.data, src = new Uint8ClampedArray(d);
+  const at = (x, y) => (y * w + x) * 4;
+  const solid = (x, y) => x >= 0 && y >= 0 && x < w && y < h && src[at(x, y) + 3] > 0;
+  const ink = (x, y) => { const i = at(x, y); return src[i] < 50 && src[i + 1] < 50 && src[i + 2] < 60; };
+  const edge = (x, y) => !solid(x, y) || ink(x, y);
+  for (let y = 0; y < h; y++) {
+    for (let x = 0; x < w; x++) {
+      if (!solid(x, y)) continue;
+      const i = at(x, y);
+      if (ink(x, y)) {
+        // Kontur: dunkle Version der angrenzenden Farbe
+        for (const [nx, ny] of [[x + 1, y], [x - 1, y], [x, y + 1], [x, y - 1]]) {
+          if (solid(nx, ny) && !ink(nx, ny)) {
+            const j = at(nx, ny);
+            d[i] = src[j] * 0.3 + 12; d[i + 1] = src[j + 1] * 0.3 + 12; d[i + 2] = src[j + 2] * 0.3 + 22;
+            break;
+          }
+        }
+        continue;
+      }
+      let f = 1;
+      if (edge(x, y - 1) || edge(x - 1, y)) f = 1.18;
+      else if (edge(x, y + 1) || edge(x + 1, y)) f = 0.78;
+      else if (edge(x + 1, y + 1)) f = 0.9;
+      if (f !== 1) for (let k = 0; k < 3; k++) d[i + k] = f > 1 ? src[i + k] + (255 - src[i + k]) * (f - 1) : src[i + k] * f;
+    }
+  }
+  g.putImageData(img, 0, 0);
+  return c;
+}
 
 function addPair(name, c) {
   SPR[name] = c;
@@ -447,19 +490,30 @@ function buildSprites() {
 
   // Kacheln je Zone
   ZONE_STYLE.forEach((z, i) => {
+    // Laborboden: glänzende Kante oben, darunter Fliesen mit Fugen, Glanzlichtern und Dither-Schatten
     SPR['groundTop' + i] = paint(16, 16, P => {
-      P.rect(0, 0, 16, 16, z.floor); P.rect(0, 0, 16, 4, z.floorTop); P.rect(0, 0, 16, 1, '#ffffff');
+      P.rect(0, 0, 16, 16, z.floor);
+      P.rect(0, 0, 16, 4, z.floorTop); P.rect(0, 0, 16, 1, '#ffffff'); P.rect(0, 1, 16, 1, tint(z.floorTop, 1.35));
       P.rect(0, 4, 16, 1, z.line);
+      P.rect(0, 5, 16, 1, tint(z.floor, 1.15));
+      P.rect(7, 5, 1, 11, z.line); P.rect(15, 5, 1, 11, z.line);
+      P.rect(1, 6, 3, 1, tint(z.floor, 1.25)); P.rect(9, 6, 2, 1, tint(z.floor, 1.25));
+      for (let y = 11; y < 16; y++) for (let x = (y % 2); x < 16; x += 2) if (y > 12 || x % 4 === 0) P.px(x, y, tint(z.floor, 0.88));
     });
     SPR['ground' + i] = paint(16, 16, P => {
-      P.rect(0, 0, 16, 16, z.floor);
+      P.rect(0, 0, 16, 16, tint(z.floor, 0.9));
+      P.rect(7, 0, 1, 16, z.line); P.rect(15, 0, 1, 16, z.line); P.rect(0, 15, 16, 1, z.line);
+      for (let y = 0; y < 16; y++) for (let x = (y % 2); x < 16; x += 2) if (y > 9) P.px(x, y, tint(z.floor, 0.8));
     });
+    // Laborpaneel: gebürstetes Metall mit Fase, Schrauben und Glanz
     SPR['brick' + i] = paint(16, 16, P => {
-      P.rect(0, 0, 16, 16, z.mortar);
+      P.rect(0, 0, 16, 16, tint(z.mortar, 0.75));
       P.rect(1, 1, 14, 14, z.brick);
-      P.rect(1, 1, 14, 1, '#ffffff');
-      P.rect(1, 14, 14, 1, z.mortar);
-      [[2, 2], [13, 2], [2, 13], [13, 13]].forEach(([x, y]) => P.px(x, y, z.mortar));
+      for (let x = 2; x < 14; x += 3) P.rect(x, 3, 1, 10, tint(z.brick, 0.96));
+      P.rect(1, 1, 14, 1, '#ffffff'); P.rect(1, 2, 1, 12, '#ffffff');
+      P.rect(1, 14, 14, 1, z.mortar); P.rect(14, 2, 1, 12, tint(z.brick, 0.9));
+      P.rect(3, 3, 4, 1, '#ffffff'); P.px(3, 4, '#ffffff');
+      [[2, 2], [13, 2], [2, 13], [13, 13]].forEach(([x, y]) => { P.px(x, y, tint(z.mortar, 0.6)); P.px(x - 1 + (x > 8 ? 0 : 1), y - 1 + (y > 8 ? 0 : 1), '#ffffff'); });
     });
   });
 
@@ -506,6 +560,10 @@ function buildSprites() {
   });
 
   buildMolecules();
+  // 16-Bit-Schattierung auf alle Figuren, Gegner und Items
+  for (const key of Object.keys(SPR)) {
+    if (/^(prof_|boss|pump|bvc|view|ppe_|coin)/.test(key) || ENEMY_SPRITE_NAMES.has(key.replace(/2$/, ''))) shade16(SPR[key]);
+  }
   buildDecor();
 }
 
