@@ -720,6 +720,16 @@ function drawBackground(ctx, camX) {
     ctx.fillStyle = z.base; ctx.fillRect(x0, 106, x1 - x0, 42);
     ctx.fillStyle = z.wall2; ctx.fillRect(x0, 104, x1 - x0, 3);
   }
+  // 16-Bit-Verlauf mit Dithering: oben heller, unten dunkler
+  const dp = ditherPatterns(ctx);
+  ctx.fillStyle = 'rgba(255,255,255,0.18)'; ctx.fillRect(0, 12, VIEW_W, 22);
+  ctx.fillStyle = dp.light; ctx.fillRect(0, 34, VIEW_W, 16);
+  ctx.fillStyle = dp.dark1; ctx.fillRect(0, 72, VIEW_W, 16);
+  ctx.fillStyle = dp.dark2; ctx.fillRect(0, 88, VIEW_W, 16);
+  // Labortisch-Front: Glanzkante oben, Dither-Schatten unten
+  ctx.fillStyle = 'rgba(255,255,255,0.35)'; ctx.fillRect(0, 107, VIEW_W, 1);
+  ctx.fillStyle = dp.dark1; ctx.fillRect(0, 124, VIEW_W, 12);
+  ctx.fillStyle = dp.dark2; ctx.fillRect(0, 136, VIEW_W, 12);
   // Ebene 1 (ganz hinten, 0.2×): Fliesen und Fenster
   const p1 = Math.round(camX * 0.2);
   for (let x = -(p1 % 16); x < VIEW_W; x += 16) {
@@ -731,7 +741,12 @@ function drawBackground(ctx, camX) {
   ctx.globalAlpha = 0.45;
   const w1 = 150;
   for (let n = Math.floor(p1 / w1) - 1; n < Math.floor(p1 / w1) + 3; n++) {
-    ctx.drawImage(SPR.deco_window, n * w1 - p1 + 50, 28);
+    const wx = n * w1 - p1 + 50;
+    ctx.drawImage(SPR.deco_window, wx, 28);
+    // Lichteinfall vom Fenster
+    ctx.save(); ctx.globalAlpha = 0.16; ctx.fillStyle = '#ffffff';
+    ctx.beginPath(); ctx.moveTo(wx + 3, 70); ctx.lineTo(wx + 43, 70); ctx.lineTo(wx + 66, 104); ctx.lineTo(wx + 26, 104); ctx.closePath(); ctx.fill();
+    ctx.restore(); ctx.globalAlpha = 0.45;
   }
   // Ebene 2 (0.45×): Wand-Deko; Poster zeigt immer die Pumpe des aktuellen Abschnitts
   const p2 = Math.round(camX * 0.45), w2 = 110, here = zoneOf(camX + VIEW_W / 2);
@@ -756,6 +771,19 @@ function drawBackground(ctx, camX) {
     ctx.drawImage(spr, sx + 42 - Math.round(spr.width / 2), 105 - spr.height);
   }
   ctx.globalAlpha = 1;
+}
+
+// Dither-Muster (einmal erzeugt) für SNES-typische Farbverläufe
+let DITHER = null;
+function ditherPatterns(ctx) {
+  if (DITHER) return DITHER;
+  const mk = (fn) => { const c = makeCanvas(4, 4), g = c.getContext('2d'); fn(g); return ctx.createPattern(c, 'repeat'); };
+  DITHER = {
+    light: mk(g => { g.fillStyle = 'rgba(255,255,255,0.22)'; g.fillRect(0, 0, 1, 1); g.fillRect(2, 2, 1, 1); }),
+    dark1: mk(g => { g.fillStyle = 'rgba(20,30,50,0.10)'; g.fillRect(0, 0, 1, 1); g.fillRect(2, 2, 1, 1); g.fillRect(2, 0, 1, 1); g.fillRect(0, 2, 1, 1); }),
+    dark2: mk(g => { g.fillStyle = 'rgba(20,30,50,0.10)'; for (let y = 0; y < 4; y++) for (let x = (y % 2); x < 4; x += 2) g.fillRect(x, y, 1, 1); })
+  };
+  return DITHER;
 }
 
 function drawTiles(ctx, level, camX, bumps, t) {
