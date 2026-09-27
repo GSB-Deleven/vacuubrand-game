@@ -15,7 +15,7 @@ Reines HTML, CSS und JavaScript mit Canvas, keine Frameworks, keine Installation
 | `js/storage.js` | Speichern, Bestenliste, Export |
 | `js/sprites.js`, `js/font.js`, `js/sound.js` | Pixelgrafik, Schrift, Musik |
 | `sw.js`, `manifest.webmanifest` | App-Installation und Offline-Betrieb |
-| `.github/workflows/` | Online-Veröffentlichung und Claude-Automatik |
+| `.github/workflows/` | Claude-Automatik |
 
 Das ausführliche Handbuch mit Spielmechanik, Datenformat und Kochrezepten zum Anpassen: **[TECHNIK.md](https://github.com/GSB-Deleven/vacuubrand-game/blob/main/TECHNIK.md)**
 
