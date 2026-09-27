@@ -15,19 +15,25 @@ function drawBoards(ctx, t, highlightId) {
   ctx.fillRect(0, 0, VIEW_W, VIEW_H);
   Font.draw(ctx, 'BESTENLISTE', 160, 5, { color: THEME.gold, scale: 2, align: 'center', outline: '#1a1c2c' });
   const cols = [
-    { title: 'HEUTE', list: Store.board(todayKey()), x: 8 },
-    { title: 'GESAMT · ' + CONFIG.eventName, list: Store.board(null), x: 164 }
+    { title: 'HEUTE', list: Store.board(todayKey()), x: 8, prize: CONFIG.prizeDay },
+    { title: 'GESAMT · ' + CONFIG.eventName, list: Store.board(null), x: 164, prize: CONFIG.prizeMain }
   ];
+  const showPrize = CONFIG.mode !== 'online';
   for (const c of cols) {
     drawPanel(ctx, c.x, 26, 148, 138);
     Font.draw(ctx, c.title.slice(0, 24), c.x + 74, 31, { color: '#c8f2ff', align: 'center' });
     ctx.fillStyle = '#3aa0e8'; ctx.fillRect(c.x + 4, 41, 140, 1);
+    // Preis unten im Kasten (im Admin einstellbar)
+    if (showPrize && c.prize) {
+      ctx.fillStyle = THEME.gold; ctx.fillRect(c.x, 153, 148, 11);
+      Font.draw(ctx, ('PREIS: ' + c.prize).slice(0, 24), c.x + 74, 155, { color: PAL.k, align: 'center' });
+    }
     if (!c.list.length) {
       Font.draw(ctx, 'NOCH KEINE EINTRÄGE.\nSEI DER ERSTE!', c.x + 74, 90, { color: '#ffffff', align: 'center' });
       continue;
     }
     c.list.slice(0, CONFIG.leaderboardSize).forEach((e, i) => {
-      const y = 46 + i * 12;
+      const y = 45 + i * 11;
       const hl = e.leadId === highlightId;
       if (hl && t % 40 < 20) { ctx.fillStyle = '#2d4a8f'; ctx.fillRect(c.x + 2, y - 2, 144, 11); }
       const col = hl ? THEME.gold : i === 0 ? '#ffd23f' : i < 3 ? '#ffffff' : '#c8d4e8';
@@ -155,6 +161,8 @@ class TitleScene {
       Font.draw(ctx, line, cx, 145, { color: PAL.k, align: 'center' });
     }
     Font.draw(ctx, CONFIG.eventName, 316, 170, { color: '#ffffff', align: 'right' });
+    const prize = CONFIG.mode !== 'online' && (CONFIG.prizeDay || CONFIG.prizeMain);
+    if (prize) Font.draw(ctx, ('ZU GEWINNEN: ' + prize).slice(0, 30), 4, 170, { color: THEME.gold, outline: PAL.k });
   }
 }
 
@@ -222,7 +230,7 @@ class ResultScene {
     ctx.fillStyle = '#5a7aa3'; ctx.fillRect(190, 42, 1, 84);
     Font.draw(ctx, 'MEDAILLEN', 250, 44, { color: THEME.gold, align: 'center' });
     CONFIG.medals.forEach((m, i) => {
-      const y = 55 + i * 12;
+      const y = 54 + i * 10;
       const idx = got.indexOf(m.key);
       const on = idx >= 0 && idx < (this.medalShown || 0);
       const pop = on && this.t < 80 + idx * 14 + 6;
@@ -230,15 +238,37 @@ class ResultScene {
       Font.draw(ctx, m.name, 210, y, { color: on ? '#ffffff' : '#7f93b0' });
     });
     if (this.t > 70 && this.test) {
-      Font.draw(ctx, 'TESTRUNDE - NICHT IN DER BESTENLISTE', 160, 134, { color: '#c8f2ff', align: 'center' });
+      Font.draw(ctx, 'TESTRUNDE - NICHT IN DER BESTENLISTE', 134, 134, { color: '#c8f2ff', align: 'center' });
     } else if (this.t > 70) {
       const rankTxt = 'PLATZ ' + (this.rankDay || '-') + ' HEUTE  ·  PLATZ ' + (this.rankAll || '-') + ' GESAMT';
-      Font.draw(ctx, rankTxt, 160, 134, { color: '#ffffff', align: 'center' });
-      if (!this.newBest) Font.draw(ctx, 'DEIN BESTWERT: ' + this.best, 160, 145, { color: '#c8f2ff', align: 'center' });
-      else if (this.rankDay === 1 && this.t % 30 < 20) Font.draw(ctx, '★ TAGESBESTWERT! ★', 160, 145, { color: '#ffd23f', align: 'center' });
+      Font.draw(ctx, rankTxt, 134, 134, { color: '#ffffff', align: 'center' });
+      if (!this.newBest) Font.draw(ctx, 'DEIN BESTWERT: ' + this.best, 134, 145, { color: '#c8f2ff', align: 'center' });
+      else if (this.rankDay === 1 && this.t % 30 < 20) Font.draw(ctx, '★ TAGESBESTWERT! ★', 134, 145, { color: '#ffd23f', align: 'center' });
     }
-    if (this.t > 60 && this.t % 50 < 35) Font.draw(ctx, hint('ENTER = BESTENLISTE', 'TIPPEN = BESTENLISTE'), 160, 159, { color: THEME.gold, align: 'center' });
+    if (this.t > 60 && this.t % 50 < 35) Font.draw(ctx, hint('ENTER = BESTENLISTE', 'TIPPEN = BESTENLISTE'), 134, 159, { color: THEME.gold, align: 'center' });
+    // QR-Code zum Kontakt (mit dem Handy scannen)
+    if (!this.qr) this.qr = qrCanvas(CONFIG.contactUrl) || 'none';
+    if (this.qr !== 'none') {
+      Font.draw(ctx, 'KONTAKT:', 286, 116, { color: '#c8f2ff', align: 'center' });
+      ctx.drawImage(this.qr, 286 - this.qr.width / 2, 125);
+    }
   }
+}
+
+// QR-Code als Pixelbild (1 Modul = 1 Pixel, weisser Rand), erzeugt offline mit js/lib/qrcode.js
+function qrCanvas(text) {
+  try {
+    if (!text || typeof qrcode === 'undefined') return null;
+    const q = qrcode(0, 'L');
+    q.addData(text);
+    q.make();
+    const n = q.getModuleCount(), m = 2;
+    const c = makeCanvas(n + m * 2, n + m * 2), g = c.getContext('2d');
+    g.fillStyle = '#ffffff'; g.fillRect(0, 0, c.width, c.height);
+    g.fillStyle = '#000000';
+    for (let r = 0; r < n; r++) for (let col = 0; col < n; col++) if (q.isDark(r, col)) g.fillRect(col + m, r + m, 1, 1);
+    return c;
+  } catch (e) { return null; }
 }
 
 // Kleine Pixel-Medaille (9×10): Band oben, runde Plakette unten

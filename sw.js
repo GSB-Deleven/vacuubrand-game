@@ -1,12 +1,13 @@
 'use strict';
 // Service Worker: macht die Online-Version offline-fähig (z. B. Tablet am Stand ohne WLAN).
 // Bei jeder neuen Version VERSION erhöhen, damit Tablets die neuen Dateien holen.
-const VERSION = 'vakuumus-v1';
+const VERSION = 'vakuumus-v2';
 const FILES = [
   './',
   'index.html',
   'manifest.webmanifest',
   'css/style.css',
+  'js/lib/qrcode.js',
   'js/config.js',
   'js/util.js',
   'js/font.js',

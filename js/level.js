@@ -1,19 +1,20 @@
 'use strict';
-// Das Level: 280 Kacheln breit, 12 hoch. Boden liegt in Zeile 10–11.
+// Das Level: 330 Kacheln breit, 12 hoch. Boden liegt in Zeile 10–11.
 // Kacheln:  # Boden   B Wandblock   - VACUU·LAN-Leitung (von unten durchspringbar)
-//           1/2/3 Kolben-Block mit Pumpe   ? Kolben-Block mit Schutzausrüstung
+//           1/2/3/4 Kolben-Block mit Pumpe   ? Kolben-Block mit Schutzausrüstung
 //           V Kolben-Block mit BVC professional   U leerer Block
 // Gegner:   Zone 1 Filtration: d Filtrat-Tropfen  f Schmutzpartikel  p Filterpapier  t Reagenzglas
 //           Zone 2 Zellkultur: n Nährmedium  e Petrischalen-Schleim  w Wellplatte
 //           Zone 3 Verdampfer: c Lösemitteldampf  y Eppi
 //                              k Rundkolben  h Trockenschrank-Hitze  m Messbecher
-//           Zone 4 Hochvakuum: i Eiskristall  l Schlenk-Kolben  z Argon-Flasche  b Siedeblase
+//           Zone 4 Chemie: a Säuredampf  g Scheidetrichter
+//           Zone 5 Hochvakuum: i Eiskristall  l Schlenk-Kolben  z Argon-Flasche  b Siedeblase
 //           Moleküle: H2O  O2  N2  H2O2  MEOH (Methanol)  ETOH (Ethanol)
 //           K Dampf-Krake (Boss)   v VACUU·VIEW extended (+10 s)
 const Level = {
-  WIDTH: 280,
+  WIDTH: 330,
   ROWS: 12,
-  ZONE_STARTS: [0, 80, 120, 200],
+  ZONE_STARTS: [0, 80, 120, 200, 250],
 
   build() {
     const W = this.WIDTH, H = this.ROWS;
@@ -72,27 +73,38 @@ const Level = {
     e('y', 189); brick(192, 6); q(193, 6, '3'); brick(194, 6);
     e('k', 196); e('c', 198, 6);
 
-    // ---------------- Zone 4: HOCHVAKUUM-TECHNIKUM (VACUU·PURE 10C) ----------------
-    sign(202, 'VACUU·PURE 10C:\nIDEAL FÜR ÖLFREIE TROCKNUNG');
+    // ---------------- Zone 4: CHEMIELABOR (MD 4C NT mit VACUU·SELECT) ----------------
+    sign(202, 'CHEMIELABOR:\nMD 4C NT MIT VACUU·SELECT');
     q(205, 6, '3');
-    e('i', 208, 6); e('N2', 210, 4); e('z', 211); e('l', 214);
-    lan(214, 8, 2); lan(217, 7, 3); lan(221, 5, 3); e('i', 222, 3); q(222, 2, '?');
-    e('b', 226, 7); e('O2', 228, 4); e('l', 229); e('i', 232, 5);
-    pit(235, 236);
-    e('z', 239); e('N2', 240, 5); e('b', 241, 6); e('O2', 245, 4); e('H2O', 249, 3); e('d', 243); e('l', 246); e('i', 249, 6);
-    sign(251, 'ACHTUNG:\nDAMPF-KRAKE!');
-    q(255, 6, '3');
-    e('v', 259, 5);
-    e('K', 267, 7);
-    brick(279, 0, 1, 10);
+    e('a', 208, 6); e('g', 210); e('c', 213, 6); e('MEOH', 215, 5);
+    lan(215, 8, 2); lan(218, 7, 4); e('g', 219, 6); q(220, 3, '?');
+    e('a', 224, 6); e('k', 226);
+    pit(229, 230);
+    e('ETOH', 232, 5); e('g', 234); e('a', 237, 6); e('y', 239);
+    brick(241, 9); brick(242, 8, 1, 2);
+    e('a', 244, 5); e('g', 246); e('c', 248, 6);
+
+    // ---------------- Zone 5: HOCHVAKUUM-TECHNIKUM (VACUU·PURE 10C) ----------------
+    sign(252, 'VACUU·PURE 10C:\nIDEAL FÜR ÖLFREIE TROCKNUNG');
+    q(255, 6, '4');
+    e('i', 258, 6); e('N2', 260, 4); e('z', 261); e('l', 264);
+    lan(264, 8, 2); lan(267, 7, 3); lan(271, 5, 3); e('i', 272, 3); q(272, 2, '?');
+    e('b', 276, 7); e('O2', 278, 4); e('l', 279); e('i', 282, 5);
+    pit(285, 286);
+    e('z', 289); e('N2', 290, 5); e('b', 291, 6); e('O2', 295, 4); e('H2O', 299, 3); e('d', 293); e('l', 296); e('i', 299, 6);
+    sign(301, 'ACHTUNG:\nDAMPF-KRAKE!');
+    q(305, 6, '4');
+    e('v', 309, 5);
+    e('K', 317, 7);
+    brick(329, 0, 1, 10);
 
     fixReach(tiles, spawns);
 
     return {
       W, H, tiles, spawns, signs,
       playerStart: { x: 2, y: 9 },
-      exitX: 276,
-      bossArenaX: 254
+      exitX: 326,
+      bossArenaX: 304
     };
   }
 };

@@ -33,7 +33,7 @@ Für die Nummern bei der Rückmeldung reicht z. B. „T12 ja, T15 lieber: …“
 | T11 | Slogan PC 3001 VARIO select, Zeile 2 | MEHR SOG: JETZT AUCH RUNDKOLBEN! | MEHR SAUGVERMÖGEN FÜR SCHWERERES CHAOS! | „Saugt Rundkolben“ klingt nach Feststoffen. Im Spiel ist Einsaugen zwar die Spielidee, beim Produktslogan wäre ich aber vorsichtig |
 | T12 | Titel beim Pumpen-Banner VACUU·PURE 10C | VACUU·PURE 10C | SCHRAUBENPUMPE VACUU·PURE 10C | analog zu „MEMBRANPUMPE ME 1C“. Bitte prüfen, ob die Bezeichnung so stimmt |
 | T13 | Titel beim Pumpen-Banner PC 3001 | PC 3001 VARIO SELECT | VAKUUMPUMPSTAND PC 3001 VARIO SELECT | gleiche Logik wie T12. Bitte die korrekte Produktbezeichnung bestätigen |
-| T14 | Meldung, wenn die BVC etwas nicht absaugen kann | DIE BVC SAUGT NUR FLÜSSIGKEITEN! | DIE BVC IST FÜR DIE MEDIENABSAUGUNG! | passt besser zum Banner „MEDIENABSAUGUNG“ |
+| T14 | ~~Meldung, wenn die BVC etwas nicht absaugen kann~~ | ~~DIE BVC SAUGT NUR FLÜSSIGKEITEN!~~ | entfällt | ✅ Die BVC saugt jetzt alles ein, die Meldung gibt es nicht mehr |
 | T15 | Slogan VACUU·PURE 10C | ÖLFREI: GEFRIERTROCKNUNG · SCHLENK · TURBO / MAXIMALER SOG! | ÖLFREI: GEFRIERTROCKNUNG · SCHLENK · TURBO / DAS STÄRKSTE IM LABOR! | „Maximaler Sog“ ist eine absolute Aussage. Die zweite Zeile ist aber reiner Spieltext, auch „MAXIMALER SOG!“ geht, wenn du es so willst |
 
 ### Steuerung, weil jetzt auch Controller gehen
@@ -53,6 +53,23 @@ Für die Nummern bei der Rückmeldung reicht z. B. „T12 ja, T15 lieber: …“
 | T32 | Ergebnis bei Testrunde | TESTRUNDE - NICHT IN DER BESTENLISTE | TESTRUNDE: NICHT IN DER BESTENLISTE | gleich wie T31 |
 | T33 | Pumpe fällt ins Becken | OH NEIN, DIE PUMPE IST WEG! NÄCHSTER KOLBEN-BLOCK... | OH NEIN, DIE PUMPE IST WEG! HOL DIR DIE NÄCHSTE! | kürzer, aktiver |
 | T34 | Bestenliste nach dem Ergebnis | DANKE FÜRS SPIELEN!  ENTER = WEITER | DANKE FÜRS MITSPIELEN! BESUCH UNS AM STAND! | Hinweis aufs Gespräch am Stand. Weiter geht es dann automatisch oder mit Enter |
+
+---
+
+## 🆕 Neue Texte (Chemielabor, QR-Code, Preise) zur Prüfung
+
+| Nr. | Ort | Text |
+|---|---|---|
+| T160 | Schild Zone 4 | CHEMIELABOR: / MD 4C NT MIT VACUU·SELECT |
+| T161 | Banner neue Pumpe (Titel) | MD 4C NT MIT VACUU·SELECT |
+| T162 | Banner neue Pumpe (Text) | CHEMIEFEST: DESTILLATION · TROCKNUNG / VACUU·SELECT REGELT AUTOMATISCH! |
+| T163 | Meldung Zonenwechsel | ZONE 4: CHEMIELABOR (Hochvakuum ist jetzt ZONE 5) |
+| T164 | Poster im Hintergrund | MD 4C NT · VACUU·SELECT |
+| T165 | Sturz ins Becken Zone 4 | IN DIE SÄURE-AUFFANGWANNE GEFALLEN! |
+| T166 | Gegnernamen Zone 4 | Säuredampf, Scheidetrichter |
+| T167 | Ergebnis, über dem QR-Code | KONTAKT: |
+| T168 | Startbildschirm unten links | ZU GEWINNEN: *Preis aus dem Admin* |
+| T169 | Bestenliste, unten in jedem Kasten | PREIS: *Tagespreis / Hauptpreis* |
 
 ---
 

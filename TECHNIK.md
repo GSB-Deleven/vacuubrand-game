@@ -78,6 +78,7 @@ Die Reihenfolge in `index.html` ist wichtig, weil spätere Dateien Dinge aus fr�
 | `referenzdaten.js` | die Referenzdaten als JavaScript, damit sie auch offline ohne Dateizugriff ladbar sind |
 | `ui.js` | HTML-Overlay: Anmeldeformular und Admin-Bereich |
 | `main.js` | Start, Szenenwechsel, Spielschleife, Skalierung, Mausklicks, Schnellstart |
+| `lib/qrcode.js` | QR-Code-Erzeugung (fremde Bibliothek „qrcode-generator“ von Kazuhiko Arase, MIT-Lizenz), für den Kontakt-QR-Code auf dem Ergebnisbildschirm. Ziel-Link: `contactUrl` in `config.js` |
 
 ---
 
@@ -186,11 +187,12 @@ Pumpen kommen aus den Kolben-Blöcken mit Nummer. Sie laufen wie die Pilze bei S
 |---|---|---|---|---|---|
 | 1 | ME 1C | 46 px | 1 | 3 s | Filtrationslabor |
 | 2 | PC 3001 VARIO select | 72 px | 2 | 3,5 s | Verdampfer-Labor |
-| 3 | VACUU·PURE 10C | 104 px | 3 | 4 s | Hochvakuum-Technikum |
+| 3 | MD 4C NT mit VACUU·SELECT | 88 px | 2 | 5 s | Chemielabor |
+| 4 | VACUU·PURE 10C | 104 px | 3 | 4 s | Hochvakuum-Technikum |
 
 Eine neue Pumpe gibt +500 Punkte, füllt die SOG-Leiste und zeigt Name und Slogan im Boden-Banner. Dazu gibt es eine Fanfare, einen kurzen Blitz und ein leichtes Wackeln.
 
-**BVC professional (Sonderfall):** kommt aus dem Block „V“ im Zellkultur-Labor. Im ganzen Zellkultur-Labor trägt der Professor dann die BVC, die Saugpistole wird zum VHC-Handstück. Sie saugt alle Gegner mit `liquid: true` (Medien, Wellplatten, Petrischalen, Tropfen) **ohne Energie-Limit** und mit **doppelten Punkten**, Reichweite mindestens 84 px. Verlässt man das Labor, ist wieder die normale Pumpe aktiv. Wird die BVC ausserhalb erwischt, gilt sie `bvcSeconds` = 8 s.
+**BVC professional (Sonderfall):** kommt aus dem Block „V“ im Zellkultur-Labor. Im ganzen Zellkultur-Labor trägt der Professor dann die BVC, die Saugpistole wird zum VHC-Handstück. Sie saugt **alles** ein (Flüssigkeiten, Dämpfe und alle anderen Gegner, egal wie schwer) **ohne Energie-Limit** und mit **doppelten Punkten**. Nur die Dampf-Krake schafft sie nicht, Reichweite mindestens 84 px. Verlässt man das Labor, ist wieder die normale Pumpe aktiv. Wird die BVC ausserhalb erwischt, gilt sie `bvcSeconds` = 8 s.
 
 ### Schutzausrüstung
 
@@ -245,14 +247,15 @@ Werden am Ende berechnet (`PlayScene.earnedMedals`), die Boni zählen zum Gesamt
 
 ### Aufbau
 
-Das Level ist **280 × 12 Kacheln** à 16 px gross. Der Boden liegt in den Reihen 10 und 11. Die Kamera folgt dem Professor seitlich.
+Das Level ist **330 × 12 Kacheln** à 16 px gross. Der Boden liegt in den Reihen 10 und 11. Die Kamera folgt dem Professor seitlich.
 
 | Zone | ab Kachel | Pumpe/Thema |
 |---|---|---|
 | 1 Filtrationslabor | 0 | ME 1C |
 | 2 Zellkultur-Labor | 80 | BVC professional |
 | 3 Verdampfer-Labor | 120 | PC 3001 VARIO select |
-| 4 Hochvakuum-Technikum | 200 | VACUU·PURE 10C, Endgegner |
+| 4 Chemielabor | 200 | MD 4C NT mit VACUU·SELECT |
+| 5 Hochvakuum-Technikum | 250 | VACUU·PURE 10C, Endgegner |
 
 Jede Zone hat eigene Farben (`ZONE_STYLE`), eigene Deko im Hintergrund, eigene Musik und Poster mit der passenden Pumpe.
 
@@ -263,7 +266,7 @@ Jede Zone hat eigene Farben (`ZONE_STYLE`), eigene Deko im Hintergrund, eigene M
 | `#` | Boden |
 | `B` | Wandblock (Edelstahl) |
 | `-` | VACUU·LAN-Leitung, von unten durchspringbar |
-| `1` `2` `3` | Kolben-Block mit Pumpe der Stufe |
+| `1` `2` `3` `4` | Kolben-Block mit Pumpe der Stufe |
 | `?` | Kolben-Block mit Schutzausrüstung |
 | `V` | Kolben-Block mit BVC professional |
 | `U` | leerer Block (nach dem Anspringen) |
@@ -288,7 +291,8 @@ Die Gruben sind Becken mit Flüssigkeit, je Zone eine andere (`PIT_STYLE` in `ga
 | 1 | Filtrat-Wanne (blau) |
 | 2 | Desinfektionsbad (rosa) |
 | 3 | Lösemittel-Auffangwanne (orange) |
-| 4 | Flüssigstickstoff (hellblau mit Nebel) |
+| 4 | Säure-Auffangwanne (gelbgrün) |
+| 5 | Flüssigstickstoff (hellblau mit Nebel) |
 
 Mit Edelstahlrand, Warnstreifen und ⚠-Schild. Wer hineinfällt, taucht sichtbar ein (Platsch, Spritzer, Meldung), verliert 3 s und startet an der letzten sicheren Stelle neu.
 
@@ -310,19 +314,21 @@ Verhalten: **walker** läuft hin und her und dreht an Kanten, **hopper** hüpft 
 | h | Hitzedampf | floater | 2 | 250 | 3 |
 | m | Messbecher | walker | 2 | 250 | 3 |
 | y | Eppi | hopper | 2 | 250 | 3 |
-| i | Eiskristall | floater | 2 | 300 | 4 |
-| l | Schlenk-Kolben | walker | 3 | 500 | 4 |
-| z | Argon-Flasche | static, harmlos | 3 | 500 | 4 |
-| b | Siedeblase | floater | 3 | 500 | 4 |
-| H2O | Wasser | floater | 1 | 150 | 1, 4 |
-| O2, N2 | Sauerstoff, Stickstoff | floater | 1 | 150 | 4 |
+| a | Säuredampf | floater | 2 | 250 | 4 |
+| g | Scheidetrichter | walker | 2 | 250 | 4 |
+| i | Eiskristall | floater | 2 | 300 | 5 |
+| l | Schlenk-Kolben | walker | 3 | 500 | 5 |
+| z | Argon-Flasche | static, harmlos | 3 | 500 | 5 |
+| b | Siedeblase | floater | 3 | 500 | 5 |
+| H2O | Wasser | floater | 1 | 150 | 1, 5 |
+| O2, N2 | Sauerstoff, Stickstoff | floater | 1 | 150 | 5 |
 | H2O2 | Wasserstoffperoxid | floater | 2 | 250 | 2 |
-| MEOH | Methanol | floater | 2 | 250 | 3 |
-| ETOH | Ethanol | floater | 2 | 300 | 3 |
+| MEOH | Methanol | floater | 2 | 250 | 3, 4 |
+| ETOH | Ethanol | floater | 2 | 300 | 3, 4 |
 
 Moleküle sind Kugelmodelle in CPK-Farben, beim Einsaugen erscheint ihr Name.
 
-Gegner mit `liquid: true` kann die BVC professional absaugen: d, t, n, e, w.
+Die BVC professional saugt alle Gegner ein. `liquid: true` (d, t, n, e, w) ist nur noch eine Beschreibung.
 
 ### Endgegner: Dampf-Krake
 
@@ -392,7 +398,7 @@ Im `localStorage` des Browsers:
 |---|---|
 | `vakuumprof_leads_v1` | alle Leads |
 | `vakuumprof_rounds_v1` | alle gespielten Runden |
-| `vakuumprof_settings_v1` | im Admin geänderte Einstellungen (Messename, Rundenzeit, PIN) |
+| `vakuumprof_settings_v1` | im Admin geänderte Einstellungen (Messename, Rundenzeit, PIN, Preise) |
 
 ⚠️ Die Daten gehören zu **diesem Browser auf diesem Laptop und diesem Ordner**. Ein anderer Browser, ein verschobener Ordner oder gelöschte Browserdaten bedeuten eine leere Bestenliste. Darum jeden Abend exportieren.
 
@@ -446,7 +452,7 @@ Beim **Laden einer Sicherung** werden nur neue Einträge ergänzt, nichts wird �
 | Übersicht | Spieler und Runden heute und gesamt |
 | Top 3 | heute (Tagespreis) und gesamte Messe, mit vollen Kontaktdaten |
 | Export & Sicherung | Leads-CSV, Runden-CSV, JSON-Sicherung speichern und laden, Referenzdaten laden. Nach jedem Export steht der Inhalt zusätzlich in einem Textfeld mit „Inhalt kopieren“, falls der Browser keinen Download zulässt |
-| Einstellungen | Messename, Rundenzeit (30 bis 600 s), Admin-PIN |
+| Einstellungen | Messename, Rundenzeit (30 bis 600 s), Admin-PIN, Tagespreis und Hauptpreis (je max. 17 Zeichen, erscheinen auf Startbildschirm und Bestenliste, nicht in der Online-Demo) |
 | Letzte Runden | die letzten 40 Runden, einzeln löschbar (✕ zweimal klicken) |
 | Gefahrenzone | alle Daten löschen, nur nach Eintippen von „LÖSCHEN“ |
 | Sonstiges | Vollbild, Ton an/aus |

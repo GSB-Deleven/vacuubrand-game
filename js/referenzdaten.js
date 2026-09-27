@@ -74,7 +74,7 @@ const REFERENCE_DATA = {
    "timeBonus": 3700,
    "finished": true,
    "timeLeft": 54,
-   "pump": 3,
+   "pump": 4,
    "captures": 57,
    "ppe": 4,
    "views": 3
@@ -90,7 +90,7 @@ const REFERENCE_DATA = {
    "timeBonus": 4350,
    "finished": true,
    "timeLeft": 67,
-   "pump": 3,
+   "pump": 4,
    "captures": 57,
    "ppe": 4,
    "views": 3
@@ -106,7 +106,7 @@ const REFERENCE_DATA = {
    "timeBonus": 4750,
    "finished": true,
    "timeLeft": 75,
-   "pump": 3,
+   "pump": 4,
    "captures": 57,
    "ppe": 4,
    "views": 3
@@ -122,7 +122,7 @@ const REFERENCE_DATA = {
    "timeBonus": 4150,
    "finished": true,
    "timeLeft": 63,
-   "pump": 3,
+   "pump": 4,
    "captures": 61,
    "ppe": 4,
    "views": 3
@@ -138,7 +138,7 @@ const REFERENCE_DATA = {
    "timeBonus": 3850,
    "finished": true,
    "timeLeft": 57,
-   "pump": 3,
+   "pump": 4,
    "captures": 55,
    "ppe": 4,
    "views": 3
@@ -154,7 +154,7 @@ const REFERENCE_DATA = {
    "timeBonus": 3800,
    "finished": true,
    "timeLeft": 56,
-   "pump": 3,
+   "pump": 4,
    "captures": 58,
    "ppe": 4,
    "views": 3

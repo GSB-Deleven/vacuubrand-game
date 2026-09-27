@@ -1,7 +1,7 @@
 'use strict';
 // Spielfiguren: Professor, Gegner/Objekte, Items, Boss + Tile-Kollision
 
-const SOLID_TILES = new Set(['#', 'B', '1', '2', '3', '?', 'V', 'U']);
+const SOLID_TILES = new Set(['#', 'B', '1', '2', '3', '4', '?', 'V', 'U']);
 
 function tileAt(level, tx, ty) {
   if (tx < 0 || tx >= level.W) return 'B';
@@ -150,7 +150,7 @@ function drawProfessor(ctx, x, y, o) {
     const gx0 = face > 0 ? x + 2 : x - 12;
     ctx.fillStyle = PAL.k; ctx.fillRect(gx0 - 1, gy - 1, 12, 5);
     ctx.fillStyle = '#a7b3c4'; ctx.fillRect(gx0, gy, 10, 3);
-    ctx.fillStyle = o.pump === 3 ? '#ffa53a' : o.pump === 2 ? '#7be07b' : o.pump === 1 ? '#3aa0e8' : '#5d6b80';
+    ctx.fillStyle = ['#5d6b80', '#3aa0e8', '#7be07b', '#b48ade', '#ffa53a'][o.pump] || '#5d6b80';
     ctx.fillRect(gx0 + 3, gy, 2, 3);
     const nx = face > 0 ? x + 12 : x - 14;
     const flare = o.sucking ? 1 : 0;
@@ -185,6 +185,8 @@ const ENEMY_DEFS = {
   H2O2: { name: 'H2O2', w: 20, h: 12, weight: 2, points: 250, beh: 'floater', harm: true, spr: 'mol_h2o2', frames: true, showName: true },
   MEOH: { name: 'METHANOL', w: 18, h: 15, weight: 2, points: 250, beh: 'floater', harm: true, spr: 'mol_meoh', frames: true, showName: true },
   ETOH: { name: 'ETHANOL', w: 24, h: 15, weight: 2, points: 300, beh: 'floater', harm: true, spr: 'mol_etoh', frames: true, showName: true },
+  a: { name: 'SÄUREDAMPF', w: 12, h: 9, weight: 2, points: 250, beh: 'floater', harm: true, spr: 'acidcloud' },
+  g: { name: 'SCHEIDETRICHTER', w: 10, h: 15, weight: 2, points: 250, beh: 'walker', speed: 0.5, harm: true, spr: 'funnel', frames: true },
   m: { name: 'MESSBECHER', w: 10, h: 10, weight: 2, points: 250, beh: 'walker', speed: 0.6, harm: true, spr: 'beaker', frames: true },
   // Hochvakuum
   i: { name: 'EISKRISTALL', w: 12, h: 12, weight: 2, points: 300, beh: 'floater', harm: true, spr: 'ice', frames: true },
