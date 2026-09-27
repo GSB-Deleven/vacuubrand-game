@@ -1,8 +1,24 @@
 # 🧪 Professor Vakuumus
 
+> [!NOTE]
+> ### 🧪 Online testen: [gsb-deleven.github.io/vacuubrand-game](https://gsb-deleven.github.io/vacuubrand-game/)
+> **Nur zum Ausprobieren** im Browser, auf dem Handy oder Tablet. Für die Messe die **Offline-Version** verwenden (Ordner kopieren, Doppelklick auf `index.html`).
+>
+> | | 🧪 Online-Test | 🎪 Messe-Version (offline) |
+> |---|---|---|
+> | Start | Link im Browser | Ordner kopieren, Doppelklick |
+> | Anmeldung | nur Spitzname | Vorname, Name, Firma, E-Mail, Einwilligung |
+> | Kontakte / Export | keine | CSV/Excel-Export |
+> | Admin-Bereich | nein | ja, mit PIN |
+> | Bestenliste | nur auf dem eigenen Gerät | Tages- und Messe-Bestenliste am Stand |
+> | Internet | nötig (beim ersten Laden) | nicht nötig |
+> | Spiel selbst | gleich | gleich |
+>
+> Mit **`?messe`** am Ende des Links läuft auch online die volle Stand-Version, z. B. auf einem Tablet am Stand.
+
 ### Das VACUUBRAND Messespiel: Besucher an den Stand holen, Produkte zeigen, Kontakte sammeln
 
-[![Online spielen](https://img.shields.io/badge/🎮_Online_spielen-f9b000?style=for-the-badge)](https://gsb-deleven.github.io/vacuubrand-game/)
+[![Online testen](https://img.shields.io/badge/🧪_Online_testen-f9b000?style=for-the-badge)](https://gsb-deleven.github.io/vacuubrand-game/)
 [![Wiki](https://img.shields.io/badge/📖_Wiki-46648c?style=for-the-badge)](https://github.com/GSB-Deleven/vacuubrand-game/wiki)
 [![Ideen & Feedback](https://img.shields.io/badge/💬_Ideen_&_Feedback-4f8fcf?style=for-the-badge)](https://github.com/GSB-Deleven/vacuubrand-game/discussions)
 [![Aufgaben](https://img.shields.io/github/issues/GSB-Deleven/vacuubrand-game?label=Aufgaben&style=for-the-badge&color=7be07b)](https://github.com/GSB-Deleven/vacuubrand-game/issues)
@@ -135,7 +151,7 @@ Dasselbe Spiel läuft auf **Laptop, Tablet und Handy**. Auf Touch-Geräten ersch
 |---|---|---|
 | 🎪 **Messe (Laptop)** | Doppelklick auf `index.html` | Stand mit Anmeldung, Bestenliste und Kontakt-Export |
 | 📱 **Messe (Tablet)** | [https://gsb-deleven.github.io/vacuubrand-game/?messe](https://gsb-deleven.github.io/vacuubrand-game/?messe) | wie oben, aber auf dem Tablet. Einmal öffnen, „Zum Home-Bildschirm“, danach läuft es auch ohne WLAN |
-| 🌍 **Online-Demo** | [https://gsb-deleven.github.io/vacuubrand-game/](https://gsb-deleven.github.io/vacuubrand-game/) | für Website, Newsletter, Social Media: nur ein Spitzname, keine Kontaktdaten, keine Datenübertragung |
+| 🧪 **Online-Test** | [https://gsb-deleven.github.io/vacuubrand-game/](https://gsb-deleven.github.io/vacuubrand-game/) | **nur zum Testen**: nur ein Spitzname, keine Kontaktdaten, keine Datenübertragung |
 
 ---
 
