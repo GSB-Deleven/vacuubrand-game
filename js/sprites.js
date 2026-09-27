@@ -460,16 +460,28 @@ function buildSprites() {
     P.rect(13, 11, 1, 2, glass); P.ell(13.5, 15, 2.5, 2.5, glass); P.px(12, 14, '#ffffff');
     P.rect(16, 9, 3, 1, greyD); P.rect(19, 10, 1, 2, glass); P.ell(19.5, 14, 2.3, 2.3, glass); P.px(18, 13, '#ffffff');
   });
-  // MD 4C NT mit VACUU·SELECT: Membranpumpe mit vier blauen Pumpenköpfen, darauf der Controller mit Touchscreen
-  SPR.pump3 = outlined(21, 17, P => {
-    P.rect(4, 1, 11, 6, '#f4f7fa'); P.rect(4, 1, 11, 1, '#ffffff');
-    P.rect(5, 2, 9, 4, k); P.rect(6, 3, 7, 2, '#7fd0f5'); P.rect(6, 3, 3, 1, '#ffffff'); P.px(11, 4, '#7be07b');
-    P.rect(8, 7, 2, 1, greyD);
-    P.rect(4, 8, 11, 6, alu); P.rect(4, 10, 11, 1, rib); P.rect(4, 12, 11, 1, rib);
-    P.rect(1, 8, 3, 3, blue); P.rect(1, 11, 3, 3, blueD); P.rect(15, 8, 3, 3, blue); P.rect(15, 11, 3, 3, blueD);
-    P.rect(18, 9, 2, 1, '#b8c3cd'); P.rect(18, 12, 2, 1, '#b8c3cd');
-    P.rect(2, 14, 16, 1, '#8e98a4');
-    P.rect(3, 15, 2, 1, k); P.rect(14, 15, 2, 1, k);
+  // MD 4C VARIO select: graues Pumpengehäuse mit Typenschild und "4c", Motorhaube mit Lüfter,
+  // Gasballast-Knopf links, daneben das VACUU·SELECT-Bediengerät mit runder Vakuumanzeige auf Klappständer
+  SPR.pump3 = outlined(24, 17, P => {
+    const g1 = '#c3cbd4', g2 = '#dde3e9', g3 = '#9aa4af';
+    // Motorhaube
+    P.rect(5, 1, 9, 6, g1); P.rect(5, 1, 9, 1, g2);
+    P.rect(7, 2, 5, 1, g3);
+    P.rect(6, 4, 3, 2, '#5d6b80'); P.px(7, 4, g1);
+    P.rect(10, 4, 3, 1, g3); P.rect(10, 5, 3, 1, g3);
+    P.rect(13, 5, 1, 2, '#3b4658');
+    // Pumpenblock
+    P.rect(1, 7, 14, 8, g1); P.rect(1, 7, 14, 1, g2); P.rect(12, 8, 3, 7, g3);
+    P.rect(3, 9, 4, 5, '#f4f7fa'); P.rect(4, 10, 2, 1, THEME.navy); P.rect(4, 12, 2, 1, '#f9b000');
+    P.rect(8, 9, 3, 4, '#eef2f6'); P.rect(9, 10, 1, 2, '#3d6fb0');
+    P.rect(2, 4, 2, 1, k); P.rect(2, 5, 2, 2, '#3b4658');
+    P.rect(2, 15, 2, 1, k); P.rect(11, 15, 2, 1, k);
+    // VACUU·SELECT-Bediengerät
+    P.rect(16, 7, 6, 8, k);
+    P.rect(17, 8, 4, 6, '#26324a');
+    P.px(17, 11, '#3aa0e8'); P.px(18, 10, '#3aa0e8'); P.px(19, 10, '#3aa0e8'); P.px(20, 11, '#8e98a4');
+    P.px(18, 12, '#ffffff'); P.px(19, 12, '#ffffff');
+    P.rect(22, 9, 1, 6, '#b8c3cd'); P.px(23, 15, '#b8c3cd');
   });
   // VACUU·PURE 10C: weisse Front, graue Seite, schwarzer Flansch oben
   SPR.pump4 = outlined(18, 17, P => {
@@ -817,7 +829,7 @@ function buildDecor() {
     }
     Font.draw(P.g, 'VACUU·LAN', 30, 0, { color: '#5d6b80' });
   });
-  const posterText = ['ME 1C', 'BVC PROFESSIONAL', 'PC 3001 VARIO SELECT', 'MD 4C NT · VACUU·SELECT', 'VACUU·PURE 10C'];
+  const posterText = ['ME 1C', 'BVC PROFESSIONAL', 'PC 3001 VARIO SELECT', 'MD 4C VARIO SELECT', 'VACUU·PURE 10C'];
   posterText.forEach((t, i) => {
     const pw = Math.max(80, Font.width(t) + 10);
     D['poster' + i] = paint(pw, 28, P => {

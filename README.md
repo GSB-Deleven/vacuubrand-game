@@ -86,7 +86,7 @@ Punkte, Zeitbonus, Medaillen und die Platzierung von heute und von der ganzen Me
 | 1️⃣ Filtrationslabor | **ME 1C** | Filtration |
 | 2️⃣ Zellkultur-Labor | **BVC professional** mit VHC-Handstück | Medienabsaugung aus Wellplatten und Petrischalen |
 | 3️⃣ Verdampfer-Labor | **PC 3001 VARIO select** | Rotavap, Vakuum-Konzentrator, Trockenschrank |
-| 4️⃣ Chemielabor | **MD 4C NT** mit **VACUU·SELECT** | Chemiefeste Membranpumpe für Destillation und Trocknung, der Controller regelt automatisch |
+| 4️⃣ Chemielabor | **MD 4C VARIO select** | Chemiefeste Membranpumpe für Destillation und Trocknung, der Controller regelt automatisch |
 | 5️⃣ Hochvakuum-Technikum | **VACUU·PURE 10C** | Ölfreie Trocknung: Gefriertrocknung, Schlenk-Line, Turbo-Vorvakuum |
 
 Am Schluss wartet die **Dampf-Krake** 🐙. Die schafft nur die VACUU·PURE 10C.

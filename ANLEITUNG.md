@@ -10,7 +10,7 @@ Schutzausrüstung und Spezial-Geräte. Die Level zeigen die echten Anwendungen d
 | 1 Filtrationslabor | **ME 1C** | Filtration: Filtrat-Tropfen, Partikel, Filterpapier, Reagenzgläser, H₂O |
 | 2 Zellkultur-Labor | **BVC professional** (Spezial) | Medienabsaugung: Nährmedium, Petrischalen-Schleim, Wellplatten, H₂O₂ |
 | 3 Verdampfer-Labor | **PC 3001 VARIO select** | Rotavap, Vakuum-Konzentrator, Trockenschrank: Lösemitteldampf, Hitzedampf, Rundkolben, Messbecher, Eppis, Methanol, Ethanol |
-| 4 Chemielabor | **MD 4C NT** mit **VACUU·SELECT** | Destillation und Trocknung: Säuredampf, Scheidetrichter, Lösemitteldampf, Methanol, Ethanol |
+| 4 Chemielabor | **MD 4C VARIO select** | Destillation und Trocknung: Säuredampf, Scheidetrichter, Lösemitteldampf, Methanol, Ethanol |
 | 5 Hochvakuum-Technikum | **VACUU·PURE 10C** | Ölfreie Trocknung (Gefriertrocknung, Schlenk-Line, Turbo-Vorvakuum): Eiskristalle, O₂, N₂, H₂O, Schlenk-Kolben, Argon-Flaschen, **Dampf-Krake** (Boss) |
 
 Die durchspringbaren Plattformen sind **VACUU·LAN**-Leitungen.
@@ -19,7 +19,7 @@ Die durchspringbaren Plattformen sind **VACUU·LAN**-Leitungen.
 
 | Item | Wirkung |
 |---|---|
-| Pumpe ME 1C → PC 3001 VARIO select → MD 4C NT mit VACUU·SELECT → VACUU·PURE 10C | mehr Reichweite, schwerere Sachen einsaugen |
+| Pumpe ME 1C → PC 3001 VARIO select → MD 4C VARIO select → VACUU·PURE 10C | mehr Reichweite, schwerere Sachen einsaugen |
 | Pumpe **BVC professional** (Zellkultur) | im ganzen Zellkultur-Labor: BVC auf dem Rücken, Pistole wird zum **VHC-Handstück**, saugt alles ein (Flüssigkeiten, Dämpfe und das ganze Labor-Chaos) ohne Energie-Limit mit doppelten Punkten; beim Verlassen des Labors wieder die normale Pumpe |
 | Schutzbrille | Treffer kosten nur 1 statt 3 Sekunden |
 | Handschuhe | Saug-Energie lädt doppelt so schnell |

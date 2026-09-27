@@ -73,8 +73,8 @@ const Level = {
     e('y', 189); brick(192, 6); q(193, 6, '3'); brick(194, 6);
     e('k', 196); e('c', 198, 6);
 
-    // ---------------- Zone 4: CHEMIELABOR (MD 4C NT mit VACUU·SELECT) ----------------
-    sign(202, 'CHEMIELABOR:\nMD 4C NT MIT VACUU·SELECT');
+    // ---------------- Zone 4: CHEMIELABOR (MD 4C VARIO select) ----------------
+    sign(202, 'CHEMIELABOR:\nMD 4C VARIO SELECT');
     q(205, 6, '3');
     e('a', 208, 6); e('g', 210); e('c', 213, 6); e('MEOH', 215, 5);
     lan(215, 8, 2); lan(218, 7, 4); e('g', 219, 6); q(220, 3, '?');
