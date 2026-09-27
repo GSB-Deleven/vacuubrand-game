@@ -1,0 +1,9 @@
+labels: [idee]
+body:
+  - type: textarea
+    id: idee
+    attributes:
+      label: Deine Idee
+      description: Frei formulieren, Skizzen und Fotos sind willkommen. Wenn die Idee reif ist, wird daraus ein Issue.
+    validations:
+      required: true

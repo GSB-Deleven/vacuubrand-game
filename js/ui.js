@@ -25,6 +25,7 @@ class RegisterScene {
   constructor() { this.allowAdmin = false; this.t = 0; this.idle = 0; this.demo = new DemoStrip(); }
 
   enter() {
+    if (CONFIG.mode === 'online') { this.enterOnline(); return; }
     const cfg = CONFIG.registration;
     const fields = cfg.fields.map(f =>
       '<label class="field"><span>' + escapeHtml(f.label) + (f.required ? ' *' : '') + '</span>' +
@@ -54,7 +55,38 @@ class RegisterScene {
       else if (e.key === 'Enter' && e.target && e.target.type === 'checkbox') { e.preventDefault(); this.submit(); }
     };
     window.addEventListener('keydown', this.onKey);
-    setTimeout(() => { const i = form.querySelector('input'); if (i) i.focus(); }, 30);
+    if (!Input.touch) setTimeout(() => { const i = form.querySelector('input'); if (i) i.focus(); }, 30);
+  }
+
+  // Online-Demo: nur ein Spitzname, keine Kontaktdaten
+  enterOnline() {
+    let last = '';
+    try { last = window.localStorage.getItem('vakuumprof_nick') || ''; } catch (e) { /* egal */ }
+    Overlay.show(
+      '<form class="panel reg online" novalidate>' +
+      '<div class="logo"><img src="assets/vacuubrand-logo.png" alt="VACUUBRAND"></div>' +
+      '<h1>ONLINE-DEMO</h1>' +
+      '<p class="hint">Keine Anmeldung nötig. Wie sollen wir dich in der Bestenliste nennen?</p>' +
+      '<label class="field"><span>Spitzname</span><input name="nick" type="text" maxlength="12" autocomplete="off" spellcheck="false" placeholder="GAST" value="' + escapeHtml(last) + '"></label>' +
+      '<div class="buttons"><button type="button" class="btn ghost" data-act="cancel">ZURÜCK</button>' +
+      '<button type="submit" class="btn">LOS GEHT\'S!</button></div>' +
+      '<p class="small">Deine Punkte werden nur auf diesem Gerät gespeichert. Es werden keine Daten übertragen.</p>' +
+      '</form>');
+    Overlay.el.classList.add('top');
+    const form = this.form = Overlay.el.querySelector('form');
+    form.addEventListener('submit', e => {
+      e.preventDefault();
+      const nick = (form.elements.nick.value.trim() || 'GAST').slice(0, 12);
+      try { window.localStorage.setItem('vakuumprof_nick', nick); } catch (err) { /* egal */ }
+      const lead = Store.upsertLead({ firstName: nick, lastName: '', company: '', email: 'online:' + nick.toLowerCase(), consent: false, newsletter: false, isOnline: true });
+      Sound.sfx('select');
+      Game.go(new PlayScene(lead));
+    });
+    form.querySelector('[data-act=cancel]').addEventListener('click', () => this.cancel());
+    form.addEventListener('input', () => { this.idle = 0; });
+    this.onKey = e => { this.idle = 0; if (e.key === 'Escape') { e.preventDefault(); this.cancel(); } };
+    window.addEventListener('keydown', this.onKey);
+    if (!Input.touch) setTimeout(() => { const i = form.querySelector('input'); if (i) i.focus(); }, 30);
   }
 
   exit() {

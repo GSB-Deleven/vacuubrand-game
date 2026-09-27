@@ -10,6 +10,7 @@ const Game = {
     if (scene.enter) scene.enter();
   },
   requestAdmin() {
+    if (CONFIG.mode === 'online') return; // Online-Demo hat keinen Admin-Bereich
     if (this.scene && this.scene.allowAdmin) this.go(new AdminScene());
   },
   // Schnellstart ohne Anmeldung (Strg + Shift + Enter): Spieler "ADMIN", Runde wird nicht gespeichert
@@ -21,6 +22,7 @@ const Game = {
   update() {
     this.t++;
     Input.pollPads();
+    Touch.update();
     if (Input.padToast > 0) Input.padToast--;
     if (Input.pressed('mute')) Sound.toggleMute();
     this.scene.update();
@@ -44,10 +46,13 @@ const Game = {
   ctx.imageSmoothingEnabled = false;
 
   Object.assign(CONFIG, Store.loadSettings());
+  if (CONFIG.mode === 'online') CONFIG.eventName = 'ONLINE-DEMO';
+  document.body.classList.add('mode-' + CONFIG.mode);
   Store.check();
   buildSprites();
   Overlay.init();
   Input.init();
+  Touch.init();
 
   function resize() {
     const s = Math.min(window.innerWidth / VIEW_W, window.innerHeight / VIEW_H);
@@ -80,4 +85,8 @@ const Game = {
   }
   requestAnimationFrame(frame);
   window.__game = Game; // für Tests
+  // Offline-Fähigkeit (PWA) nur auf GitHub Pages
+  if ('serviceWorker' in navigator && /\.github\.io$/i.test(location.hostname)) {
+    navigator.serviceWorker.register('sw.js').catch(() => {});
+  }
 })();

@@ -1,0 +1,24 @@
+name: ✏️ Textänderung
+description: Einen Text im Spiel ändern (Nummern aus TEXTE.md).
+title: "Text: "
+labels: [texte]
+body:
+  - type: input
+    id: nummer
+    attributes:
+      label: Text-Nummer(n) aus TEXTE.md
+      placeholder: T10, T11
+    validations:
+      required: true
+  - type: textarea
+    id: neu
+    attributes:
+      label: Neuer Text
+      description: "Nur GROSSBUCHSTABEN, max. ca. 50 Zeichen pro Zeile, Schilder und Banner höchstens 2 Zeilen."
+    validations:
+      required: true
+  - type: input
+    id: von
+    attributes:
+      label: Freigegeben von
+      placeholder: Marketing, Datenschutz …

@@ -122,14 +122,14 @@ class TitleScene {
     drawMenuBackground(ctx, this.t);
     if (this.mode === 'board') {
       drawBoards(ctx, this.t, null);
-      Font.draw(ctx, 'B / ESC = ZURÜCK    ENTER = START', 160, 170, { color: THEME.gold, align: 'center', outline: '#1a1c2c' });
+      Font.draw(ctx, hint('B / ESC = ZURÜCK    ENTER = START', 'TIPPEN = ZURÜCK'), 160, 170, { color: THEME.gold, align: 'center', outline: '#1a1c2c' });
       return;
     }
     // Demo: der Professor saugt Laborchaos ein
     this.demo.draw(ctx);
     ctx.fillStyle = 'rgba(233,237,242,0.75)';
     ctx.fillRect(0, 0, VIEW_W, 88);
-    Font.drawLogo(ctx, 160, 5, 1, PAL.k);
+    Font.drawLogo(ctx, 160, 3, 1, PAL.k);
     const bob = Math.round(Math.sin(this.t * 0.05) * 2);
     Font.draw(ctx, 'PROFESSOR', 160, 15 + bob, { color: '#ffffff', scale: 3, align: 'center', outline: THEME.navy });
     Font.draw(ctx, 'VAKUUMUS', 160, 40 + bob, { color: THEME.gold, scale: 4, align: 'center', outline: PAL.k });
@@ -137,9 +137,9 @@ class TitleScene {
     const cx = 233;
     const [sx, sy, sw, sh] = TITLE_BTN_START, [bx, by, bw, bh] = TITLE_BTN_BOARD;
     drawPanel(ctx, sx, sy, sw, sh);
-    Font.draw(ctx, 'ENTER = START', sx + sw / 2, sy + 4, { color: this.t % 60 < 42 ? THEME.gold : '#ffffff', align: 'center' });
+    Font.draw(ctx, hint('ENTER = START', 'TIPPEN = START'), sx + sw / 2, sy + 4, { color: this.t % 60 < 42 ? THEME.gold : '#ffffff', align: 'center' });
     drawPanel(ctx, bx, by, bw, bh);
-    Font.draw(ctx, 'B = BESTENLISTE', bx + bw / 2, by + 4, { color: '#c8f2ff', align: 'center' });
+    Font.draw(ctx, hint('B = BESTENLISTE', 'BESTENLISTE'), bx + bw / 2, by + 4, { color: '#c8f2ff', align: 'center' });
     const top = Store.board(todayKey())[0];
     if (top) {
       const line = top.name + '  ' + top.score;
@@ -190,6 +190,9 @@ class ResultScene {
       Game.go(new BoardScene(this.res.lead.id));
     }
   }
+  click() {
+    if (this.t > 60) { Sound.sfx('select'); Game.go(new BoardScene(this.res.lead.id)); }
+  }
   draw(ctx) {
     const r = this.res;
     drawMenuBackground(ctx, this.t);
@@ -234,7 +237,7 @@ class ResultScene {
       if (!this.newBest) Font.draw(ctx, 'DEIN BESTWERT: ' + this.best, 160, 145, { color: '#c8f2ff', align: 'center' });
       else if (this.rankDay === 1 && this.t % 30 < 20) Font.draw(ctx, '★ TAGESBESTWERT! ★', 160, 145, { color: '#ffd23f', align: 'center' });
     }
-    if (this.t > 60 && this.t % 50 < 35) Font.draw(ctx, 'ENTER = BESTENLISTE', 160, 159, { color: THEME.gold, align: 'center' });
+    if (this.t > 60 && this.t % 50 < 35) Font.draw(ctx, hint('ENTER = BESTENLISTE', 'TIPPEN = BESTENLISTE'), 160, 159, { color: THEME.gold, align: 'center' });
   }
 }
 
@@ -257,9 +260,10 @@ class BoardScene {
     this.t++;
     if ((this.t > 30 && Input.pressed('start')) || this.t > CONFIG.boardAutoReturnSeconds * 60) Game.go(new TitleScene());
   }
+  click() { if (this.t > 30) Game.go(new TitleScene()); }
   draw(ctx) {
     drawMenuBackground(ctx, this.t);
     drawBoards(ctx, this.t, this.hl);
-    if (this.t % 60 < 40) Font.draw(ctx, 'DANKE FÜRS SPIELEN!  ENTER = WEITER', 160, 170, { color: THEME.gold, align: 'center', outline: '#1a1c2c' });
+    if (this.t % 60 < 40) Font.draw(ctx, hint('DANKE FÜRS SPIELEN!  ENTER = WEITER', 'DANKE FÜRS SPIELEN!  TIPPEN = WEITER'), 160, 170, { color: THEME.gold, align: 'center', outline: '#1a1c2c' });
   }
 }

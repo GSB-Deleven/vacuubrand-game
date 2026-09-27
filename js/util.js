@@ -39,6 +39,9 @@ function displayName(lead) {
   const l = String(lead.lastName || '').trim().toUpperCase();
   return (f + (l ? ' ' + l[0] + '.' : '')).trim() || 'SPIELER';
 }
+// Hinweistext je nach Bedienung (Tastatur oder Touch)
+function hint(keys, touch) { return Input.touch ? touch : keys; }
+
 function toggleFullscreen() {
   try {
     if (document.fullscreenElement) document.exitFullscreen();
