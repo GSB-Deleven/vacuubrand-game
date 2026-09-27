@@ -7,4 +7,4 @@ Alle Texte im Spiel sind nummeriert (T1, T2 …) und stehen mit Korrekturvorschl
 **Regeln für Spieltexte:**
 - nur GROSSBUCHSTABEN (Pixelschrift)
 - ca. 50 Zeichen pro Zeile, Schilder und Banner max. 2 Zeilen
-- fachlich korrekt: Vakuumpumpen pumpen Gase und Dämpfe, keine Flüssigkeiten oder Feststoffe (Ausnahme BVC: Medienabsaugung)
+- fachlich korrekt: Vakuumpumpen pumpen Gase und Dämpfe, keine Flüssigkeiten oder Feststoffe (Ausnahme BVC: Medienabsaugung, Flüssigkeiten und Dämpfe)

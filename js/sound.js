@@ -40,13 +40,21 @@ const SONGS = {
     bass: seq(`D3 . D3 D3 . D3 . .   A#2 . A#2 A#2 . A#2 . .   C3 . C3 C3 . C3 . .   A2 . A2 A2 . A2 . .
                D3 . D3 D3 . D3 . .   A#2 . A#2 A#2 . A#2 . .   C3 . C3 C3 . C3 . .   A2 . A2 A2 . C#3 . .`)
   },
-  // Zone 4: Hochvakuum-Technikum – etwas mystisch
-  zone3: {
+  // Zone 5: Hochvakuum-Technikum – etwas mystisch
+  zone4: {
     step: 0.17, leadType: 'triangle', drums: true,
     lead: seq(`E5 . B4 . G5 . F#5 .   E5 . . . B4 . . .   D5 . A4 . F#5 . E5 .   D5 . . . A4 . . .
                C5 . G5 . E5 . C6 .   B5 . . . G5 . . .   A5 . F#5 . D#5 . B4 .   E5 . . . . . . .`),
     bass: seq(`E2 . . . E3 . . .   E2 . . . E3 . . .   D2 . . . D3 . . .   D2 . . . D3 . . .
                C2 . . . C3 . . .   G2 . . . G2 . . .   B2 . . . B2 . . .   E2 . . . E3 . . .`)
+  },
+  // Zone 4: Chemielabor – verspielt, leicht schräg
+  zone3: {
+    step: 0.14, leadType: 'square', drums: true,
+    lead: seq(`A4 . C5 E5 . D#5 . E5   G5 . E5 . C5 . A4 .   F4 . A4 C5 . B4 . C5   E5 . C5 . A4 . F4 .
+               A4 C5 E5 A5 . G#5 . A5   B5 . A5 . E5 . C5 .   D5 . F5 . A5 . F5 .   E5 . G#4 . B4 . E5 .`),
+    bass: seq(`A2 . . A2 . . E2 .   A2 . . A2 . . E2 .   F2 . . F2 . . C3 .   F2 . . F2 . . C3 .
+               A2 . . A2 . . E2 .   A2 . . A2 . . E2 .   D2 . . D2 . . A2 .   E2 . . E2 . G#2 . .`)
   },
   // Boss: Dampf-Krake
   boss: {

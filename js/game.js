@@ -102,7 +102,7 @@ class PlayScene {
       boss: !!(this.boss && this.boss.captured),
       ppe: p.fullPPE(),
       nohit: this.hits === 0 && this.captures >= 10,
-      pump: Math.max(this.bestPump, p.pump) >= 3,
+      pump: Math.max(this.bestPump, p.pump) >= CONFIG.pumps.length - 1,
       combo: this.maxCombo >= CONFIG.comboMedal,
       view: this.viewsTotal > 0 && this.views >= this.viewsTotal
     };
@@ -245,7 +245,7 @@ class PlayScene {
       const ty = Math.floor((p.y - p.h - 5) / T);
       let best = null;
       for (const tx of [Math.floor((p.x - p.w / 2) / T), Math.floor((p.x + p.w / 2 - 0.01) / T)]) {
-        if ('123?V'.includes(tileAt(lv, tx, ty)) && (ty + 1) * T >= p.y - p.h - 5 && (!best || Math.abs(tx * T + 8 - p.x) < Math.abs(best.tx * T + 8 - p.x))) best = { tx, ty };
+        if ('1234?V'.includes(tileAt(lv, tx, ty)) && (ty + 1) * T >= p.y - p.h - 5 && (!best || Math.abs(tx * T + 8 - p.x) < Math.abs(best.tx * T + 8 - p.x))) best = { tx, ty };
       }
       if (best) { p.bump = best; p.vy = 0.5; }
     }
@@ -291,7 +291,7 @@ class PlayScene {
     const p = this.player;
     const bx = tx * T + 8, by = (ty + 1) * T;
     this.bumps.push({ tx, ty, t: 0 });
-    if ('123?V'.includes(c)) {
+    if ('1234?V'.includes(c)) {
       lv.tiles[ty][tx] = 'U';
       let item = null;
       if (c === '?') {
@@ -403,20 +403,19 @@ class PlayScene {
     for (const e of this.enemies) {
       if (!e.active || !e.alive || e.captured) continue;
       if (!this.inCone(nz, p.face, range, e.x, e.y - e.h / 2)) continue;
-      const liquid = bvc && e.def.liquid;
-      if (liquid || e.def.weight <= cfg.power) {
+      // Die BVC professional saugt alles: Flüssigkeiten, Dämpfe und das ganze Labor-Chaos
+      if (bvc || e.def.weight <= cfg.power) {
         e.pulledNow = true;
-        e.pullV = liquid ? Math.min(e.pullV + 0.5, 6) : Math.min(e.pullV + 0.09 * pull, 0.8 + pull * 1.2);
+        e.pullV = bvc ? Math.min(e.pullV + 0.5, 6) : Math.min(e.pullV + 0.09 * pull, 0.8 + pull * 1.2);
         const dx = nz.x - e.x, dy = nz.y - (e.y - e.h / 2), len = Math.hypot(dx, dy) || 1;
         e.x += dx / len * Math.min(e.pullV, len);
         e.y += dy / len * Math.min(e.pullV, len);
-        if (len < 8) this.capture(e, liquid);
+        if (len < 8) this.capture(e, bvc);
       } else {
         e.shake = 6;
         if (this.heavyT <= 0) {
           this.heavyT = 150;
-          if (bvc && cfg.power < e.def.weight) this.showMsg('DIE BVC SAUGT NUR FLÜSSIGKEITEN!', 120, '#ff8fb8');
-          else this.showMsg('ZU SCHWER! DU BRAUCHST EINE STÄRKERE PUMPE!', 130, '#ff8f8f');
+          this.showMsg('ZU SCHWER! DU BRAUCHST EINE STÄRKERE PUMPE!', 130, '#ff8f8f');
           Sound.sfx('heavy');
         }
       }
@@ -434,7 +433,7 @@ class PlayScene {
     }
     const b = this.boss;
     if (b && b.active && b.alive && !b.captured && this.inCone(nz, p.face, range + 10, b.x, b.y - b.h / 2)) {
-      if (cfg.power >= 3) {
+      if (p.pump >= CONFIG.pumps.length - 1 && !bvc) { // nur die stärkste Pumpe schafft die Krake
         b.suckedNow = true;
         b.shake = 4;
         this.shake(3, 1);
@@ -455,7 +454,7 @@ class PlayScene {
             this.banner = { title: 'LABOR GERETTET!', sub: 'SCHNELL ZUM AUSGANG →\nRESTZEIT GIBT BONUSPUNKTE!', t: 200 };
             Sound.sfx('boss');
             this.shake(36, 3); this.flashT = 6;
-            Sound.music('zone3');
+            Sound.music('zone' + (ZONE_STYLE.length - 1));
           }
         }
       } else if (this.heavyT <= 0) {
@@ -803,17 +802,17 @@ class PlayScene {
     ctx.fillStyle = THEME.gold; ctx.fillRect(28, 86, 264, 1);
     Font.draw(ctx, 'KOLBEN-BLÖCKE VON UNTEN ANSPRINGEN:', 160, 91, { color: THEME.gold, align: 'center' });
     // Block + Inhalte
-    ctx.drawImage(SPR.q0, 30, 104);
-    const icons = ['pump1', 'pump2', 'pump3', 'bvc', 'ppe_goggles', 'ppe_gloves', 'ppe_helmet', 'ppe_shoes', 'view'];
+    ctx.drawImage(SPR.q0, 26, 104);
+    const icons = ['pump1', 'pump2', 'pump3', 'pump4', 'bvc', 'ppe_goggles', 'ppe_gloves', 'ppe_helmet', 'ppe_shoes', 'view'];
     icons.forEach((n, i) => {
       const spr = SPR[n];
-      const x = 62 + i * 26;
+      const x = 58 + i * 24;
       ctx.drawImage(spr, Math.round(x - spr.width / 2), 120 - spr.height);
     });
-    ctx.fillStyle = '#5d6b80'; ctx.fillRect(153, 100, 1, 32); ctx.fillRect(257, 100, 1, 32);
-    Font.draw(ctx, 'PUMPEN', 101, 124, { color: '#ffffff', align: 'center' });
-    Font.draw(ctx, 'SCHUTZAUSRÜSTUNG', 205, 124, { color: '#ffffff', align: 'center' });
-    Font.draw(ctx, '+10 S', 272, 124, { color: '#7be07b', align: 'center' });
+    ctx.fillStyle = '#5d6b80'; ctx.fillRect(166, 100, 1, 32); ctx.fillRect(262, 100, 1, 32);
+    Font.draw(ctx, 'PUMPEN', 106, 124, { color: '#ffffff', align: 'center' });
+    Font.draw(ctx, 'SCHUTZAUSRÜSTUNG', 214, 124, { color: '#ffffff', align: 'center' });
+    Font.draw(ctx, '+10 S', 280, 124, { color: '#7be07b', align: 'center' });
     Font.draw(ctx, 'SAUG IN ' + CONFIG.roundSeconds + ' SEK SO VIEL CHAOS WIE MÖGLICH EIN!', 160, 146, { color: '#ffffff', align: 'center' });
     if (this.t % 50 < 35) Font.draw(ctx, hint('ENTER = START', 'TIPPEN = START'), 160, 160, { color: THEME.gold, align: 'center' });
   }
@@ -946,6 +945,7 @@ const PIT_STYLE = [
   { name: 'FILTRAT-WANNE', into: 'IN DIE FILTRAT-WANNE', deep: '#1f4f8a', mid: '#3a7fcf', top: '#8fd0ff', bubble: '#c8ecff' },
   { name: 'DESINFEKTIONSBAD', into: 'INS DESINFEKTIONSBAD', deep: '#8a2f5e', mid: '#d0609a', top: '#ffb0d6', bubble: '#ffe0f0' },
   { name: 'LÖSEMITTEL-AUFFANGWANNE', into: 'IN DIE LÖSEMITTEL-AUFFANGWANNE', deep: '#8a4a10', mid: '#e0861f', top: '#ffc46b', bubble: '#fff0c8' },
+  { name: 'SÄURE-AUFFANGWANNE', into: 'IN DIE SÄURE-AUFFANGWANNE', deep: '#55700f', mid: '#9cc52e', top: '#e2f58a', bubble: '#f4ffc8' },
   { name: 'FLÜSSIGSTICKSTOFF', into: 'IN DEN FLÜSSIGSTICKSTOFF', deep: '#3d6f96', mid: '#8fc4e8', top: '#e6f7ff', bubble: '#ffffff', fog: true }
 ];
 const PIT_SURFACE = 10 * T + 6; // Flüssigkeitsspiegel (Welt-y)

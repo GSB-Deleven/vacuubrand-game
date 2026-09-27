@@ -13,7 +13,7 @@ const PAL = {
 const THEME = { navy: '#46648c', navyDark: '#34507a', gold: '#f9b000', light: '#e9edf2', sky: '#7b9cc0', blue: '#4f8fcf', ink: '#1a1c2c' };
 
 const SPR = {};
-const ENEMY_SPRITE_NAMES = new Set(['drop', 'dust', 'cloud', 'hotcloud', 'flask', 'beaker', 'paper', 'medium', 'petri', 'plate', 'ice', 'schlenk', 'bubble', 'cylinder', 'testtube', 'eppi', 'mol_h2o', 'mol_o2', 'mol_n2', 'mol_h2o2', 'mol_meoh', 'mol_etoh']);
+const ENEMY_SPRITE_NAMES = new Set(['drop', 'dust', 'cloud', 'hotcloud', 'flask', 'beaker', 'paper', 'medium', 'petri', 'plate', 'ice', 'schlenk', 'bubble', 'cylinder', 'testtube', 'eppi', 'acidcloud', 'funnel', 'mol_h2o', 'mol_o2', 'mol_n2', 'mol_h2o2', 'mol_meoh', 'mol_etoh']);
 
 function makeCanvas(w, h) {
   const c = document.createElement('canvas');
@@ -295,6 +295,8 @@ const ZONE_STYLE = [
     bench: ['hood', 'incubator', 'plates'], wall_: ['shelf', 'signs', 'vacuulan', 'clock'] },
   { name: 'VERDAMPFER-LABOR', wall: '#efe3cf', wall2: '#e2d2b7', base: '#c7ae88', floorTop: '#8a6a45', floor: '#6b5033', line: '#523b24', brick: '#f5efe4', mortar: '#cbb893',
     bench: ['rotavap', 'concentrator', 'oven', 'rotavap'], wall_: ['vacuulan', 'shelf', 'signs', 'periodic', 'clock'] },
+  { name: 'CHEMIELABOR', wall: '#ece9f3', wall2: '#dcd6ea', base: '#b9b0cf', floorTop: '#7c6fa0', floor: '#5b4f80', line: '#443a63', brick: '#f5f3fa', mortar: '#c4bcd8',
+    bench: ['md4c', 'distill', 'hood', 'oven'], wall_: ['shelf', 'signs', 'vacuulan', 'periodic', 'clock'] },
   { name: 'HOCHVAKUUM-TECHNIKUM', wall: '#d9dfea', wall2: '#c5cedd', base: '#8f9bb3', floorTop: '#5a6478', floor: '#3e4658', line: '#2b3140', brick: '#e8ecf2', mortar: '#a9b4c5',
     bench: ['freezedryer', 'distill', 'turbo'], wall_: ['schlenk', 'signs', 'vacuulan', 'clock', 'shelf'] }
 ];
@@ -315,6 +317,7 @@ function buildSprites() {
   // Gegner aus Rastern
   for (const key of Object.keys(ENEMY_GRIDS)) SPR[key] = spriteFromGrid(ENEMY_GRIDS[key], key);
   SPR.hotcloud = spriteFromGrid(ENEMY_GRIDS.cloud, 'hotcloud', { v: '#c0392b', V: '#ffc2a0' });
+  SPR.acidcloud = spriteFromGrid(ENEMY_GRIDS.cloud, 'acidcloud', { v: '#6f8f12', V: '#d4ef6a' });
 
   // Gegner per Code
   for (let f = 0; f < 2; f++) {
@@ -351,6 +354,17 @@ function buildSprites() {
       P.rect(4, 3, 1, 4, '#ffffff');
       P.px(4, 5, k); P.px(7, 5, k);
       if (f) { P.px(3, 16, k); P.px(7, 16, k); } else { P.px(4, 16, k); P.px(6, 16, k); }
+    });
+    // Scheidetrichter: Birnenform mit zwei Flüssigkeitsphasen, Hahn unten
+    SPR['funnel' + sfx] = outlined(12, 18, P => {
+      P.rect(5, 0, 2, 2, '#dfe5ec');
+      P.ell(6, 6, 4.5, 4.5, '#e6f6ff');
+      P.rect(3, 4, 6, 3, '#f9d77a'); P.ell(6, 7.5, 3.5, 2.5, '#6fb7e8');
+      P.rect(4, 3, 1, 2, '#ffffff');
+      P.rect(5, 10, 2, 3, '#e6f6ff'); P.rect(3, 11, 6, 1, '#5d6b80');
+      P.rect(5, 13, 2, 2, '#e6f6ff');
+      P.px(4, 5, k); P.px(8, 5, k);
+      if (f) { P.px(4, 16, k); P.px(7, 16, k); } else { P.px(3, 16, k); P.px(8, 16, k); }
     });
     // Eppi: konische Spitze, Snap-Cap seitlich aufgeklappt
     SPR['eppi' + sfx] = outlined(15, 16, P => {
@@ -446,8 +460,19 @@ function buildSprites() {
     P.rect(13, 11, 1, 2, glass); P.ell(13.5, 15, 2.5, 2.5, glass); P.px(12, 14, '#ffffff');
     P.rect(16, 9, 3, 1, greyD); P.rect(19, 10, 1, 2, glass); P.ell(19.5, 14, 2.3, 2.3, glass); P.px(18, 13, '#ffffff');
   });
+  // MD 4C NT mit VACUU·SELECT: Membranpumpe mit vier blauen Pumpenköpfen, darauf der Controller mit Touchscreen
+  SPR.pump3 = outlined(21, 17, P => {
+    P.rect(4, 1, 11, 6, '#f4f7fa'); P.rect(4, 1, 11, 1, '#ffffff');
+    P.rect(5, 2, 9, 4, k); P.rect(6, 3, 7, 2, '#7fd0f5'); P.rect(6, 3, 3, 1, '#ffffff'); P.px(11, 4, '#7be07b');
+    P.rect(8, 7, 2, 1, greyD);
+    P.rect(4, 8, 11, 6, alu); P.rect(4, 10, 11, 1, rib); P.rect(4, 12, 11, 1, rib);
+    P.rect(1, 8, 3, 3, blue); P.rect(1, 11, 3, 3, blueD); P.rect(15, 8, 3, 3, blue); P.rect(15, 11, 3, 3, blueD);
+    P.rect(18, 9, 2, 1, '#b8c3cd'); P.rect(18, 12, 2, 1, '#b8c3cd');
+    P.rect(2, 14, 16, 1, '#8e98a4');
+    P.rect(3, 15, 2, 1, k); P.rect(14, 15, 2, 1, k);
+  });
   // VACUU·PURE 10C: weisse Front, graue Seite, schwarzer Flansch oben
-  SPR.pump3 = outlined(18, 17, P => {
+  SPR.pump4 = outlined(18, 17, P => {
     P.rect(1, 2, 15, 2, '#e9edf1');
     P.rect(1, 4, 10, 11, '#f7f9fb');
     P.rect(11, 4, 5, 11, greyD); P.rect(11, 4, 1, 11, '#a9b3be');
@@ -792,7 +817,7 @@ function buildDecor() {
     }
     Font.draw(P.g, 'VACUU·LAN', 30, 0, { color: '#5d6b80' });
   });
-  const posterText = ['ME 1C', 'BVC PROFESSIONAL', 'PC 3001 VARIO SELECT', 'VACUU·PURE 10C'];
+  const posterText = ['ME 1C', 'BVC PROFESSIONAL', 'PC 3001 VARIO SELECT', 'MD 4C NT · VACUU·SELECT', 'VACUU·PURE 10C'];
   posterText.forEach((t, i) => {
     const pw = Math.max(80, Font.width(t) + 10);
     D['poster' + i] = paint(pw, 28, P => {
@@ -805,6 +830,8 @@ function buildDecor() {
   // ME 1C als Gerät auf dem Labortisch (doppelt so gross)
   D.me1c = makeCanvas(SPR.pump1.width * 2, SPR.pump1.height * 2);
   { const g = D.me1c.getContext('2d'); g.imageSmoothingEnabled = false; g.drawImage(SPR.pump1, 0, 0, D.me1c.width, D.me1c.height); }
+  D.md4c = makeCanvas(SPR.pump3.width * 2, SPR.pump3.height * 2);
+  { const g = D.md4c.getContext('2d'); g.imageSmoothingEnabled = false; g.drawImage(SPR.pump3, 0, 0, D.md4c.width, D.md4c.height); }
   // Chemikalienschrank
   D.window2 = outlined(40, 44, P => {
     P.rect(0, 0, 40, 44, '#e8eef5'); P.rect(2, 2, 36, 40, '#f4f7fb');

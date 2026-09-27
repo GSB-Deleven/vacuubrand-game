@@ -16,19 +16,21 @@ Eine Runde dauert **120 Sekunden**. Ziel: möglichst viel Labor-Chaos einsaugen,
 
 Kurz antippen springt gut 2 Kacheln hoch, gedrückt halten gut 3.
 
-## Die vier Labore
+## Die fünf Labore
 
 | Labor | Pumpe | Anwendung |
 |---|---|---|
 | Filtrationslabor | ME 1C | Filtration |
 | Zellkultur-Labor | BVC professional mit VHC | Medienabsaugung |
 | Verdampfer-Labor | PC 3001 VARIO select | Rotavap, Vakuum-Konzentrator, Trockenschrank |
+| Chemielabor | MD 4C NT mit VACUU·SELECT | Destillation und Trocknung |
 | Hochvakuum-Technikum | VACUU·PURE 10C | Ölfreie Trocknung, Endgegner Dampf-Krake |
 
 ## Punkte, Combo und Medaillen
 
 - **Kolben-Blöcke** von unten anspringen: Pumpen, Schutzausrüstung, BVC
 - **Schutzausrüstung:** Schutzbrille (Treffer nur −1 s), Handschuhe (SOG lädt doppelt), Helm (von unten wegköpfen), Sicherheitsschuhe (draufspringen). Alle vier = Vollschutz
+- **BVC professional:** saugt im Zellkultur-Labor alles ein, ohne Energie-Limit, doppelte Punkte
 - **VACUU·VIEW extended:** +10 Sekunden
 - **Combo:** schnell hintereinander einsaugen gibt bis ×8
 - **Medaillen:** Krake bezwungen, Vollschutz, Unverletzt, Top-Pumpe, Combo-Profi, Zeitmeister

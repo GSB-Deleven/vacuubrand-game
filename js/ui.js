@@ -208,6 +208,8 @@ class AdminScene {
       '<label>Messename<input type="text" name="eventName" maxlength="30" value="' + escapeHtml(CONFIG.eventName) + '"></label>' +
       '<label>Rundenzeit (Sek.)<input type="number" name="roundSeconds" min="30" max="600" value="' + CONFIG.roundSeconds + '"></label>' +
       '<label>Admin-PIN<input type="text" name="adminPin" maxlength="12" value="' + escapeHtml(CONFIG.adminPin) + '"></label>' +
+      '<label>Tagespreis<input type="text" name="prizeDay" maxlength="17" placeholder="leer = keine Anzeige" value="' + escapeHtml(CONFIG.prizeDay || '') + '"></label>' +
+      '<label>Hauptpreis (ganze Messe)<input type="text" name="prizeMain" maxlength="17" placeholder="leer = keine Anzeige" value="' + escapeHtml(CONFIG.prizeMain || '') + '"></label>' +
       '<button class="btn" type="submit">Speichern</button></form>' +
       '<h2>Letzte Runden</h2><table><tr><th>Zeit</th><th>Name</th><th>Firma</th><th>E-Mail</th><th>Punkte</th><th></th></tr>' +
       (rows || '<tr><td colspan="6">Noch keine Runden.</td></tr>') + '</table>' +
@@ -231,7 +233,9 @@ class AdminScene {
       const s = {
         eventName: f.elements.eventName.value.trim().toUpperCase() || CONFIG.eventName,
         roundSeconds: clamp(parseInt(f.elements.roundSeconds.value, 10) || CONFIG.roundSeconds, 30, 600),
-        adminPin: f.elements.adminPin.value.trim() || CONFIG.adminPin
+        adminPin: f.elements.adminPin.value.trim() || CONFIG.adminPin,
+        prizeDay: f.elements.prizeDay.value.trim().toUpperCase(),
+        prizeMain: f.elements.prizeMain.value.trim().toUpperCase()
       };
       Object.assign(CONFIG, s);
       Store.saveSettings(s);
