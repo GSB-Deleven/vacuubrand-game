@@ -56,7 +56,7 @@ const CONFIG = {
     null,
     { short: 'ME 1C', title: 'MEMBRANPUMPE ME 1C', slogan: 'IDEAL FÜR DIE FILTRATION', range: 46, power: 1, pull: 1.6, tank: 3 },
     { short: 'PC 3001 VARIO SELECT', title: 'PC 3001 VARIO SELECT', slogan: 'ROTAVAP · VAKUUM-KONZENTRATOR · TROCKENSCHRANK\nMEHR SOG: JETZT AUCH RUNDKOLBEN!', range: 72, power: 2, pull: 2.4, tank: 3.5 },
-    { short: 'MD 4C NT', title: 'MD 4C NT MIT VACUU·SELECT', slogan: 'CHEMIEFEST: DESTILLATION · TROCKNUNG\nVACUU·SELECT REGELT AUTOMATISCH!', range: 88, power: 2, pull: 2.9, tank: 5 },
+    { short: 'MD 4C VARIO SELECT', title: 'MD 4C VARIO SELECT', slogan: 'CHEMIEFEST: DESTILLATION · TROCKNUNG\nVACUU·SELECT REGELT AUTOMATISCH!', range: 88, power: 2, pull: 2.9, tank: 5 },
     { short: 'VACUU·PURE 10C', title: 'VACUU·PURE 10C', slogan: 'ÖLFREI: GEFRIERTROCKNUNG · SCHLENK · TURBO\nMAXIMALER SOG!', range: 104, power: 3, pull: 3.4, tank: 4 }
   ],
 

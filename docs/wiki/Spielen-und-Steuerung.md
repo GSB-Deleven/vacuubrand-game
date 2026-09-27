@@ -23,7 +23,7 @@ Kurz antippen springt gut 2 Kacheln hoch, gedrückt halten gut 3.
 | Filtrationslabor | ME 1C | Filtration |
 | Zellkultur-Labor | BVC professional mit VHC | Medienabsaugung |
 | Verdampfer-Labor | PC 3001 VARIO select | Rotavap, Vakuum-Konzentrator, Trockenschrank |
-| Chemielabor | MD 4C NT mit VACUU·SELECT | Destillation und Trocknung |
+| Chemielabor | MD 4C VARIO select | Destillation und Trocknung |
 | Hochvakuum-Technikum | VACUU·PURE 10C | Ölfreie Trocknung, Endgegner Dampf-Krake |
 
 ## Punkte, Combo und Medaillen

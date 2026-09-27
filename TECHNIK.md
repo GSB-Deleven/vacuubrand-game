@@ -187,7 +187,7 @@ Pumpen kommen aus den Kolben-Blöcken mit Nummer. Sie laufen wie die Pilze bei S
 |---|---|---|---|---|---|
 | 1 | ME 1C | 46 px | 1 | 3 s | Filtrationslabor |
 | 2 | PC 3001 VARIO select | 72 px | 2 | 3,5 s | Verdampfer-Labor |
-| 3 | MD 4C NT mit VACUU·SELECT | 88 px | 2 | 5 s | Chemielabor |
+| 3 | MD 4C VARIO select | 88 px | 2 | 5 s | Chemielabor |
 | 4 | VACUU·PURE 10C | 104 px | 3 | 4 s | Hochvakuum-Technikum |
 
 Eine neue Pumpe gibt +500 Punkte, füllt die SOG-Leiste und zeigt Name und Slogan im Boden-Banner. Dazu gibt es eine Fanfare, einen kurzen Blitz und ein leichtes Wackeln.
@@ -254,7 +254,7 @@ Das Level ist **330 × 12 Kacheln** à 16 px gross. Der Boden liegt in den Reihe
 | 1 Filtrationslabor | 0 | ME 1C |
 | 2 Zellkultur-Labor | 80 | BVC professional |
 | 3 Verdampfer-Labor | 120 | PC 3001 VARIO select |
-| 4 Chemielabor | 200 | MD 4C NT mit VACUU·SELECT |
+| 4 Chemielabor | 200 | MD 4C VARIO select |
 | 5 Hochvakuum-Technikum | 250 | VACUU·PURE 10C, Endgegner |
 
 Jede Zone hat eigene Farben (`ZONE_STYLE`), eigene Deko im Hintergrund, eigene Musik und Poster mit der passenden Pumpe.

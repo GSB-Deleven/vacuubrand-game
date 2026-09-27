@@ -60,11 +60,11 @@ Für die Nummern bei der Rückmeldung reicht z. B. „T12 ja, T15 lieber: …“
 
 | Nr. | Ort | Text |
 |---|---|---|
-| T160 | Schild Zone 4 | CHEMIELABOR: / MD 4C NT MIT VACUU·SELECT |
-| T161 | Banner neue Pumpe (Titel) | MD 4C NT MIT VACUU·SELECT |
+| T160 | Schild Zone 4 | CHEMIELABOR: / MD 4C VARIO SELECT |
+| T161 | Banner neue Pumpe (Titel) | MD 4C VARIO SELECT |
 | T162 | Banner neue Pumpe (Text) | CHEMIEFEST: DESTILLATION · TROCKNUNG / VACUU·SELECT REGELT AUTOMATISCH! |
 | T163 | Meldung Zonenwechsel | ZONE 4: CHEMIELABOR (Hochvakuum ist jetzt ZONE 5) |
-| T164 | Poster im Hintergrund | MD 4C NT · VACUU·SELECT |
+| T164 | Poster im Hintergrund | MD 4C VARIO SELECT |
 | T165 | Sturz ins Becken Zone 4 | IN DIE SÄURE-AUFFANGWANNE GEFALLEN! |
 | T166 | Gegnernamen Zone 4 | Säuredampf, Scheidetrichter |
 | T167 | Ergebnis, über dem QR-Code | KONTAKT: |
