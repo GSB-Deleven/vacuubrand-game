@@ -51,7 +51,7 @@ vacuubrand-game/
 ├── manifest.webmanifest          App-Beschreibung für „Zum Home-Bildschirm“ (PWA)
 ├── sw.js                         Service Worker: Online-Version offline verfügbar machen
 ├── CLAUDE.md                     Regeln für Claude und Mitwirkende
-├── .github/                      Pages-Deployment, Claude-Automatik, Vorlagen für Issues, Discussions und PRs
+├── .github/                      Claude-Automatik, Vorlagen für Issues, Discussions und PRs
 ├── daten/                        Beispieldaten (erfundene Personen) als JSON und CSV
 ├── docs/                         Screenshots für die Dokumentation
 └── js/                           der eigentliche Spielcode (siehe unten)
@@ -104,7 +104,7 @@ Online-Runden werden als Lead mit `isOnline: true`, Spitzname als Vorname und E-
 
 ### GitHub Pages und Automatik
 
-- `.github/workflows/pages.yml` veröffentlicht bei jedem Push auf `main` die Spieldateien (ohne Doku und Daten) auf GitHub Pages.
+- GitHub Pages veröffentlicht bei jedem Push auf `main` automatisch das ganze Repo (Einstellung: Settings → Pages → „Deploy from a branch“, `main`, `/ (root)`). Die Datei `.nojekyll` sorgt dafür, dass die Dateien unverändert ausgeliefert werden.
 - `.github/workflows/claude.yml` startet Claude, wenn in einem Issue oder Kommentar `@claude` steht oder das Label `claude` gesetzt wird. Claude setzt die Aufgabe auf einem eigenen Branch um und bereitet einen Pull Request vor. Voraussetzung: Repository-Secret `CLAUDE_CODE_OAUTH_TOKEN` (Claude-Abo, erzeugt mit `claude setup-token`) oder `ANTHROPIC_API_KEY`. Regeln für Claude stehen in `CLAUDE.md`.
 
 ### Szenen
