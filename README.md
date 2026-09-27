@@ -1,12 +1,16 @@
 # 🧪 Professor Vakuumus
 
 > [!NOTE]
-> ### 🧪 Online testen: [gsb-deleven.github.io/vacuubrand-game](https://gsb-deleven.github.io/vacuubrand-game/)
-> **Nur zum Ausprobieren** im Browser, auf dem Handy oder Tablet. Für die Messe die **Offline-Version** verwenden (Ordner kopieren, Doppelklick auf `index.html`).
+> **🧪 Online testen: [gsb-deleven.github.io/vacuubrand-game](https://gsb-deleven.github.io/vacuubrand-game/)**
+>
+> Nur zum Ausprobieren. Für die Messe die Offline-Version verwenden.
+>
+> <details>
+> <summary>Unterschiede zur Messe-Version (aufklappen)</summary>
 >
 > | | 🧪 Online-Test | 🎪 Messe-Version (offline) |
 > |---|---|---|
-> | Start | Link im Browser | Ordner kopieren, Doppelklick |
+> | Start | Link im Browser | Ordner kopieren, Doppelklick auf `index.html` |
 > | Anmeldung | nur Spitzname | Vorname, Name, Firma, E-Mail, Einwilligung |
 > | Kontakte / Export | keine | CSV/Excel-Export |
 > | Admin-Bereich | nein | ja, mit PIN |
@@ -15,6 +19,8 @@
 > | Spiel selbst | gleich | gleich |
 >
 > Mit **`?messe`** am Ende des Links läuft auch online die volle Stand-Version, z. B. auf einem Tablet am Stand.
+>
+> </details>
 
 ### Das VACUUBRAND Messespiel: Besucher an den Stand holen, Produkte zeigen, Kontakte sammeln
 
