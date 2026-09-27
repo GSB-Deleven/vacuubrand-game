@@ -79,3 +79,13 @@ const CONFIG = {
     privacyNote: 'Die Daten werden nur lokal auf diesem Gerät gespeichert und ausschliesslich für das Gewinnspiel und die Kontaktaufnahme verwendet.'
   }
 };
+
+// Betriebsart, wird aus der Adresse erkannt:
+//  'messe'  = Stand-Version mit Anmeldung, Admin und Export (Laptop per Doppelklick, oder online mit ?messe)
+//  'online' = öffentliche Demo auf GitHub Pages: nur Spitzname, kein Admin, keine Kontaktdaten
+CONFIG.mode = (function () {
+  const q = location.search;
+  if (/[?&]messe\b/i.test(q)) return 'messe';
+  if (/[?&]online\b/i.test(q)) return 'online';
+  return /\.github\.io$/i.test(location.hostname) ? 'online' : 'messe';
+})();

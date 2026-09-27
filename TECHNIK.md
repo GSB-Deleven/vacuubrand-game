@@ -31,8 +31,8 @@ Dieses Dokument erklärt, wie das Spiel aufgebaut ist, was jede Datei macht und 
 | Start | Doppelklick auf `index.html`. Die Skripte werden als klassische `<script>`-Tags geladen (keine ES-Module), deshalb läuft alles direkt von der Festplatte (`file://`) ohne Webserver |
 | Internet | nicht nötig. Grafik, Schrift und Sound werden im Code erzeugt, nur das Logo ist eine Bilddatei |
 | Speicher | `localStorage` des Browsers, also pro Browser und pro Ordner |
-| Browser | Edge, Chrome, Firefox (aktuelle Versionen) |
-| Grösse | ca. 4200 Zeilen Code in 14 JavaScript-Dateien |
+| Browser | Edge, Chrome, Firefox, Safari (auch iPad/iPhone und Android) |
+| Grösse | ca. 4500 Zeilen Code in 15 JavaScript-Dateien |
 
 ---
 
@@ -47,8 +47,12 @@ vacuubrand-game/
 ├── TECHNIK.md                    dieses Dokument
 ├── TEXTE.md                      alle Spieltexte mit Korrekturvorschlägen
 ├── css/style.css                 Aussehen von Anmeldung und Admin-Bereich (HTML-Overlay)
-├── assets/vacuubrand-logo.png    Logo im Anmeldeformular
-├── daten/                        Referenzdaten (Testrunden vom 26.09.2026) als JSON und CSV
+├── assets/                       Logo und App-Icons (icon-192.png, icon-512.png)
+├── manifest.webmanifest          App-Beschreibung für „Zum Home-Bildschirm“ (PWA)
+├── sw.js                         Service Worker: Online-Version offline verfügbar machen
+├── CLAUDE.md                     Regeln für Claude und Mitwirkende
+├── .github/                      Pages-Deployment, Claude-Automatik, Vorlagen für Issues, Discussions und PRs
+├── daten/                        Beispieldaten (erfundene Personen) als JSON und CSV
 ├── docs/                         Screenshots für die Dokumentation
 └── js/                           der eigentliche Spielcode (siehe unten)
 ```
@@ -65,6 +69,7 @@ Die Reihenfolge in `index.html` ist wichtig, weil spätere Dateien Dinge aus fr�
 | `sprites.js` | erzeugt beim Start **alle Grafiken** im Code: Professor, Haare, Pumpen, Gegner, Moleküle, Kacheln, Deko, Farbthema (`THEME`, `PAL`) und die Zonen-Stile (`ZONE_STYLE`) |
 | `sound.js` | 8-Bit-Musik und Soundeffekte über die WebAudio-API, ohne Audiodateien |
 | `input.js` | Tastatur, Gamepad und Joystick, übersetzt alles in Aktionen (links, springen, saugen …) |
+| `touch.js` | Bildschirm-Tasten für Tablet und Handy, erscheinen beim ersten Antippen. Admin per 3 s Druck aufs Logo |
 | `storage.js` | Speichern von Leads und Runden, Bestenliste, CSV- und JSON-Export, Import |
 | `level.js` | Aufbau des Levels (Kacheln, Blöcke, Gegner, Schilder) und die automatische Erreichbarkeits-Korrektur |
 | `entities.js` | Figuren: Professor (`Player`), Gegner (`Enemy`, `ENEMY_DEFS`), Items (`Item`), Endgegner (`Boss`), Kollision mit Kacheln (`moveBody`) |
@@ -77,6 +82,30 @@ Die Reihenfolge in `index.html` ist wichtig, weil spätere Dateien Dinge aus fr�
 ---
 
 ## 🧩 Architektur
+
+### Betriebsarten (`CONFIG.mode`)
+
+| Aufruf | Modus | Verhalten |
+|---|---|---|
+| Doppelklick auf `index.html` (file://) | `messe` | Anmeldung mit Lead-Erfassung, Admin, Export |
+| `https://gsb-deleven.github.io/vacuubrand-game/` | `online` | Online-Demo: nur Spitzname (bleibt auf dem Gerät), kein Admin, Titel zeigt „ONLINE-DEMO“ |
+| `…/vacuubrand-game/?messe` | `messe` | Stand-Version auf dem Tablet. Daten liegen im Browser des Tablets |
+| `…?online` | `online` | Online-Modus erzwingen (zum Testen) |
+
+Online-Runden werden als Lead mit `isOnline: true`, Spitzname als Vorname und E-Mail `online:<spitzname>` gespeichert, nur lokal.
+
+### Tablet, Handy und PWA
+
+- `touch.js` blendet beim ersten Antippen Bildschirm-Tasten ein (Steuerkreuz links; SAUGEN, SPRUNG, SPRINT rechts; Pause oben rechts). Sie erzeugen virtuelle Tasten (`TouchLeft`, `TouchJump` …) wie das Gamepad. Mehrere Finger gleichzeitig gehen.
+- Die Tasten sind nur während der Runde sichtbar. In Menüs genügt Tippen. Im Hochformat erscheint „Bitte Gerät quer halten“.
+- Texte passen sich an (`hint()` in `util.js`): „TIPPEN = START“ statt „ENTER = START“.
+- Admin auf dem Tablet (nur `messe`): 3 Sekunden auf das VACUUBRAND-Logo oben drücken.
+- `manifest.webmanifest` und `sw.js` machen die Online-Version zur installierbaren App („Zum Home-Bildschirm“, Vollbild, Querformat). Der Service Worker cached alle Spieldateien, danach läuft sie ohne Internet. Er ist nur auf `*.github.io` aktiv. **Bei jeder Änderung `VERSION` in `sw.js` erhöhen**, sonst behalten Tablets die alte Version.
+
+### GitHub Pages und Automatik
+
+- `.github/workflows/pages.yml` veröffentlicht bei jedem Push auf `main` die Spieldateien (ohne Doku und Daten) auf GitHub Pages.
+- `.github/workflows/claude.yml` startet Claude, wenn in einem Issue oder Kommentar `@claude` steht oder das Label `claude` gesetzt wird. Claude setzt die Aufgabe auf einem eigenen Branch um und bereitet einen Pull Request vor. Voraussetzung: Repository-Secret `CLAUDE_CODE_OAUTH_TOKEN` (Claude-Abo, erzeugt mit `claude setup-token`) oder `ANTHROPIC_API_KEY`. Regeln für Claude stehen in `CLAUDE.md`.
 
 ### Szenen
 
@@ -321,6 +350,8 @@ Gegner mit `liquid: true` kann die BVC professional absaugen: d, t, n, e, w.
 | Ton an/aus | M | | |
 | Vollbild | F | | |
 
+**Touch (Tablet, Handy):** Steuerkreuz ← ↓ → links (mit dem Finger zwischen den Richtungen wischen geht), rechts **SAUGEN** (halten), **SPRUNG**, **SPRINT**, oben rechts **II** für Pause. Tippen startet, schaltet weiter und beendet die Pause. Eine Runde lässt sich per Touch absichtlich nicht abbrechen.
+
 **Tastenkürzel fürs Personal:**
 - `Strg + Shift + A`: Admin-Bereich (PIN)
 - `Strg + Shift + Enter`: Schnellstart als „ADMIN“, die Runde wird nicht gespeichert
@@ -394,7 +425,7 @@ Beim **Laden einer Sicherung** werden nur neue Einträge ergänzt, nichts wird �
 
 ### Referenzdaten
 
-`daten/referenzdaten.json` (und als CSV) enthält 5 Leads und 6 Testrunden vom 26.09.2026. Im Admin-Bereich lädt „Referenzdaten laden (Test)“ sie ins Spiel, um Bestenliste und Export auszuprobieren. Vor der Messe mit „Alle Daten löschen“ wieder entfernen.
+`daten/referenzdaten.json` (und als CSV) enthält 5 erfundene Leads und 6 Runden. Im Admin-Bereich lädt „Referenzdaten laden (Test)“ sie ins Spiel, um Bestenliste und Export auszuprobieren. Vor der Messe mit „Alle Daten löschen“ wieder entfernen.
 
 ### Datenschutz
 

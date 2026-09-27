@@ -91,6 +91,14 @@ Die Anmeldung (Namen eintippen) geht natürlich nur mit Tastatur. Eine Runde abb
 Abschalten unter *Einstellungen → Barrierefreiheit → Tastatur → Einrastfunktion* (Tastenkombination deaktivieren).
 Sprinten geht auch mit Ctrl.
 
+## Tablet am Stand
+
+1. Auf dem Tablet im Browser **https://gsb-deleven.github.io/vacuubrand-game/?messe** öffnen (wichtig: `?messe` am Ende, sonst startet die Online-Demo ohne Anmeldung).
+2. Einmal **„Zum Home-Bildschirm“** hinzufügen (iPad: Teilen-Symbol → „Zum Home-Bildschirm“; Android: Menü ⋮ → „App installieren“). Dann startet es wie eine App im Vollbild und läuft auch ohne WLAN.
+3. Tablet quer halten. Beim ersten Antippen erscheinen die Bildschirm-Tasten.
+4. **Admin-Bereich:** 3 Sekunden auf das VACUUBRAND-Logo oben drücken, dann PIN.
+5. Die Daten liegen nur auf diesem Tablet. Exportieren wie am Laptop über den Admin-Bereich („Inhalt kopieren“ funktioniert auch, wenn der Download nicht klappt).
+
 ## Ablauf am Stand
 
 1. Titelbild mit Demo lockt Besucher an. **B** (oder Klick auf den Knopf) zeigt die Bestenliste.
@@ -115,7 +123,7 @@ Auf dem Titelbild **Strg + Shift + A** drücken, PIN eingeben (Standard **1234**
 - **Leads (CSV/Excel)** und **Alle Runden (CSV/Excel)** exportieren → landen im Download-Ordner
 - **Sicherung speichern / laden** (JSON) – z.B. um Daten auf einen anderen Laptop zu übertragen
 - Messename, Rundenzeit und PIN ändern
-- **Referenzdaten laden (Test):** lädt die Testrunden vom 26.09.2026 (Ordner `daten/`: JSON und CSV-Beispiele), um Bestenliste und Export auszuprobieren – vor der Messe mit „Alle Daten löschen“ wieder entfernen
+- **Referenzdaten laden (Test):** lädt Beispieldaten mit erfundenen Personen (Ordner `daten/`: JSON und CSV-Beispiele), um Bestenliste und Export auszuprobieren – vor der Messe mit „Alle Daten löschen“ wieder entfernen
 - Einzelne Runden löschen (✕ zweimal klicken), **alle Daten löschen** nach der Messe (LÖSCHEN ins Feld tippen)
 - Nach jedem Export erscheint der Inhalt zusätzlich in einem Textfeld mit „Inhalt kopieren“ – praktisch, falls der Browser keinen Download erlaubt (z.B. in der Online-Vorschau)
 

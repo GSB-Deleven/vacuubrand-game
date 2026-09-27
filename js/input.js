@@ -7,15 +7,15 @@ const Input = {
   keys: {},
   just: {},
   map: {
-    left: ['ArrowLeft', 'PadLeft'],
-    right: ['ArrowRight', 'PadRight'],
-    jump: ['ArrowUp', 'PadUp', 'PadJump'],
-    down: ['ArrowDown', 'PadDown'],
-    suck: ['Space', 'PadSuck'],
-    sprint: ['ShiftLeft', 'ShiftRight', 'ControlLeft', 'ControlRight', 'PadSprint'],
+    left: ['ArrowLeft', 'PadLeft', 'TouchLeft'],
+    right: ['ArrowRight', 'PadRight', 'TouchRight'],
+    jump: ['ArrowUp', 'PadUp', 'PadJump', 'TouchJump'],
+    down: ['ArrowDown', 'PadDown', 'TouchDown'],
+    suck: ['Space', 'PadSuck', 'TouchSuck'],
+    sprint: ['ShiftLeft', 'ShiftRight', 'ControlLeft', 'ControlRight', 'PadSprint', 'TouchSprint'],
     start: ['Enter', 'NumpadEnter', 'Space', 'PadStart', 'PadA'],
     back: ['Escape', 'PadBack'],
-    pause: ['Escape', 'PadStart', 'PadBack'],   // Pause ein/aus
+    pause: ['Escape', 'PadStart', 'PadBack', 'TouchPause'],   // Pause ein/aus
     abort: ['Enter', 'NumpadEnter'],            // Runde abbrechen (nur Tastatur, fürs Standpersonal)
     mute: ['KeyM'],
     fullscreen: ['KeyF'],
@@ -24,6 +24,7 @@ const Input = {
   padPrev: {},
   padName: '',
   padToast: 0,
+  touch: false,
   gameKeys: new Set(['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'Space', 'Enter', 'Tab', 'Backspace']),
 
   init() {

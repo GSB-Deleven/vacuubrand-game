@@ -177,3 +177,51 @@ input.bad { border-color: #ff6b6b; }
 #overlay.top .reg .check { margin-top: 0.4em; }
 #overlay.top .reg .err { min-height: 1em; margin-top: 0.3em; }
 #overlay.top .reg .small { margin-top: 0.3em; }
+
+/* ---------- Tablet / Handy ---------- */
+html, body { touch-action: none; -webkit-user-select: none; user-select: none; -webkit-tap-highlight-color: transparent; overscroll-behavior: none; }
+#overlay input, #overlay textarea { -webkit-user-select: text; user-select: text; touch-action: manipulation; }
+#overlay .panel { touch-action: pan-y; }
+.reg.online { width: 56%; }
+.reg.online .field input { font-size: 1.3em; text-transform: uppercase; }
+
+#touch {
+  position: fixed; inset: 0; pointer-events: none; z-index: 5;
+  font-family: "Courier New", Consolas, monospace; font-weight: bold; color: #fff;
+}
+#touch > * { pointer-events: auto; }
+#touch .t-dpad {
+  position: absolute; left: max(2vmin, env(safe-area-inset-left)); bottom: 3vmin;
+  width: 32vmin; height: 24vmin; display: grid; grid-template-columns: 1fr 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 1.2vmin;
+}
+#touch .t-key, #touch .t-btn {
+  display: flex; align-items: center; justify-content: center;
+  background: rgba(70, 100, 140, 0.55); border: 0.5vmin solid rgba(255, 255, 255, 0.75);
+  border-radius: 2vmin; box-shadow: 0 0.6vmin 0 rgba(0, 0, 0, 0.35);
+  text-shadow: 0 0.3vmin 0 #1a1c2c; letter-spacing: 0.05em;
+}
+#touch .t-key { font-size: 6vmin; }
+#touch .t-left { grid-column: 1; grid-row: 1 / span 2; }
+#touch .t-down { grid-column: 2; grid-row: 2; }
+#touch .t-right { grid-column: 3; grid-row: 1 / span 2; }
+#touch .t-btns {
+  position: absolute; right: max(2vmin, env(safe-area-inset-right)); bottom: 3vmin;
+  width: 44vmin; height: 34vmin;
+}
+#touch .t-btn { position: absolute; border-radius: 50%; font-size: 3.2vmin; }
+#touch .t-jump { right: 0; bottom: 0; width: 19vmin; height: 19vmin; background: rgba(123, 224, 123, 0.5); }
+#touch .t-suck { right: 21vmin; bottom: 0; width: 19vmin; height: 19vmin; background: rgba(249, 176, 0, 0.6); }
+#touch .t-sprint { right: 12vmin; bottom: 21vmin; width: 13vmin; height: 13vmin; font-size: 2.6vmin; }
+#touch .t-pause {
+  position: absolute; top: calc(14vmin + env(safe-area-inset-top)); right: max(2vmin, env(safe-area-inset-right));
+  width: 9vmin; height: 9vmin; border-radius: 2vmin; font-size: 3.5vmin;
+}
+#touch .on { background: rgba(255, 255, 255, 0.55) !important; transform: translateY(0.4vmin); box-shadow: none; }
+
+#rotate { display: none; }
+@media (orientation: portrait) {
+  body.touch #rotate {
+    display: flex; position: fixed; inset: 0; z-index: 20; align-items: center; justify-content: center; text-align: center;
+    background: #46648c; color: #fff; font: bold 6vmin "Courier New", monospace; line-height: 1.6;
+  }
+}

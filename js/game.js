@@ -34,6 +34,11 @@ class PlayScene {
 
   enter() { Sound.music(null); }
   exit() { Sound.suckStop(); }
+  // Tippen/Klicken: Anleitung überspringen, Pause beenden
+  click() {
+    if (this.paused) { this.paused = false; return; }
+    if (this.state === 'howto' && this.stateT > 30) this.setState('count');
+  }
 
   showMsg(text, dur, color) { this.msg = { text, t: dur || 100, color: color || '#ffffff' }; }
   popup(x, y, text, color) { this.popups.push({ x, y, text, color: color || '#ffffff', t: 36 }); }
@@ -759,7 +764,7 @@ class PlayScene {
     if (this.paused) {
       drawPanel(ctx, 60, 55, 200, 60);
       Font.draw(ctx, 'PAUSE', 160, 62, { color: THEME.gold, scale: 2, align: 'center' });
-      Font.draw(ctx, 'ESC / START = WEITERSPIELEN\nENTER = RUNDE ABBRECHEN', 160, 84, { color: '#ffffff', align: 'center' });
+      Font.draw(ctx, hint('ESC / START = WEITERSPIELEN\nENTER = RUNDE ABBRECHEN', 'TIPPEN = WEITERSPIELEN'), 160, 84, { color: '#ffffff', align: 'center' });
     }
   }
 
@@ -790,8 +795,8 @@ class PlayScene {
   drawHowto(ctx) {
     drawPanel(ctx, 16, 8, 288, 164);
     Font.draw(ctx, 'SO GEHT\'S', 160, 13, { color: THEME.gold, scale: 2, align: 'center' });
-    const left = [['←  →', 'LAUFEN'], ['↑', 'SPRINGEN'], ['↓', 'DUCKEN']];
-    const right = [['LEERTASTE', 'SAUGEN'], ['SHIFT/CTRL', 'SPRINTEN'], ['CONTROLLER', 'GEHT AUCH']];
+    const left = Input.touch ? [['←  →', 'LAUFEN'], ['SPRUNG', 'SPRINGEN'], ['↓', 'DUCKEN']] : [['←  →', 'LAUFEN'], ['↑', 'SPRINGEN'], ['↓', 'DUCKEN']];
+    const right = Input.touch ? [['SAUGEN', 'HALTEN'], ['SPRINT', 'SPRINTEN'], ['II', 'PAUSE']] : [['LEERTASTE', 'SAUGEN'], ['SHIFT/CTRL', 'SPRINTEN'], ['CONTROLLER', 'GEHT AUCH']];
     left.forEach((r, i) => { drawKey(ctx, 88, 33 + i * 13, r[0]); Font.draw(ctx, r[1], 94, 35 + i * 13, { color: '#ffffff' }); });
     right.forEach((r, i) => { drawKey(ctx, 232, 33 + i * 13, r[0]); Font.draw(ctx, r[1], 238, 35 + i * 13, { color: '#ffffff' }); });
     Font.draw(ctx, 'SOG + SPRINT SIND BEGRENZT: LEISTEN BEACHTEN!', 160, 75, { color: '#c8f2ff', align: 'center' });
@@ -810,7 +815,7 @@ class PlayScene {
     Font.draw(ctx, 'SCHUTZAUSRÜSTUNG', 205, 124, { color: '#ffffff', align: 'center' });
     Font.draw(ctx, '+10 S', 272, 124, { color: '#7be07b', align: 'center' });
     Font.draw(ctx, 'SAUG IN ' + CONFIG.roundSeconds + ' SEK SO VIEL CHAOS WIE MÖGLICH EIN!', 160, 146, { color: '#ffffff', align: 'center' });
-    if (this.t % 50 < 35) Font.draw(ctx, 'ENTER = START', 160, 160, { color: THEME.gold, align: 'center' });
+    if (this.t % 50 < 35) Font.draw(ctx, hint('ENTER = START', 'TIPPEN = START'), 160, 160, { color: THEME.gold, align: 'center' });
   }
 }
 
@@ -832,7 +837,9 @@ function drawKey(ctx, rightX, y, label) {
 }
 
 function drawSign(ctx, s, camX) {
-  const lines = s.text.split('\n');
+  // Auf Tablet/Handy statt der Leertaste den Knopf nennen
+  const text = Input.touch ? s.text.replace('LEERTASTE HALTEN', 'KNOPF SAUGEN HALTEN') : s.text;
+  const lines = text.split('\n');
   const w = Math.max(...lines.map(l => l.length)) * 6 + 7;
   const h = lines.length * 9 + 5;
   const cx = s.x * T + 8 - camX;
@@ -841,7 +848,7 @@ function drawSign(ctx, s, camX) {
   ctx.fillStyle = '#6b3f22'; ctx.fillRect(cx - 1, by + h, 3, 160 - by - h);
   ctx.fillStyle = PAL.k; ctx.fillRect(bx - 1, by - 1, w + 2, h + 2);
   ctx.fillStyle = '#fff6d5'; ctx.fillRect(bx, by, w, h);
-  Font.draw(ctx, s.text, bx + 4, by + 3, { color: PAL.k });
+  Font.draw(ctx, text, bx + 4, by + 3, { color: PAL.k });
 }
 
 function drawBackground(ctx, camX) {

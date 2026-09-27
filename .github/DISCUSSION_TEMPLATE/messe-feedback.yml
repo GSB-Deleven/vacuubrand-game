@@ -1,0 +1,24 @@
+body:
+  - type: input
+    id: messe
+    attributes:
+      label: Messe und Datum
+      placeholder: Name der Messe, Datum
+    validations:
+      required: true
+  - type: input
+    id: spieler
+    attributes:
+      label: Wie viele Runden / Spieler ungefähr?
+  - type: textarea
+    id: gut
+    attributes:
+      label: Was kam gut an?
+  - type: textarea
+    id: schlecht
+    attributes:
+      label: Was hat nicht funktioniert oder genervt?
+  - type: textarea
+    id: ideen
+    attributes:
+      label: Ideen für das nächste Mal

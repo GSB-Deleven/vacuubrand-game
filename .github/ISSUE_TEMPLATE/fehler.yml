@@ -1,0 +1,39 @@
+name: 🐞 Fehler melden
+description: Etwas funktioniert nicht wie erwartet.
+title: "Fehler: "
+labels: [fehler]
+body:
+  - type: textarea
+    id: was
+    attributes:
+      label: Was ist passiert?
+      placeholder: z. B. "Der Professor bleibt im Zellkultur-Labor an der Wand hängen."
+    validations:
+      required: true
+  - type: textarea
+    id: erwartet
+    attributes:
+      label: Was hättest du erwartet?
+  - type: dropdown
+    id: geraet
+    attributes:
+      label: Gerät
+      options: [Laptop (Doppelklick), Tablet, Handy, Online-Demo am Computer, Anderes]
+    validations:
+      required: true
+  - type: input
+    id: browser
+    attributes:
+      label: Browser
+      placeholder: Edge, Chrome, Safari, Firefox …
+  - type: textarea
+    id: bild
+    attributes:
+      label: Screenshot oder Video
+      description: Einfach hier hineinziehen.
+  - type: checkboxes
+    id: claude
+    attributes:
+      label: Automatisch bearbeiten
+      options:
+        - label: "Claude soll versuchen, das zu beheben (im Text \"@claude\" erwähnen oder Label \"claude\" setzen)"

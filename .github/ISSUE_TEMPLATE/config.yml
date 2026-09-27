@@ -1,0 +1,11 @@
+blank_issues_enabled: true
+contact_links:
+  - name: 🎮 Online-Demo spielen
+    url: https://gsb-deleven.github.io/vacuubrand-game/
+    about: Das Spiel direkt im Browser, auch auf Tablet und Handy.
+  - name: 💬 Ideen und Fragen (Discussions)
+    url: https://github.com/GSB-Deleven/vacuubrand-game/discussions
+    about: Lose Ideen, Messe-Feedback und Fragen gehören in die Discussions.
+  - name: 📖 Wiki
+    url: https://github.com/GSB-Deleven/vacuubrand-game/wiki
+    about: Anleitung, Technik, Texte und Fehlersuche.

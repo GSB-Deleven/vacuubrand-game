@@ -2,6 +2,11 @@
 
 ### Das VACUUBRAND Messespiel: Besucher an den Stand holen, Produkte zeigen, Kontakte sammeln
 
+[![Online spielen](https://img.shields.io/badge/🎮_Online_spielen-f9b000?style=for-the-badge)](https://gsb-deleven.github.io/vacuubrand-game/)
+[![Wiki](https://img.shields.io/badge/📖_Wiki-46648c?style=for-the-badge)](https://github.com/GSB-Deleven/vacuubrand-game/wiki)
+[![Ideen & Feedback](https://img.shields.io/badge/💬_Ideen_&_Feedback-4f8fcf?style=for-the-badge)](https://github.com/GSB-Deleven/vacuubrand-game/discussions)
+[![Aufgaben](https://img.shields.io/github/issues/GSB-Deleven/vacuubrand-game?label=Aufgaben&style=for-the-badge&color=7be07b)](https://github.com/GSB-Deleven/vacuubrand-game/issues)
+
 ![Titelbild](docs/1_titel.png)
 
 ---
@@ -114,11 +119,23 @@ Die Plattformen im Spiel sind **VACUU·LAN** Leitungen, und die **VACUU·VIEW ex
 
 | | |
 |---|---|
-| 🖥️ Hardware | Ein normaler Firmen-Laptop. Mit einem grossen Bildschirm oder TV daneben wirkt es natürlich am besten. |
+| 🖥️ Hardware | Ein normaler Firmen-Laptop **oder ein Tablet**. Mit einem grossen Bildschirm oder TV daneben wirkt es natürlich am besten. |
 | 🎮 Optional | Ein USB-Gamepad oder Joystick |
 | 📦 Installation | Keine. Ordner kopieren, Doppelklick, läuft. |
 | 🌐 Internet | Nicht nötig, das Spiel läuft komplett offline |
 | 💰 Lizenzen | Keine. Das Spiel ist selbst entwickelt, ohne fremde Software oder Abos. |
+
+---
+
+## 📱 Tablet und Online-Demo
+
+Dasselbe Spiel läuft auf **Laptop, Tablet und Handy**. Auf Touch-Geräten erscheinen automatisch Bildschirm-Tasten.
+
+| Version | Adresse | Wofür |
+|---|---|---|
+| 🎪 **Messe (Laptop)** | Doppelklick auf `index.html` | Stand mit Anmeldung, Bestenliste und Kontakt-Export |
+| 📱 **Messe (Tablet)** | [https://gsb-deleven.github.io/vacuubrand-game/?messe](https://gsb-deleven.github.io/vacuubrand-game/?messe) | wie oben, aber auf dem Tablet. Einmal öffnen, „Zum Home-Bildschirm“, danach läuft es auch ohne WLAN |
+| 🌍 **Online-Demo** | [https://gsb-deleven.github.io/vacuubrand-game/](https://gsb-deleven.github.io/vacuubrand-game/) | für Website, Newsletter, Social Media: nur ein Spitzname, keine Kontaktdaten, keine Datenübertragung |
 
 ---
 
@@ -147,5 +164,15 @@ Die ersten drei gehen direkt im Admin-Bereich, der Rest in einer gut kommentiert
 📖 **Anleitung fürs Standpersonal** mit Steuerung, Admin-Bereich, Export und Tipps: [ANLEITUNG.md](ANLEITUNG.md)
 
 🛠️ **Technisches Handbuch** mit Aufbau, Dateien und allen Einstellungen: [TECHNIK.md](TECHNIK.md)
+
+## 🤝 Mitmachen
+
+| | |
+|---|---|
+| 💬 [Discussions](https://github.com/GSB-Deleven/vacuubrand-game/discussions) | lose Ideen, Fragen und Feedback nach der Messe |
+| ✅ [Issues](https://github.com/GSB-Deleven/vacuubrand-game/issues) | konkrete Aufgaben, Fehler und Textänderungen, mit Vorlagen |
+| 🗂️ [Project-Board](https://github.com/GSB-Deleven/vacuubrand-game/projects) und [Milestones](https://github.com/GSB-Deleven/vacuubrand-game/milestones) | Überblick, was bis zur Messe erledigt sein muss |
+| 🤖 **@claude** | in einem Issue oder Kommentar erwähnen (oder Label „claude“ setzen): Claude setzt die Aufgabe um und schlägt einen Pull Request vor |
+| 📖 [Wiki](https://github.com/GSB-Deleven/vacuubrand-game/wiki) | alle Anleitungen an einem Ort |
 
 🚀 **Starten:** Doppelklick auf `Spiel starten (Vollbild).bat` oder auf `index.html`
