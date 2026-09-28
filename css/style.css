@@ -245,3 +245,6 @@ html, body { touch-action: none; -webkit-user-select: none; user-select: none; -
   font: bold 15px "Courier New", monospace; padding: 8px 36px 8px 12px; max-width: 86vw; line-height: 1.4;
 }
 #a2hs button { position: absolute; right: 4px; top: 4px; font: bold 16px monospace; background: none; border: 0; color: #1a1c2c; }
+
+/* Scharfer QR-Code auf dem Ergebnisbildschirm */
+#qrview { position: absolute; display: none; z-index: 2; image-rendering: pixelated; image-rendering: crisp-edges; box-shadow: 0 0 0 2px #1a1c2c; }

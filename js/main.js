@@ -79,6 +79,7 @@ function showHomeScreenHint() {
     wrap.style.width = Math.floor(VIEW_W * s) + 'px';
     wrap.style.height = Math.floor(VIEW_H * s) + 'px';
     Overlay.el.style.fontSize = Math.max(11, Math.round(s * 4)) + 'px';
+    QRView.layout();
   }
   window.addEventListener('resize', resize);
   window.addEventListener('orientationchange', () => setTimeout(resize, 300));
