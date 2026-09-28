@@ -41,7 +41,10 @@ Dieses Dokument erklärt, wie das Spiel aufgebaut ist, was jede Datei macht und 
 ```
 vacuubrand-game/
 ├── index.html                    Einstiegsseite, lädt CSS und alle Skripte
-├── Spiel starten (Vollbild).bat  startet Edge im App- und Vollbildmodus
+├── ▶ START Windows.bat            Windows: Edge im App- und Vollbildmodus
+├── ▶ START Mac.command            Mac: Chrome/Edge im App-/Vollbildmodus, sonst Safari
+├── ▶ START Linux + Raspberry Pi.sh  Linux/Pi: Chromium im Kiosk-Modus
+├── raspberry-pi/                 Kiosk-Start und Autostart-Installation für Raspberry Pi OS
 ├── README.md                     Pitch fürs Management
 ├── ANLEITUNG.md                  Anleitung fürs Standpersonal
 ├── TECHNIK.md                    dieses Dokument
@@ -363,6 +366,25 @@ Die BVC professional saugt alle Gegner ein. `liquid: true` (d, t, n, e, w) ist n
 - `Strg + Shift + Enter`: Schnellstart als „ADMIN“, die Runde wird nicht gespeichert
 
 Die Tastatur ist bewusst auf Pfeile, Leertaste, Shift/Ctrl beschränkt, damit keine Browser-Kürzel wie Strg+W ausgelöst werden. Controller werden über die Gamepad-API des Browsers erkannt. Beim ersten Erkennen erscheint „CONTROLLER VERBUNDEN“. Manche Browser melden einen Controller erst nach dem ersten Tastendruck.
+
+---
+
+### Joysticks, Arcade und eigene Belegung
+
+- **Hat-Steuerkreuz:** Viele Arcade-Encoder („Zero Delay“) melden das Steuerkreuz als Achsen 6/7 oder als Achse 9 mit Stufenwerten. `pollPads()` wertet beides aus. Die Ruhewerte werden beim ersten Erkennen gemerkt, damit z. B. ein Schubregler nicht als Dauer-Richtung gilt.
+- **Eigene Belegung:** Admin → **Controller einrichten** fragt nacheinander SPRINGEN, SAUGEN, SPRINTEN und START/PAUSE ab. Die Belegung wird pro Controller-Modell (`gamepad.id`) im `localStorage` unter `vakuumprof_padmap_v1` gespeichert und hat Vorrang vor der Standardbelegung.
+- **Arcade-Tastatur-Encoder** (z. B. I-PAC): Pfeiltasten, Leertaste, Ctrl/Shift und Enter funktionieren direkt. Zusätzlich starten **1** und **5** (Arcade-Standard für Start und Münze).
+
+### iPhone / iPad
+
+- Eingabefelder haben mindestens 16 px Schrift, sonst zoomt iOS beim Antippen hinein.
+- Ton wird bei der ersten Berührung freigeschaltet (`touchend`, stummer Puffer), auch nach Anruf oder Sperrbildschirm (`interrupted`).
+- Die Bildgrösse richtet sich nach `visualViewport` (sichtbare Fläche ohne Safari-Leisten).
+- In Safari erscheint online einmalig der Hinweis „Zum Home-Bildschirm“, weil es auf dem iPhone sonst keinen Vollbildmodus gibt.
+
+### Raspberry Pi
+
+`raspberry-pi/installieren.sh` installiert Chromium und `unclutter`, schaltet den Bildschirmschoner aus und richtet den Autostart ein (XDG-Autostart und labwc). `raspberry-pi/spiel-starten.sh` startet Chromium im Kiosk-Modus mit eigenem Profil `~/.professor-vakuumus` und erlaubt Ton ohne Tastendruck. Anleitung: `raspberry-pi/README.md`.
 
 ---
 

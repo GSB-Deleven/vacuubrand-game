@@ -76,7 +76,7 @@ html, body {
 
 input[type=text], input[type=email], input[type=password], input[type=number] {
   font: inherit;
-  font-size: 1.05em;
+  font-size: max(16px, 1.05em); /* unter 16px zoomt iPhone/iPad beim Antippen ins Bild */
   padding: 0.3em 0.4em;
   background: #34507a;
   color: #fff;
@@ -225,3 +225,23 @@ html, body { touch-action: none; -webkit-user-select: none; user-select: none; -
     background: #46648c; color: #fff; font: bold 6vmin "Courier New", monospace; line-height: 1.6;
   }
 }
+
+/* Kleine Bildschirme (Handy quer): Formular kompakter und scrollbar */
+@media (max-height: 500px) {
+  #overlay.top { padding-top: 0.5%; }
+  #overlay.top .reg { max-height: 96%; max-height: 96dvh; width: 92%; padding: 0.4em 0.8em; }
+  #overlay.top .reg .logo { display: none; }
+  #overlay.top .reg .hint { display: none; }
+  #overlay.top .reg .small { font-size: 0.65em; margin-top: 0.2em; }
+  #overlay.top .reg .check { font-size: 0.75em; margin-top: 0.2em; }
+  .fields { gap: 0.2em 0.6em; }
+  .panel { max-height: 96%; }
+}
+
+/* Hinweis "Zum Home-Bildschirm" (iPhone/iPad in Safari) */
+#a2hs {
+  position: fixed; left: 50%; top: calc(8px + env(safe-area-inset-top)); transform: translateX(-50%); z-index: 30;
+  background: #f9b000; color: #1a1c2c; border: 3px solid #1a1c2c; box-shadow: 0 0 0 2px #fff;
+  font: bold 15px "Courier New", monospace; padding: 8px 36px 8px 12px; max-width: 86vw; line-height: 1.4;
+}
+#a2hs button { position: absolute; right: 4px; top: 4px; font: bold 16px monospace; background: none; border: 0; color: #1a1c2c; }

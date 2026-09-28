@@ -9,7 +9,7 @@ Das VACUUBRAND Messespiel: Ein verrückter Laborprofessor saugt mit seiner Saugp
 | Ich möchte … | So geht's |
 |---|---|
 | online spielen | **[https://gsb-deleven.github.io/vacuubrand-game/](https://gsb-deleven.github.io/vacuubrand-game/)** |
-| am Stand mit Laptop spielen | Ordner kopieren, Doppelklick auf `Spiel starten (Vollbild).bat` → [[Am Messestand]] |
+| am Stand mit Laptop spielen | Ordner kopieren, Doppelklick auf `▶ START Windows.bat` / `▶ START Mac.command` → [[Am Messestand]] |
 | am Stand mit Tablet spielen | **[https://gsb-deleven.github.io/vacuubrand-game/?messe](https://gsb-deleven.github.io/vacuubrand-game/?messe)** → [[Tablet und Online]] |
 | Daten exportieren | [[Admin-Bereich]] |
 | etwas ändern lassen | Issue schreiben, **@claude** erwähnen → [[Mitarbeit und Planung]] |
@@ -19,6 +19,7 @@ Das VACUUBRAND Messespiel: Ein verrückter Laborprofessor saugt mit seiner Saugp
 - [[Spielen und Steuerung]]: Tastatur, Gamepad, Touch, Spielregeln
 - [[Am Messestand]]: Ablauf, Tipps fürs Standpersonal
 - [[Tablet und Online]]: Tablet-Betrieb, Online-Demo, App installieren
+- [[Plattformen]]: Windows, Mac, iPad, iPhone, Android, Raspberry Pi, Arcade-Automat
 - [[Admin-Bereich]]: Top 3, Export, Einstellungen
 - [[Daten und Datenschutz]]
 - [[Technik]]: Aufbau, Dateien, Anpassen

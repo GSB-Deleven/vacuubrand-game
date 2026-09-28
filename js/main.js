@@ -39,6 +39,23 @@ const Game = {
   }
 };
 
+// iPhone/iPad in Safari: Vollbild gibt es nur als App vom Home-Bildschirm. Einmalig darauf hinweisen.
+function showHomeScreenHint() {
+  const ios = /iPhone|iPad|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  const standalone = navigator.standalone || (window.matchMedia && window.matchMedia('(display-mode: fullscreen), (display-mode: standalone)').matches);
+  if (!ios || standalone || location.protocol !== 'https:') return;
+  try { if (window.localStorage.getItem('vakuumprof_a2hs')) return; } catch (e) { /* egal */ }
+  const el = document.createElement('div');
+  el.id = 'a2hs';
+  el.innerHTML = '📲 Für Vollbild: unten auf <b>Teilen</b> tippen und <b>„Zum Home-Bildschirm“</b> wählen.<button aria-label="Schliessen">✕</button>';
+  el.querySelector('button').addEventListener('click', () => {
+    el.remove();
+    try { window.localStorage.setItem('vakuumprof_a2hs', '1'); } catch (e) { /* egal */ }
+  });
+  document.body.appendChild(el);
+  setTimeout(() => el.remove(), 15000);
+}
+
 (function start() {
   const canvas = document.getElementById('game');
   const wrap = document.getElementById('wrap');
@@ -55,12 +72,18 @@ const Game = {
   Touch.init();
 
   function resize() {
-    const s = Math.min(window.innerWidth / VIEW_W, window.innerHeight / VIEW_H);
+    // visualViewport liefert auf iPhone/iPad die wirklich sichtbare Fläche (ohne Safari-Leisten)
+    const vv = window.visualViewport;
+    const w = vv ? vv.width : window.innerWidth, h = vv ? vv.height : window.innerHeight;
+    const s = Math.min(w / VIEW_W, h / VIEW_H);
     wrap.style.width = Math.floor(VIEW_W * s) + 'px';
     wrap.style.height = Math.floor(VIEW_H * s) + 'px';
     Overlay.el.style.fontSize = Math.max(11, Math.round(s * 4)) + 'px';
   }
   window.addEventListener('resize', resize);
+  window.addEventListener('orientationchange', () => setTimeout(resize, 300));
+  if (window.visualViewport) window.visualViewport.addEventListener('resize', resize);
+  showHomeScreenHint();
   canvas.addEventListener('click', e => {
     const r = canvas.getBoundingClientRect();
     const x = (e.clientX - r.left) / r.width * VIEW_W, y = (e.clientY - r.top) / r.height * VIEW_H;

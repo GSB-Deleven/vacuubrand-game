@@ -4,6 +4,7 @@
 - [[Spielen und Steuerung]]
 - [[Am Messestand]]
 - [[Tablet und Online]]
+- [[Plattformen]]
 - [[Admin-Bereich]]
 - [[Daten und Datenschutz]]
 - [[Technik]]

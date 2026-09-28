@@ -10,6 +10,7 @@ Auftraggeber ist David (Labor, kein Programmierer): Antworten und Issue-Kommenta
 - **Spieltexte:** nur Grossbuchstaben (Pixelschrift), ca. 50 Zeichen pro Zeile, Schilder und Banner max. 2 Zeilen. Unbekannte Zeichen (z. B. ₂, ⚠) zeigt die Schrift nicht an. Textliste: `TEXTE.md`.
 - **Nicht gewünscht** (von David abgelehnt): Geister, SPE-Kartuschen, Konzentrator-Röhrchen, Fässer, rote Wangen, Zittern/Blinken auf dem Startbildschirm, automatisches Umschalten der Bestenliste.
 - Einstellungen gehören nach `js/config.js`, gut kommentiert.
+- Start-Dateien für Windows (`▶ START Windows.bat`), Mac (`▶ START Mac.command`) und Linux/Pi (`▶ START Linux + Raspberry Pi.sh`, `raspberry-pi/`) aktuell halten. Zielplattformen: Windows, Mac, iPad, iPhone, Android, Raspberry Pi (Arcade), Joystick/Gamepad.
 - Zwei Betriebsarten (`CONFIG.mode`): `messe` (Anmeldung mit Lead-Erfassung, Admin) und `online` (GitHub Pages, nur Spitzname). Änderungen in beiden prüfen, dazu Tastatur, Gamepad und Touch.
 
 ## Aufbau
