@@ -184,7 +184,8 @@ class ResultScene {
     this.rankAll = Store.rank(res.lead.id, null);
     this.newBest = this.best === res.total;
   }
-  enter() { Sound.music(null); this.medalShown = 0; }
+  enter() { Sound.music(null); this.medalShown = 0; this.qrOk = QRView.show(CONFIG.contactUrl, [257, 117, 56, 56]); }
+  exit() { QRView.hide(); }
   update() {
     this.t++;
     // Medaillen ploppen nacheinander auf
@@ -230,7 +231,7 @@ class ResultScene {
     ctx.fillStyle = '#5a7aa3'; ctx.fillRect(190, 42, 1, 84);
     Font.draw(ctx, 'MEDAILLEN', 250, 44, { color: THEME.gold, align: 'center' });
     CONFIG.medals.forEach((m, i) => {
-      const y = 54 + i * 10;
+      const y = 53 + i * 9;
       const idx = got.indexOf(m.key);
       const on = idx >= 0 && idx < (this.medalShown || 0);
       const pop = on && this.t < 80 + idx * 14 + 6;
@@ -246,30 +247,52 @@ class ResultScene {
       else if (this.rankDay === 1 && this.t % 30 < 20) Font.draw(ctx, '★ TAGESBESTWERT! ★', 134, 145, { color: '#ffd23f', align: 'center' });
     }
     if (this.t > 60 && this.t % 50 < 35) Font.draw(ctx, hint('ENTER = BESTENLISTE', 'TIPPEN = BESTENLISTE'), 134, 159, { color: THEME.gold, align: 'center' });
-    // QR-Code zum Kontakt (mit dem Handy scannen)
-    if (!this.qr) this.qr = qrCanvas(CONFIG.contactUrl) || 'none';
-    if (this.qr !== 'none') {
-      Font.draw(ctx, 'KONTAKT:', 286, 116, { color: '#c8f2ff', align: 'center' });
-      ctx.drawImage(this.qr, 286 - this.qr.width / 2, 125);
-    }
+    // QR-Code zum Kontakt: wird als eigenes, scharfes Bild darübergelegt (QRView)
+    if (this.qrOk) Font.draw(ctx, 'KONTAKT:', 285, 110, { color: '#c8f2ff', align: 'center' });
   }
 }
 
-// QR-Code als Pixelbild (1 Modul = 1 Pixel, weisser Rand), erzeugt offline mit js/lib/qrcode.js
-function qrCanvas(text) {
-  try {
-    if (!text || typeof qrcode === 'undefined') return null;
-    const q = qrcode(0, 'L');
-    q.addData(text);
-    q.make();
-    const n = q.getModuleCount(), m = 2;
-    const c = makeCanvas(n + m * 2, n + m * 2), g = c.getContext('2d');
-    g.fillStyle = '#ffffff'; g.fillRect(0, 0, c.width, c.height);
+// Scharfer QR-Code über dem Spielbild. Er darf NICHT mit dem Pixel-Spielbild hochskaliert werden,
+// sonst werden die Kästchen ungleich breit und Handys können ihn nicht lesen.
+// Jedes Kästchen ist eine ganze Zahl Bildschirmpixel gross, mit dem vorgeschriebenen weissen Rand (4 Kästchen).
+const QRView = {
+  el: null, text: null, q: null, box: null,
+  // box = Bereich im Spielbild [x, y, breite, höhe]
+  show(text, box) {
+    if (!this.el) {
+      this.el = document.createElement('canvas');
+      this.el.id = 'qrview';
+      document.getElementById('wrap').appendChild(this.el);
+    }
+    if (text !== this.text) {
+      this.text = text; this.q = null;
+      try {
+        if (text && typeof qrcode !== 'undefined') { const q = qrcode(0, 'L'); q.addData(text); q.make(); this.q = q; }
+      } catch (e) { this.q = null; }
+    }
+    this.box = box;
+    this.el.style.display = this.q ? 'block' : 'none';
+    this.layout();
+    return !!this.q;
+  },
+  hide() { if (this.el) this.el.style.display = 'none'; },
+  layout() {
+    if (!this.el || !this.q || this.el.style.display === 'none') return;
+    const wrap = document.getElementById('wrap');
+    const s = wrap.clientWidth / VIEW_W, dpr = window.devicePixelRatio || 1;
+    const n = this.q.getModuleCount(), total = n + 8;
+    const m = Math.max(1, Math.floor(Math.min(this.box[2], this.box[3]) * s * dpr / total));
+    const px = m * total, c = this.el, g = c.getContext('2d');
+    c.width = px; c.height = px;
+    g.fillStyle = '#ffffff'; g.fillRect(0, 0, px, px);
     g.fillStyle = '#000000';
-    for (let r = 0; r < n; r++) for (let col = 0; col < n; col++) if (q.isDark(r, col)) g.fillRect(col + m, r + m, 1, 1);
-    return c;
-  } catch (e) { return null; }
-}
+    for (let r = 0; r < n; r++) for (let col = 0; col < n; col++) if (this.q.isDark(r, col)) g.fillRect((col + 4) * m, (r + 4) * m, m, m);
+    const css = px / dpr;
+    c.style.width = css + 'px'; c.style.height = css + 'px';
+    c.style.left = (this.box[0] * s + (this.box[2] * s - css) / 2) + 'px';
+    c.style.top = (this.box[1] * s + (this.box[3] * s - css) / 2) + 'px';
+  }
+};
 
 // Kleine Pixel-Medaille (9×10): Band oben, runde Plakette unten
 function drawMedal(ctx, x, y, on) {
