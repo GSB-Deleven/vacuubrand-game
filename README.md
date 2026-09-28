@@ -150,6 +150,17 @@ Die Plattformen im Spiel sind **VACUU·LAN** Leitungen, und die **VACUU·VIEW ex
 
 ---
 
+## 🌍 Läuft auf …
+
+| Gerät | So geht's |
+|---|---|
+| 💻 Windows-Laptop | `▶ START Windows.bat` |
+| 🍎 Mac | `▶ START Mac.command` |
+| 📱 iPad / iPhone | Online-Link öffnen, dann **Teilen → „Zum Home-Bildschirm“**: startet wie eine App im Vollbild, auch offline |
+| 🤖 Android-Tablet / Handy | Online-Link öffnen, Menü → **„App installieren“** |
+| 🍓 Raspberry Pi / Arcade-Automat | startet beim Einschalten direkt ins Spiel, Anleitung in [`raspberry-pi/README.md`](raspberry-pi/README.md) |
+| 🕹️ Joystick, Gamepad, Arcade-Knöpfe | einstecken, fertig. Falls Knöpfe falsch liegen: im Admin **Controller einrichten** |
+
 ## 📱 Tablet und Online-Demo
 
 Dasselbe Spiel läuft auf **Laptop, Tablet und Handy**. Auf Touch-Geräten erscheinen automatisch Bildschirm-Tasten.
@@ -198,4 +209,11 @@ Die ersten drei gehen direkt im Admin-Bereich, der Rest in einer gut kommentiert
 | 🤖 **@claude** | in einem Issue oder Kommentar erwähnen (oder Label „claude“ setzen): Claude setzt die Aufgabe um und schlägt einen Pull Request vor |
 | 📖 [Wiki](https://github.com/GSB-Deleven/vacuubrand-game/wiki) | alle Anleitungen an einem Ort |
 
-🚀 **Starten:** Doppelklick auf `Spiel starten (Vollbild).bat` oder auf `index.html`
+🚀 **Starten:**
+
+| System | Start-Datei (Doppelklick) |
+|---|---|
+| 🪟 Windows | `▶ START Windows.bat` (Edge im Vollbild) |
+| 🍎 Mac | `▶ START Mac.command` (Chrome/Edge im Vollbild, sonst Safari). Beim ersten Mal: Rechtsklick → **Öffnen** → Öffnen |
+| 🐧 Linux / 🍓 Raspberry Pi | `▶ START Linux + Raspberry Pi.sh` (Chromium im Vollbild). Automatisch beim Einschalten: siehe `raspberry-pi/README.md` |
+| alle | Notfalls einfach `index.html` doppelklicken |

@@ -137,6 +137,13 @@ class RegisterScene {
 }
 
 // ---------------------------------------------------------------------
+const PAD_SETUP_STEPS = [
+  { key: 'jump', label: 'SPRINGEN' },
+  { key: 'suck', label: 'SAUGEN' },
+  { key: 'sprint', label: 'SPRINTEN' },
+  { key: 'start', label: 'START / PAUSE' }
+];
+
 class AdminScene {
   constructor() { this.allowAdmin = false; this.t = 0; this.unlocked = false; }
 
@@ -213,6 +220,7 @@ class AdminScene {
       '<button class="btn" type="submit">Speichern</button></form>' +
       '<h2>Letzte Runden</h2><table><tr><th>Zeit</th><th>Name</th><th>Firma</th><th>E-Mail</th><th>Punkte</th><th></th></tr>' +
       (rows || '<tr><td colspan="6">Noch keine Runden.</td></tr>') + '</table>' +
+      '<h2>Controller / Joystick</h2>' + this.padHtml() +
       '<h2>Gefahrenzone</h2><div class="row"><label>Zum Löschen LÖSCHEN eintippen<input type="text" data-wipe autocomplete="off"></label>' +
       '<button class="btn danger" data-act="wipe">Alle Daten löschen</button></div>' +
       '<div class="buttons" style="margin-top:1em"><button class="btn ghost" data-act="fullscreen">Vollbild an/aus</button>' +
@@ -255,8 +263,54 @@ class AdminScene {
     });
   }
 
+  // ---- Controller einrichten: Knöpfe der Reihe nach drücken lassen ----
+  firstPad() {
+    const list = navigator.getGamepads ? navigator.getGamepads() : [];
+    for (const gp of list || []) if (gp && gp.connected) return gp;
+    return null;
+  }
+  padHtml() {
+    const gp = this.firstPad();
+    if (!gp) return '<p>Kein Controller erkannt. Einstecken und eine Taste drücken, dann <button class="btn small ghost" data-act="padRefresh">Neu suchen</button></p>';
+    const custom = Input.padMap(gp.id);
+    const steps = PAD_SETUP_STEPS;
+    let html = '<p>Erkannt: <b>' + escapeHtml(gp.id.slice(0, 60)) + '</b> · Belegung: ' + (custom ? 'eigene' : 'Standard') + '</p>';
+    if (this.padStep != null) {
+      html += '<div class="export"><b>Drücke jetzt am Controller: ' + steps[this.padStep].label + '</b> (' + (this.padStep + 1) + ' von ' + steps.length + ')' +
+        ' <button class="btn small ghost" data-act="padCancel">Abbrechen</button></div>';
+    } else {
+      html += '<div class="row"><button class="btn" data-act="padSetup">Controller einrichten</button>' +
+        (custom ? '<button class="btn ghost" data-act="padReset">Standard wiederherstellen</button>' : '') + '</div>' +
+        '<p class="small" style="text-align:left">Nötig, wenn Springen/Saugen auf falschen Knöpfen liegen (z. B. bei Arcade-Automaten). Laufen geht immer mit Stick bzw. Steuerkreuz.</p>';
+    }
+    return html;
+  }
+  // wird jedes Bild aufgerufen, solange die Einrichtung läuft
+  padSetupTick() {
+    if (this.padStep == null) return;
+    const gp = this.firstPad();
+    if (!gp) return;
+    const pressed = gp.buttons.map(b => !!b && (b.pressed || b.value > 0.5));
+    if (!this.padPrev) { this.padPrev = pressed; return; }
+    const idx = pressed.findIndex((p, i) => p && !this.padPrev[i]);
+    this.padPrev = pressed;
+    if (idx < 0) return;
+    this.padNew[PAD_SETUP_STEPS[this.padStep].key] = idx;
+    Sound.sfx('select');
+    this.padStep++;
+    if (this.padStep >= PAD_SETUP_STEPS.length) {
+      Input.savePadMap(gp.id, this.padNew);
+      this.padStep = null;
+      this.render('Controller gespeichert: ' + PAD_SETUP_STEPS.map(s => s.label + ' = Knopf ' + (this.padNew[s.key] + 1)).join(', '));
+    } else this.render();
+  }
+
   action(a) {
     switch (a) {
+      case 'padRefresh': this.render(); break;
+      case 'padSetup': this.padStep = 0; this.padNew = {}; this.padPrev = null; this.render(); break;
+      case 'padCancel': this.padStep = null; this.render('Einrichtung abgebrochen.'); break;
+      case 'padReset': { const gp = this.firstPad(); if (gp) Input.savePadMap(gp.id, null); this.render('Standard-Belegung wiederhergestellt.'); break; }
       case 'close': this.close(); break;
       case 'csvLeads': this.exported = Store.exportLeadsCSV(); this.render('Leads exportiert.'); break;
       case 'csvRounds': this.exported = Store.exportRoundsCSV(); this.render('Runden exportiert.'); break;
@@ -289,7 +343,7 @@ class AdminScene {
     }
   }
 
-  update() { this.t++; }
+  update() { this.t++; this.padSetupTick(); }
   draw(ctx) {
     drawMenuBackground(ctx, this.t);
     ctx.fillStyle = 'rgba(11,15,31,0.7)';

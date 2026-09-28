@@ -3,7 +3,7 @@
 ## Aufbau Laptop
 
 1. Ganzen Ordner auf den Laptop kopieren
-2. Doppelklick auf `Spiel starten (Vollbild).bat` (oder `index.html` + F11)
+2. Start-Datei doppelklicken: `▶ START Windows.bat`, `▶ START Mac.command` oder `▶ START Linux + Raspberry Pi.sh` (notfalls `index.html`)
 3. Admin-Bereich (**Strg + Shift + A**): PIN ändern, Messename setzen, Beispieldaten löschen
 4. Windows: Einrastfunktion (5× Shift) abschalten, Energiesparmodus aus
 

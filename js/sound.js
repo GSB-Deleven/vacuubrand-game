@@ -79,7 +79,8 @@ const Sound = {
 
   init() {
     if (this.ctx) {
-      if (this.ctx.state === 'suspended') this.ctx.resume();
+      // 'interrupted' kommt auf iPhone/iPad z. B. nach einem Anruf oder Sperrbildschirm
+      if (this.ctx.state === 'suspended' || this.ctx.state === 'interrupted') this.ctx.resume();
       return;
     }
     const AC = window.AudioContext || window.webkitAudioContext;
@@ -96,6 +97,11 @@ const Sound = {
       const d = this.noiseBuf.getChannelData(0);
       for (let i = 0; i < len; i++) d[i] = Math.random() * 2 - 1;
       this.nextTime = c.currentTime + 0.1;
+      // ältere iPhones/iPads schalten Ton erst frei, wenn in der Berührung etwas abgespielt wird
+      const unlock = c.createBufferSource();
+      unlock.buffer = c.createBuffer(1, 1, 22050);
+      unlock.connect(c.destination);
+      unlock.start(0);
     } catch (e) { this.ctx = null; }
   },
 

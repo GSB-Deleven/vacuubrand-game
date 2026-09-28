@@ -51,9 +51,16 @@ Jede Zone hat ihre eigene Musik, die Dampf-Krake ein eigenes Boss-Thema.
 ## Starten – ohne Installation, ohne Internet
 
 1. Den ganzen Ordner auf den Messe-Laptop kopieren (z.B. auf den Desktop).
-2. **Doppelklick auf `Spiel starten (Vollbild).bat`** (öffnet Edge im Vollbild),
-   oder einfach **Doppelklick auf `index.html`** und dann **F11** für Vollbild.
-3. Beenden: **Alt + F4**.
+2. Die passende Start-Datei doppelklicken:
+
+| System | Start-Datei (Doppelklick) |
+|---|---|
+| 🪟 Windows | `▶ START Windows.bat` (Edge im Vollbild) |
+| 🍎 Mac | `▶ START Mac.command` (Chrome/Edge im Vollbild, sonst Safari). Beim ersten Mal: Rechtsklick → **Öffnen** → Öffnen |
+| 🐧 Linux / 🍓 Raspberry Pi | `▶ START Linux + Raspberry Pi.sh` (Chromium im Vollbild). Automatisch beim Einschalten: siehe `raspberry-pi/README.md` |
+| alle | Notfalls einfach `index.html` doppelklicken |
+
+3. Beenden: **Alt + F4** (Mac: **Cmd + Q**).
 
 Läuft in Edge, Chrome und Firefox. **Immer denselben Browser und denselben Ordner benutzen**,
 sonst sieht das Spiel die bisherige Bestenliste nicht.
@@ -72,6 +79,8 @@ sonst sieht das Spiel die bisherige Bestenliste nicht.
 | M | Ton an/aus |
 | F | Vollbild (auf dem Titelbild) |
 | B | Bestenliste ein/aus (auf dem Titelbild) |
+
+**Knöpfe liegen falsch?** (z. B. Arcade-Joystick) Im Admin-Bereich unter **Controller / Joystick → Controller einrichten** der Reihe nach Springen, Saugen, Sprinten und Start drücken. Das Spiel merkt sich die Belegung für dieses Controller-Modell.
 
 **Controller:** Xbox-/USB-Gamepads und einfache USB-Joysticks einfach einstecken, sie werden automatisch erkannt
 („CONTROLLER VERBUNDEN“; evtl. einmal eine Taste drücken). Die Tastatur funktioniert weiterhin.
