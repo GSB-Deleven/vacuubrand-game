@@ -35,6 +35,7 @@ const CONFIG = {
   bvcSeconds: 8,               // BVC gilt im ganzen Zellkultur-Labor; nur falls man sie ausserhalb erwischt: so viele Sekunden
 
   resultAutoReturnSeconds: 25, // Ergebnis-Bildschirm schliesst automatisch
+  contactSeconds: 20,          // so lange bleibt die Kontakt-Seite mit dem QR-Code stehen
   boardAutoReturnSeconds: 20,
   registrationTimeoutSeconds: 90,
   leaderboardSize: 10,

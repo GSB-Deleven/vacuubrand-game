@@ -143,7 +143,8 @@ Das Spiel selbst ist ein Canvas mit 320 × 180 Pixeln. Formulare (Anmeldung, Adm
 2. `PlayScene` läuft mit diesem Lead.
 3. Am Ende berechnet `PlayScene.end()` Zeitbonus und Medaillen und übergibt alles an `ResultScene`.
 4. `ResultScene` speichert die Runde (`Store.addRound`), ausser bei Testrunden, und zeigt die Platzierung.
-5. `BoardScene` zeigt die Bestenlisten.
+5. `ContactScene` zeigt einen grossen QR-Code zur Kontaktseite (`contactUrl`, `contactSeconds` in `config.js`). Der QR-Code wird als eigenes, scharfes Bild über das Spiel gelegt (`QRView`), weil er beim Hochskalieren des Pixelbilds unlesbar würde. Ist `contactUrl` leer, entfällt die Seite.
+6. `BoardScene` zeigt die Bestenlisten.
 
 ---
 

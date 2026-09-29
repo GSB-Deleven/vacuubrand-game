@@ -184,8 +184,7 @@ class ResultScene {
     this.rankAll = Store.rank(res.lead.id, null);
     this.newBest = this.best === res.total;
   }
-  enter() { Sound.music(null); this.medalShown = 0; this.qrOk = QRView.show(CONFIG.contactUrl, [257, 117, 56, 56]); }
-  exit() { QRView.hide(); }
+  enter() { Sound.music(null); this.medalShown = 0; }
   update() {
     this.t++;
     // Medaillen ploppen nacheinander auf
@@ -196,11 +195,11 @@ class ResultScene {
     }
     if ((this.t > 60 && Input.pressed('start')) || this.t > CONFIG.resultAutoReturnSeconds * 60) {
       Sound.sfx('select');
-      Game.go(new BoardScene(this.res.lead.id));
+      Game.go(afterResult(this.res.lead.id));
     }
   }
   click() {
-    if (this.t > 60) { Sound.sfx('select'); Game.go(new BoardScene(this.res.lead.id)); }
+    if (this.t > 60) { Sound.sfx('select'); Game.go(afterResult(this.res.lead.id)); }
   }
   draw(ctx) {
     const r = this.res;
@@ -248,7 +247,37 @@ class ResultScene {
     }
     if (this.t > 60 && this.t % 50 < 35) Font.draw(ctx, hint('ENTER = BESTENLISTE', 'TIPPEN = BESTENLISTE'), 134, 159, { color: THEME.gold, align: 'center' });
     // QR-Code zum Kontakt: wird als eigenes, scharfes Bild darübergelegt (QRView)
-    if (this.qrOk) Font.draw(ctx, 'KONTAKT:', 285, 110, { color: '#c8f2ff', align: 'center' });
+  }
+}
+
+// Nach dem Ergebnis: zuerst die Kontakt-Seite mit grossem QR-Code (falls ein Link eingestellt ist), dann die Bestenliste
+function afterResult(leadId) {
+  return CONFIG.contactUrl ? new ContactScene(leadId) : new BoardScene(leadId);
+}
+
+// Kontakt-Seite: grosser QR-Code, damit ihn jede Handykamera auch aus etwas Abstand erkennt
+class ContactScene {
+  constructor(leadId) { this.leadId = leadId; this.t = 0; this.allowAdmin = true; }
+  enter() {
+    this.ok = QRView.show(CONFIG.contactUrl, [166, 30, 140, 140]);
+    if (!this.ok) Game.go(new BoardScene(this.leadId));
+  }
+  exit() { QRView.hide(); }
+  next() { Sound.sfx('select'); Game.go(new BoardScene(this.leadId)); }
+  update() {
+    this.t++;
+    if ((this.t > 30 && Input.pressed('start')) || this.t > CONFIG.contactSeconds * 60) this.next();
+  }
+  click() { if (this.t > 30) this.next(); }
+  draw(ctx) {
+    drawMenuBackground(ctx, this.t);
+    drawPanel(ctx, 8, 8, 304, 164);
+    Font.draw(ctx, 'KONTAKT', 87, 16, { color: THEME.gold, scale: 2, align: 'center' });
+    Font.draw(ctx, 'HANDY-KAMERA AUF\nDEN CODE RICHTEN:', 87, 44, { color: '#ffffff', align: 'center', lineHeight: 11 });
+    Font.draw(ctx, 'DEIN DIREKTER DRAHT\nZU VACUUBRAND.', 87, 72, { color: '#c8f2ff', align: 'center', lineHeight: 11 });
+    Font.draw(ctx, '→', 150, 96, { color: THEME.gold, scale: 2, align: 'center' });
+    drawProfessor(ctx, 60, 150, { face: 1, pump: 4, pose: 'idle', ppe: {} });
+    if (this.t > 30 && this.t % 50 < 35) Font.draw(ctx, hint('ENTER = WEITER', 'TIPPEN = WEITER'), 87, 158, { color: THEME.gold, align: 'center' });
   }
 }
 

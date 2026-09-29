@@ -67,7 +67,10 @@ Für die Nummern bei der Rückmeldung reicht z. B. „T12 ja, T15 lieber: …“
 | T164 | Poster im Hintergrund | MD 4C VARIO SELECT |
 | T165 | Sturz ins Becken Zone 4 | IN DIE SÄURE-AUFFANGWANNE GEFALLEN! |
 | T166 | Gegnernamen Zone 4 | Säuredampf, Scheidetrichter |
-| T167 | Ergebnis, über dem QR-Code | KONTAKT: |
+| T167 | Kontakt-Seite nach dem Ergebnis, Titel | KONTAKT |
+| T170 | Kontakt-Seite | HANDY-KAMERA AUF / DEN CODE RICHTEN: |
+| T171 | Kontakt-Seite | DEIN DIREKTER DRAHT / ZU VACUUBRAND. |
+| T172 | Kontakt-Seite unten | ENTER = WEITER / TIPPEN = WEITER |
 | T168 | Startbildschirm unten links | ZU GEWINNEN: *Preis aus dem Admin* |
 | T169 | Bestenliste, unten in jedem Kasten | PREIS: *Tagespreis / Hauptpreis* |
 
