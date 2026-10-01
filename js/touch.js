@@ -13,10 +13,11 @@ const Touch = {
     el.id = 'touch';
     el.className = 'hidden';
     el.innerHTML =
-      '<div class="t-dpad" data-dpad>' +
-      '<div class="t-key t-up">▲</div><div class="t-key t-left">◀</div>' +
-      '<div class="t-key t-right">▶</div><div class="t-key t-down">▼</div></div>' +
-      '<div class="t-btn t-suck" data-code="TouchSuck">SAUGEN</div>' +
+      // Links: Laufen (◀ ▶). Rechts: Bedienfeld mit SPRUNG oben und SAUGEN unten.
+      '<div class="t-panel t-move" data-zone="move">' +
+      '<div class="t-key t-left">◀</div><div class="t-key t-right">▶</div></div>' +
+      '<div class="t-panel t-act" data-zone="act">' +
+      '<div class="t-key t-jump">SPRUNG</div><div class="t-key t-suck">SAUGEN</div></div>' +
       '<div class="t-btn t-pause" data-code="TouchPause">II</div>';
     document.body.appendChild(el);
     const rot = document.createElement('div');
@@ -61,19 +62,16 @@ const Touch = {
     }
   },
 
-  // Steuerkreuz: welche Richtung(en) liegen unter dem Finger?
-  // Hoch = springen, schräg hoch = laufen + springen, unten = ducken.
-  // Schräg unten zählt nur als links/rechts, damit man beim Laufen nicht aus Versehen duckt.
-  dpadCodes(e, pad) {
-    const r = pad.getBoundingClientRect();
-    const dx = e.clientX - (r.left + r.width / 2), dy = (r.top + r.height / 2) - e.clientY;
-    if (Math.hypot(dx, dy) < r.width * 0.12) return [];        // Mitte: nichts drücken
-    const a = Math.atan2(dy, dx) * 180 / Math.PI;               // 0 = rechts, 90 = oben
-    if (a > 22.5 && a < 67.5) return ['TouchRight', 'TouchJump'];
-    if (a >= 67.5 && a <= 112.5) return ['TouchJump'];
-    if (a > 112.5 && a < 157.5) return ['TouchLeft', 'TouchJump'];
-    if (a < -60 && a > -120) return ['TouchDown'];
-    return Math.abs(a) > 90 ? ['TouchLeft'] : ['TouchRight'];
+  // Welche Taste(n) liegen unter dem Finger? Die Felder werden nach Position ausgewertet,
+  // damit man ohne Loslassen von einer Taste zur anderen wischen kann.
+  // Rechts: oben SPRUNG, unten SAUGEN; ein Daumen auf der Naht dazwischen drückt beide.
+  zoneCodes(e, zone) {
+    const r = zone.getBoundingClientRect();
+    if (zone.dataset.zone === 'move') return [(e.clientX - r.left) / r.width < 0.5 ? 'TouchLeft' : 'TouchRight'];
+    const fy = (e.clientY - r.top) / r.height;
+    if (fy < 0.42) return ['TouchJump'];
+    if (fy > 0.58) return ['TouchSuck'];
+    return ['TouchJump', 'TouchSuck'];
   },
 
   press(code) {
@@ -89,23 +87,23 @@ const Touch = {
 
   down(e) {
     e.preventDefault(); e.stopPropagation();
-    const pad = e.target.closest('[data-dpad]');
+    const zone = e.target.closest('[data-zone]');
     const btn = e.target.closest('[data-code]');
-    if (!pad && !btn) return;
-    const codes = pad ? this.dpadCodes(e, pad) : [btn.dataset.code];
+    if (!zone && !btn) return;
+    const codes = zone ? this.zoneCodes(e, zone) : [btn.dataset.code];
     try { this.el.setPointerCapture(e.pointerId); } catch (err) { /* egal */ }
-    this.pointers.set(e.pointerId, pad ? { pad: true, codes } : { codes });
+    this.pointers.set(e.pointerId, { zone, codes });
     codes.forEach(c => this.press(c));
     this.mark();
   },
   move(e) {
     const p = this.pointers.get(e.pointerId);
-    if (!p || !p.pad) return;
-    const codes = this.dpadCodes(e, this.el.querySelector('[data-dpad]'));
+    if (!p || !p.zone) return;
+    const codes = this.zoneCodes(e, p.zone);
     const old = p.codes;
     if (codes.join() === old.join()) return;
     p.codes = codes;
-    // nur wegfallende Richtungen loslassen und nur neue drücken (gehaltener Sprung bleibt gehalten)
+    // nur wegfallende Richtungen loslassen und nur neue drücken (gehaltenes Saugen bleibt gehalten)
     old.filter(c => !codes.includes(c)).forEach(c => this.release(c));
     codes.filter(c => !old.includes(c)).forEach(c => this.press(c));
     this.mark();
@@ -126,10 +124,8 @@ const Touch = {
   mark() {
     const held = this.held();
     this.el.querySelectorAll('[data-code]').forEach(b => b.classList.toggle('on', held.has(b.dataset.code)));
-    this.el.querySelector('.t-up').classList.toggle('on', held.has('TouchJump'));
-    this.el.querySelector('.t-left').classList.toggle('on', held.has('TouchLeft'));
-    this.el.querySelector('.t-right').classList.toggle('on', held.has('TouchRight'));
-    this.el.querySelector('.t-down').classList.toggle('on', held.has('TouchDown'));
+    const keys = { left: 'TouchLeft', right: 'TouchRight', jump: 'TouchJump', suck: 'TouchSuck' };
+    for (const k in keys) this.el.querySelector('.t-' + k).classList.toggle('on', held.has(keys[k]));
   },
 
   // Knöpfe nur während der Spielrunde zeigen
