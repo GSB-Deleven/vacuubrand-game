@@ -6,9 +6,9 @@ Eine Runde dauert **120 Sekunden**. Ziel: möglichst viel Labor-Chaos einsaugen,
 
 | Aktion | Tastatur | Gamepad (Xbox) | Joystick | Touch |
 |---|---|---|---|---|
-| Laufen | ← → | Stick / Steuerkreuz | Stick | Steuerkreuz ← → |
-| Springen | ↑ | A, Y | Knopf 2/3 | Steuerkreuz ↑ (schräg hoch: laufen + springen) |
-| Ducken | ↓ | Stick runter | Stick runter | Steuerkreuz ↓ |
+| Laufen | ← → | Stick / Steuerkreuz | Stick | ◀ ▶ |
+| Springen | ↑ | A, Y | Knopf 2/3 | SPRUNG |
+| Ducken | ↓ | Stick runter | Stick runter | – |
 | Saugen (halten) | Leertaste | B, X | Feuerknopf | SAUGEN |
 | Sprinten | Shift, Ctrl | LB, RB, LT, RT | weitere Knöpfe | – |
 | Start / weiter | Enter | Start, A | Feuerknopf | Tippen |
