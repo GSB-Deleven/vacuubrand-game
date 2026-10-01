@@ -192,7 +192,8 @@ html, body { touch-action: none; -webkit-user-select: none; user-select: none; -
 #touch > * { pointer-events: auto; }
 #touch .t-dpad {
   position: absolute; left: max(2vmin, env(safe-area-inset-left)); bottom: 3vmin;
-  width: 32vmin; height: 24vmin; display: grid; grid-template-columns: 1fr 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 1.2vmin;
+  width: 40vmin; height: 40vmin; border-radius: 50%;
+  background: rgba(26, 28, 44, 0.25); border: 0.5vmin solid rgba(255, 255, 255, 0.35);
 }
 #touch .t-key, #touch .t-btn {
   display: flex; align-items: center; justify-content: center;
@@ -200,18 +201,17 @@ html, body { touch-action: none; -webkit-user-select: none; user-select: none; -
   border-radius: 2vmin; box-shadow: 0 0.6vmin 0 rgba(0, 0, 0, 0.35);
   text-shadow: 0 0.3vmin 0 #1a1c2c; letter-spacing: 0.05em;
 }
-#touch .t-key { font-size: 6vmin; }
-#touch .t-left { grid-column: 1; grid-row: 1 / span 2; }
-#touch .t-down { grid-column: 2; grid-row: 2; }
-#touch .t-right { grid-column: 3; grid-row: 1 / span 2; }
-#touch .t-btns {
-  position: absolute; right: max(2vmin, env(safe-area-inset-right)); bottom: 3vmin;
-  width: 44vmin; height: 34vmin;
+/* Pfeile in Kreuzform; nur Anzeige, die Richtung wird aus der Fingerposition berechnet */
+#touch .t-key { position: absolute; width: 13vmin; height: 13vmin; font-size: 5vmin; pointer-events: none; }
+#touch .t-up { left: 13.5vmin; top: 1vmin; background: rgba(123, 224, 123, 0.5); }
+#touch .t-down { left: 13.5vmin; bottom: 1vmin; }
+#touch .t-left { left: 1vmin; top: 13.5vmin; }
+#touch .t-right { right: 1vmin; top: 13.5vmin; }
+#touch .t-btn { position: absolute; border-radius: 50%; font-size: 3.6vmin; }
+#touch .t-suck {
+  right: max(3vmin, env(safe-area-inset-right)); bottom: 5vmin;
+  width: 26vmin; height: 26vmin; background: rgba(249, 176, 0, 0.6);
 }
-#touch .t-btn { position: absolute; border-radius: 50%; font-size: 3.2vmin; }
-#touch .t-jump { right: 0; bottom: 0; width: 19vmin; height: 19vmin; background: rgba(123, 224, 123, 0.5); }
-#touch .t-suck { right: 21vmin; bottom: 0; width: 19vmin; height: 19vmin; background: rgba(249, 176, 0, 0.6); }
-#touch .t-sprint { right: 12vmin; bottom: 21vmin; width: 13vmin; height: 13vmin; font-size: 2.6vmin; }
 #touch .t-pause {
   position: absolute; top: calc(14vmin + env(safe-area-inset-top)); right: max(2vmin, env(safe-area-inset-right));
   width: 9vmin; height: 9vmin; border-radius: 2vmin; font-size: 3.5vmin;

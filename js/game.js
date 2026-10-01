@@ -794,8 +794,8 @@ class PlayScene {
   drawHowto(ctx) {
     drawPanel(ctx, 16, 8, 288, 164);
     Font.draw(ctx, 'SO GEHT\'S', 160, 13, { color: THEME.gold, scale: 2, align: 'center' });
-    const left = Input.touch ? [['←  →', 'LAUFEN'], ['SPRUNG', 'SPRINGEN'], ['↓', 'DUCKEN']] : [['←  →', 'LAUFEN'], ['↑', 'SPRINGEN'], ['↓', 'DUCKEN']];
-    const right = Input.touch ? [['SAUGEN', 'HALTEN'], ['SPRINT', 'SPRINTEN'], ['II', 'PAUSE']] : [['LEERTASTE', 'SAUGEN'], ['SHIFT/CTRL', 'SPRINTEN'], ['CONTROLLER', 'GEHT AUCH']];
+    const left = [['←  →', 'LAUFEN'], ['↑', 'SPRINGEN'], ['↓', 'DUCKEN']];
+    const right = Input.touch ? [['SAUGEN', 'HALTEN'], ['II', 'PAUSE']] : [['LEERTASTE', 'SAUGEN'], ['SHIFT/CTRL', 'SPRINTEN'], ['CONTROLLER', 'GEHT AUCH']];
     left.forEach((r, i) => { drawKey(ctx, 88, 33 + i * 13, r[0]); Font.draw(ctx, r[1], 94, 35 + i * 13, { color: '#ffffff' }); });
     right.forEach((r, i) => { drawKey(ctx, 232, 33 + i * 13, r[0]); Font.draw(ctx, r[1], 238, 35 + i * 13, { color: '#ffffff' }); });
     Font.draw(ctx, 'SOG + SPRINT SIND BEGRENZT: LEISTEN BEACHTEN!', 160, 75, { color: '#c8f2ff', align: 'center' });
