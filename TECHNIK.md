@@ -100,7 +100,7 @@ Online-Runden werden als Lead mit `isOnline: true`, Spitzname als Vorname und E-
 
 ### Tablet, Handy und PWA
 
-- `touch.js` blendet beim ersten Antippen Bildschirm-Tasten ein (Steuerkreuz links; SAUGEN, SPRUNG, SPRINT rechts; Pause oben rechts). Sie erzeugen virtuelle Tasten (`TouchLeft`, `TouchJump` …) wie das Gamepad. Mehrere Finger gleichzeitig gehen.
+- `touch.js` blendet beim ersten Antippen Bildschirm-Tasten ein (rundes 8-Wege-Steuerkreuz links, ↑ = springen; SAUGEN rechts; Pause oben rechts; kein Sprint auf Touch). Sie erzeugen virtuelle Tasten (`TouchLeft`, `TouchJump` …) wie das Gamepad. Mehrere Finger gleichzeitig gehen.
 - Die Tasten sind nur während der Runde sichtbar. In Menüs genügt Tippen. Im Hochformat erscheint „Bitte Gerät quer halten“.
 - Texte passen sich an (`hint()` in `util.js`): „TIPPEN = START“ statt „ENTER = START“.
 - Admin auf dem Tablet (nur `messe`): 3 Sekunden auf das VACUUBRAND-Logo oben drücken.
@@ -360,7 +360,7 @@ Die BVC professional saugt alle Gegner ein. `liquid: true` (d, t, n, e, w) ist n
 | Ton an/aus | M | | |
 | Vollbild | F | | |
 
-**Touch (Tablet, Handy):** Steuerkreuz ← ↓ → links (mit dem Finger zwischen den Richtungen wischen geht), rechts **SAUGEN** (halten), **SPRUNG**, **SPRINT**, oben rechts **II** für Pause. Tippen startet, schaltet weiter und beendet die Pause. Eine Runde lässt sich per Touch absichtlich nicht abbrechen.
+**Touch (Tablet, Handy):** rundes Steuerkreuz links mit 8 Richtungen: ← → laufen, ↑ springen, schräg hoch laufen und springen, ↓ ducken (schräg unten zählt nur als links/rechts). Die Richtung ergibt sich aus dem Winkel zur Mitte, man kann ohne Loslassen wischen; ein gehaltener Sprung bleibt dabei gehalten (`dpadCodes()` in `touch.js`). Rechts **SAUGEN** (halten), oben rechts **II** für Pause. Sprinten gibt es auf Touch nicht. Tippen startet, schaltet weiter und beendet die Pause. Eine Runde lässt sich per Touch absichtlich nicht abbrechen.
 
 **Tastenkürzel fürs Personal:**
 - `Strg + Shift + A`: Admin-Bereich (PIN)
