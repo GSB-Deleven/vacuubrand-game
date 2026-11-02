@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>QR-Codes prüfen – Professor Vacuumus</title>
+<title>QR-Codes prüfen / Check QR codes – Professor Vacuumus</title>
 <style>
   :root { --navy: #46648c; --gold: #f9b000; --blue: #4f8fcf; --ink: #1a1c2c; }
   body { margin: 0; background: #e9edf2; color: var(--ink); font: 16px/1.45 system-ui, -apple-system, "Segoe UI", Arial, sans-serif; }
@@ -19,20 +19,22 @@
   .card a.open { align-self: flex-start; background: var(--gold); color: var(--ink); font-weight: bold; padding: 6px 12px; text-decoration: none; border: 2px solid var(--ink); }
   .card .png { font-size: 0.85em; }
   .err { background: #e04848; color: #fff; padding: 12px; margin: 16px; }
+  header nav.langs { float: right; font-weight: bold; }
+  header nav.langs a { color: #fff; padding: 2px 6px; text-decoration: none; border: 2px solid transparent; }
+  header nav.langs a.on { border-color: var(--gold); }
   footer { padding: 0 16px 24px; color: #5d6b80; font-size: 0.9em; max-width: 60em; }
 </style>
 </head>
 <body>
 <header>
-  <h1>QR-Codes prüfen</h1>
-  <p>Diese Seite zeigt die QR-Codes, die am Ende einer Runde auf der Kontakt-Seite erscheinen, für jedes Land. Mit dem Handy scannen oder auf „Link öffnen“ klicken.
-     Die Links stehen in <b>js/config.js</b> (Abschnitt <b>countries</b>). Nach einer Änderung dort diese Seite neu laden (F5), dann ist sie aktuell.</p>
+  <nav class="langs" aria-label="Sprache / Language"><a href="?lang=de" data-lang="de">DE</a> <a href="?lang=en" data-lang="en">EN</a></nav>
+  <h1 id="h1">QR-Codes prüfen</h1>
+  <p id="intro"></p>
 </header>
 <div id="msg"></div>
 <main id="list"></main>
 <footer>
-  <p>Die Bilder <b>QR_CH.png</b>, <b>QR_DE.png</b>, <b>QR_UK.png</b> und <b>QR_FR.png</b> in diesem Ordner sind zum Weiterschicken gedacht.
-     Sie werden nach einer Link-Änderung nicht automatisch neu erzeugt (Anleitung in TECHNIK.md, Abschnitt „QR-Codes“). Diese Seite ist dagegen immer aktuell.</p>
+  <p id="foot"></p>
 </footer>
 <!-- Gleiche Bibliothek und gleiche Einstellungen wie im Spiel (qrcode(0, 'L')) -->
 <script src="../js/lib/qrcode.js"></script>
@@ -40,10 +42,48 @@
 <script>
 'use strict';
 (function () {
-  const LANG = { de: 'Deutsch', en: 'Englisch', fr: 'Französisch' };
+  // Texte der Prüfseite auf Deutsch und Englisch (wie der Admin-Bereich). Sprache: ?lang=de / ?lang=en,
+  // sonst die Sprache des Browsers (Deutsch, sonst Englisch).
+  const T = {
+    de: {
+      title: 'QR-Codes prüfen',
+      intro: 'Diese Seite zeigt die QR-Codes, die am Ende einer Runde auf der Kontakt-Seite erscheinen, für jedes Land und ohne Land. Mit dem Handy scannen oder auf „Link öffnen“ klicken. ' +
+             'Die Links stehen in <b>js/config.js</b> (Abschnitt <b>countries</b>, ohne Land: <b>contactUrl</b>). Nach einer Änderung dort diese Seite neu laden (F5), dann ist sie aktuell.',
+      foot: 'Die Bilder <b>QR_CH.png</b>, <b>QR_DE.png</b>, <b>QR_UK.png</b>, <b>QR_FR.png</b> und <b>QR_ALLE.png</b> (ohne Land) in diesem Ordner sind zum Weiterschicken gedacht. ' +
+            'Sie werden nach einer Link-Änderung nicht automatisch neu erzeugt (Anleitung in TECHNIK.md, Abschnitt „QR-Codes“). Diese Seite ist dagegen immer aktuell.',
+      langs: { de: 'Deutsch', en: 'Englisch', fr: 'Französisch' },
+      preset: 'Sprache vorgewählt: ',
+      noCountry: 'Ohne Land (Schnellstart)',
+      noCountrySub: 'Ansprechpartner weltweit (contactUrl), gilt, wenn kein Land gewählt wurde',
+      open: 'Link öffnen', png: 'Bild zum Weiterschicken: ',
+      err: 'js/config.js oder js/lib/qrcode.js konnte nicht geladen werden.'
+    },
+    en: {
+      title: 'Check QR codes',
+      intro: 'This page shows the QR codes that appear on the contact page at the end of a round, for each country and without a country. Scan them with a phone or click “Open link”. ' +
+             'The links are in <b>js/config.js</b> (section <b>countries</b>, without a country: <b>contactUrl</b>). After a change there, reload this page (F5) and it is up to date.',
+      foot: 'The images <b>QR_CH.png</b>, <b>QR_DE.png</b>, <b>QR_UK.png</b>, <b>QR_FR.png</b> and <b>QR_ALLE.png</b> (no country) in this folder are meant for sending on. ' +
+            'They are not regenerated automatically after a link change (instructions in TECHNIK.md, section “QR-Codes”). This page, however, is always up to date.',
+      langs: { de: 'German', en: 'English', fr: 'French' },
+      preset: 'Preselected language: ',
+      noCountry: 'No country (quick start)',
+      noCountrySub: 'Contacts worldwide (contactUrl), used when no country was chosen',
+      open: 'Open link', png: 'Image for sending on: ',
+      err: 'js/config.js or js/lib/qrcode.js could not be loaded.'
+    }
+  };
+  const want = (new URLSearchParams(location.search).get('lang') || navigator.language || 'en').slice(0, 2).toLowerCase();
+  const lang = T[want] ? want : 'en';
+  const t = T[lang];
+  document.documentElement.lang = lang;
+  document.title = t.title + ' – Professor Vacuumus';
+  document.getElementById('h1').textContent = t.title;
+  document.getElementById('intro').innerHTML = t.intro;
+  document.getElementById('foot').innerHTML = t.foot;
+  for (const a of document.querySelectorAll('nav.langs a')) a.classList.toggle('on', a.dataset.lang === lang);
   const list = document.getElementById('list');
   if (typeof CONFIG === 'undefined' || typeof qrcode === 'undefined') {
-    document.getElementById('msg').innerHTML = '<div class="err">js/config.js oder js/lib/qrcode.js konnte nicht geladen werden.</div>';
+    document.getElementById('msg').innerHTML = '<div class="err">' + t.err + '</div>';
     return;
   }
   const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -58,8 +98,9 @@
     for (let r = 0; r < n; r++) for (let col = 0; col < n; col++) if (q.isDark(r, col)) g.fillRect((col + 4) * m, (r + 4) * m, m, m);
     return c;
   }
-  const entries = (CONFIG.countries || []).map(c => ({ key: c.key, title: c.name, sub: 'Sprache vorgewählt: ' + (LANG[c.lang] || c.lang), url: c.contactUrl || CONFIG.contactUrl, png: 'QR_' + c.key + '.png' }));
-  entries.push({ key: 'ALLGEMEIN', title: 'Ohne Land (Schnellstart)', sub: 'Allgemeiner Link contactUrl, gilt nur, wenn kein Land gewählt wurde', url: CONFIG.contactUrl });
+  const entries = (CONFIG.countries || []).map(c => ({ key: c.key, title: c.name, sub: t.preset + (t.langs[c.lang] || c.lang), url: c.contactUrl || CONFIG.contactUrl, png: 'QR_' + c.key + '.png' }));
+  // Ohne Land (Schnellstart): allgemeiner Link, Bild QR_ALLE.png
+  entries.push({ key: 'ALLE', title: t.noCountry, sub: t.noCountrySub, url: CONFIG.contactUrl, png: 'QR_ALLE.png' });
   for (const e of entries) {
     const card = document.createElement('section');
     card.className = 'card';
@@ -69,8 +110,8 @@
     canvas.dataset.url = e.url;
     card.appendChild(canvas);
     card.insertAdjacentHTML('beforeend', '<code>' + esc(e.url) + '</code>' +
-      '<a class="open" href="' + esc(e.url) + '" target="_blank" rel="noopener">Link öffnen</a>' +
-      (e.png ? '<div class="png">Bild zum Weiterschicken: <a href="' + e.png + '" download>' + e.png + '</a></div>' : ''));
+      '<a class="open" href="' + esc(e.url) + '" target="_blank" rel="noopener">' + t.open + '</a>' +
+      (e.png ? '<div class="png">' + t.png + '<a href="' + e.png + '" download>' + e.png + '</a></div>' : ''));
     list.appendChild(card);
   }
 })();

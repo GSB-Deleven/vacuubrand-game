@@ -140,7 +140,7 @@ is listed with their best result.
 On the title screen, the high scores or in the registration form press **Ctrl + Shift + Enter**:
 the game starts immediately with the player **ADMIN**. These test rounds are **not** saved
 and appear neither on the high score list nor in the export. The country selection is skipped: the device language
-is used and the QR code at the end shows the general contact link.
+is used and the QR code at the end shows the contacts worldwide (all countries).
 
 ## Admin area (for booth staff)
 
@@ -172,9 +172,15 @@ for the UK/Ireland and France respectively. After the show, use **Delete all dat
 The folder `qr/` contains a check page: double-click **`qr/index.html`** (works without internet) or open
 **https://gsb-deleven.github.io/vacuubrand-game/qr/** online. It shows the QR code for each country in large size,
 together with the link as text and as a clickable link. Simply scan it with a phone and check that the right page opens.
+The fifth card **“No country (quick start)”** shows the code used when no country was chosen:
+the page with the contacts worldwide (all countries). The page can be switched between German and English at the top right (DE / EN).
 
-The links are in `js/config.js` in the `countries` section and can be replaced there. The check page is up to date
-immediately afterwards (F5). For emails, the images `QR_CH.png`, `QR_DE.png`, `QR_UK.png` and `QR_FR.png` are in the same folder.
+![Check page qr/index.html with all five QR codes](docs/qr-check-page.en.png)
+
+The links are in `js/config.js` in the `countries` section (no country: `contactUrl`) and can be replaced there.
+The check page is up to date immediately afterwards (F5). For emails, the images `QR_CH.png`, `QR_DE.png`, `QR_UK.png`,
+`QR_FR.png` and `QR_ALLE.png` (no country) are in the same folder. These images are not regenerated automatically
+after a link change (see TECHNIK.md, section “QR-Codes prüfen und Bilder neu erzeugen”).
 
 ## Customising
 

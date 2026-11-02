@@ -115,7 +115,10 @@ Das Spiel läuft auf **Deutsch, Englisch und Französisch** (Wunsch des UK-Teams
 - Der QR-Code am Ende führt zu den Ansprechpartnern des gewählten Landes
 - Das Titelbild ist für alle auf Englisch. Das Standpersonal stellt die Gerätesprache (Vorwahl in der Länderwahl) und die Sprache des Admin-Bereichs (Deutsch/Englisch) selbst ein
 - Im Export stehen Land und Sprache jedes Spielers
+- Ohne Länderwahl (Schnellstart) führt der QR-Code zu den Ansprechpartnern weltweit
 - Die QR-Codes lassen sich auf einer eigenen Seite prüfen: [qr/index.html](https://gsb-deleven.github.io/vacuubrand-game/qr/)
+
+![Prüfseite mit allen QR-Codes](docs/qr-pruefseite.png)
 
 Die englischen und französischen Texte sind Entwürfe und werden noch vom Marketing geprüft (siehe [TEXTE.md](TEXTE.md)).
 
