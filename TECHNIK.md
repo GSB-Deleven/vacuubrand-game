@@ -114,7 +114,7 @@ Online-Runden werden als Lead mit `isOnline: true`, Spitzname als Vorname und E-
 ### GitHub Pages und Automatik
 
 - GitHub Pages veröffentlicht bei jedem Push auf `main` automatisch das ganze Repo (Einstellung: Settings → Pages → „Deploy from a branch“, `main`, `/ (root)`). Die Datei `.nojekyll` sorgt dafür, dass die Dateien unverändert ausgeliefert werden.
-- `.github/workflows/release.yml` baut die **Download-Version**: Sobald ein Tag `v…` (z. B. `v0.9.0`) gepusht wird, packt `git archive --prefix=Professor-Vacuumus/` das Repo in `Professor-Vacuumus-v….zip`, erstellt das Release mit dem Text aus `RELEASE_NOTES.md` und hängt das ZIP an. Tags mit `v0.` oder `-` (z. B. `v1.0.0-beta`) werden als Vorabversion (Pre-release) markiert. Was nicht ins ZIP gehört (`.github/`, `docs/wiki/`, `docs/discussions-willkommen.md`, `CLAUDE.md`, Punkt-Dateien), steht mit `export-ignore` in `.gitattributes`. `git archive` übernimmt die Ausführbarkeit der Start-Dateien (`.command`, `.sh`) ins ZIP; Windows ignoriert sie, Mac und Pi behalten sie beim Entpacken normalerweise. Falls nicht: `chmod +x` (siehe ANLEITUNG.md). Download-Link für alle: https://github.com/GSB-Deleven/vacuubrand-game/releases/latest
+- `.github/workflows/release.yml` baut die **Download-Version**: Sobald man ihn unter Actions mit „Run workflow“ startet (Version eintragen, er setzt den Tag selbst) oder ein Tag `v…` (z. B. `v0.9.0`) gepusht wird, packt `git archive --prefix=Professor-Vacuumus/` das Repo in `Professor-Vacuumus-v….zip`, erstellt das Release mit dem Text aus `RELEASE_NOTES.md` und hängt das ZIP an. Tags mit `v0.` oder `-` (z. B. `v1.0.0-beta`) werden als Vorabversion (Pre-release) markiert. Was nicht ins ZIP gehört (`.github/`, `docs/wiki/`, `docs/discussions-willkommen.md`, `CLAUDE.md`, Punkt-Dateien), steht mit `export-ignore` in `.gitattributes`. `git archive` übernimmt die Ausführbarkeit der Start-Dateien (`.command`, `.sh`) ins ZIP; Windows ignoriert sie, Mac und Pi behalten sie beim Entpacken normalerweise. Falls nicht: `chmod +x` (siehe ANLEITUNG.md). Download-Link für alle: https://github.com/GSB-Deleven/vacuubrand-game/releases/latest
 - `.github/workflows/claude.yml` startet Claude, wenn in einem Issue oder Kommentar `@claude` steht oder das Label `claude` gesetzt wird. Claude setzt die Aufgabe auf einem eigenen Branch um und bereitet einen Pull Request vor. Voraussetzung: Repository-Secret `CLAUDE_CODE_OAUTH_TOKEN` (Claude-Abo, erzeugt mit `claude setup-token`) oder `ANTHROPIC_API_KEY`. Regeln für Claude stehen in `CLAUDE.md`.
 
 ### Szenen
@@ -594,9 +594,10 @@ In `CONFIG.medals` einen Eintrag ergänzen, in `earnedMedals()` (`js/game.js`) d
 1. In `js/config.js` `version` erhöhen (z. B. `'0.9.1'`), in `sw.js` `VERSION` erhöhen
 2. `RELEASE_NOTES.md` anpassen (Deutsch zuerst, dann Englisch): Versionsnummer, was neu ist, Hinweis auf Vorabversion solange `0.x`
 3. Per Pull Request nach `main` mergen
-4. Tag auf den Merge-Commit setzen und pushen: `git fetch origin main && git tag v0.9.1 origin/main && git push origin v0.9.1`
+4. Release auslösen, **einfachster Weg im Browser:** auf GitHub **Actions** → links **„Release erstellen“** → rechts **„Run workflow“**, bei Version z. B. `v0.9.1` eintragen (mit v, gleiche Nummer wie in `js/config.js`) → grüner Knopf **Run workflow**. Der Workflow setzt den Tag selbst auf den neuesten Stand von `main`.
+   Alternative mit Git: `git fetch origin main && git tag v0.9.1 origin/main && git push origin v0.9.1` (aus der Claude-Cloud-Umgebung blockiert, dort den Workflow über das GitHub-Werkzeug starten)
 5. Unter Actions läuft „Release erstellen“; nach ca. 1 Minute steht das Release mit ZIP unter https://github.com/GSB-Deleven/vacuubrand-game/releases. `v0.…` und Versionen mit `-` (z. B. `v1.0.0-beta`) erscheinen als Vorabversion, ab `v1.0.0` als normale Version
-6. Ging etwas schief: Fehler per PR beheben, dann altes Release und Tag löschen (Release-Seite → Delete; `git push origin :refs/tags/v0.9.1`) und den Tag neu setzen
+6. Ging etwas schief: Fehler per PR beheben, dann altes Release und Tag löschen (Release-Seite → Delete; `git push origin :refs/tags/v0.9.1`) und den Workflow erneut starten
 
 **Musik ändern**
 In `SONGS` (`js/sound.js`) die Notenfolgen `lead` (Melodie) und `bass` bearbeiten. `step` ist die Dauer eines Schritts in Sekunden.

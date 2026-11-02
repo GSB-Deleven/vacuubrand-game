@@ -1,5 +1,8 @@
 # Download-Version (Release) automatisch erstellen.
-# Auslöser: ein Tag, der mit "v" beginnt, z. B. v0.9.0 (Ablauf: TECHNIK.md, "Neue Version veröffentlichen").
+# Zwei Wege (Ablauf: TECHNIK.md, "Neue Version veröffentlichen"):
+#  A) Im Browser: Actions → "Release erstellen" → "Run workflow", Version eintragen (z. B. v0.9.1).
+#     Der Workflow setzt den Tag selbst auf den neuesten Stand von main.
+#  B) Ein Tag, der mit "v" beginnt, wird gepusht (git push origin v0.9.1).
 # Baut Professor-Vacuumus-vX.Y.Z.zip mit "git archive" (Dateien aus .gitattributes mit export-ignore
 # bleiben draussen), erstellt das Release mit dem Text aus RELEASE_NOTES.md und hängt das ZIP an.
 # Versionen mit "v0." am Anfang oder mit "-" (z. B. v1.0.0-beta) werden als Vorabversion (Pre-release) markiert.
@@ -9,6 +12,11 @@ on:
   push:
     tags:
       - 'v*'
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version mit v davor, z. B. v0.9.1 (sollte zu CONFIG.version in js/config.js passen)'
+        required: true
 
 permissions:
   contents: write
@@ -19,11 +27,36 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Version bestimmen
+        env:
+          INPUT_VERSION: ${{ inputs.version }}
+        run: |
+          if [ "$GITHUB_EVENT_NAME" = "workflow_dispatch" ]; then
+            TAG="$INPUT_VERSION"
+            case "$TAG" in
+              v[0-9]*) ;;
+              *) echo "Version muss mit v und einer Zahl beginnen, z. B. v0.9.1"; exit 1 ;;
+            esac
+            if git ls-remote --exit-code --tags origin "refs/tags/$TAG" >/dev/null; then
+              echo "Tag $TAG gibt es schon. Bitte eine neue Versionsnummer wählen."; exit 1
+            fi
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git tag -a "$TAG" -m "Professor Vacuumus $TAG"
+            git push origin "refs/tags/$TAG"
+          else
+            TAG="$GITHUB_REF_NAME"
+          fi
+          WANT="${TAG#v}"
+          HAVE=$(grep -oE "version: '[^']+'" js/config.js | head -1 | cut -d"'" -f2)
+          [ "$WANT" = "$HAVE" ] || echo "::warning::Tag $TAG passt nicht zu CONFIG.version '$HAVE' in js/config.js"
+          echo "TAG=$TAG" >> "$GITHUB_ENV"
+
       - name: ZIP bauen
         run: |
-          ZIP="Professor-Vacuumus-${GITHUB_REF_NAME}.zip"
+          ZIP="Professor-Vacuumus-${TAG}.zip"
           # git archive übernimmt die Ausführbarkeit der Start-Dateien (.command, .sh) ins ZIP
-          git archive --format=zip --prefix=Professor-Vacuumus/ -o "$ZIP" "$GITHUB_REF_NAME"
+          git archive --format=zip --prefix=Professor-Vacuumus/ -o "$ZIP" "$TAG"
           unzip -l "$ZIP"
           echo "ZIP=$ZIP" >> "$GITHUB_ENV"
 
@@ -32,10 +65,10 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           PRE=""
-          case "$GITHUB_REF_NAME" in
+          case "$TAG" in
             v0.*|*-*) PRE="--prerelease" ;;
           esac
-          gh release create "$GITHUB_REF_NAME" "$ZIP" \
-            --title "Professor Vacuumus ${GITHUB_REF_NAME}" \
+          gh release create "$TAG" "$ZIP" \
+            --title "Professor Vacuumus ${TAG}" \
             --notes-file RELEASE_NOTES.md \
             --verify-tag $PRE
