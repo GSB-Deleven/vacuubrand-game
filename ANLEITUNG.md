@@ -45,7 +45,7 @@ Diese Anleitung erklärt Schritt für Schritt, wie das Messespiel am Stand läuf
 
 ## 2. Herunterladen und installieren
 
-Die fertige Download-Version liegt auf GitHub: **[Neueste Version herunterladen](https://github.com/GSB-Deleven/vacuubrand-game/releases/latest)**.
+Die fertige Download-Version liegt auf GitHub: **[Neueste Version herunterladen](https://github.com/GSB-Deleven/vacuubrand-game/releases)**.
 Dort unten bei „Assets“ die Datei `Professor-Vacuumus-v….zip` laden (nicht „Source code“).
 
 | System | So geht's |
@@ -294,7 +294,7 @@ Auf dem Titelbild **Strg + Shift + A** drücken (Tablet: 3 Sekunden aufs Logo), 
 > [!WARNING]
 > Die Standard-PIN ist **1234**. Bitte vor der Messe ändern!
 
-![Admin-Bereich mit Top 3, Export und Einstellungen (Beispieldaten)](docs/screenshots/de/15-admin.png)
+![Admin-Bereich mit Top 3, Export, Einstellungen und Schalter „Nur Spitzname“ (Beispieldaten)](docs/screenshots/de/15-admin.png)
 
 | Bereich | Was es kann |
 |---|---|

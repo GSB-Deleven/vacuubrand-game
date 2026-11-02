@@ -13,7 +13,7 @@
 
 > [!NOTE]
 > **🧪 Try it online: [gsb-deleven.github.io/vacuubrand-game](https://gsb-deleven.github.io/vacuubrand-game/)**
-> The online version is for trying it out only. At the show, the offline version with registration and export is used: [download](https://github.com/GSB-Deleven/vacuubrand-game/releases/latest).
+> The online version is for trying it out only. At the show, the offline version with registration and export is used: [download](https://github.com/GSB-Deleven/vacuubrand-game/releases).
 >
 > <details>
 > <summary>Differences from the show version (expand)</summary>
@@ -192,8 +192,9 @@ The game runs in **German, English and French** (a wish of the UK team). Before 
 - Export as an **Excel file (CSV)**: one list with all contacts, one with all rounds played, each with country and language. The contacts can then go straight into the CRM or to sales.
 - Consent is required, the newsletter is optional and ticked separately.
 - After the show one button deletes all data.
+- For events without lead collection there is a **Nickname only** switch in the admin area: people only enter a nickname and no contact data is captured. While it is on, the admin area shows a yellow warning bar.
 
-![Admin area with top 3, export and settings (sample data)](docs/screenshots/en/15-admin.png)
+![Admin area with top 3, export, settings and the "Nickname only" switch (sample data)](docs/screenshots/en/15-admin.png)
 
 > [!IMPORTANT]
 > The consent text should be checked by data protection before first use, for the UK/Ireland and France separately. It can be changed in a file, without programming skills.
@@ -202,7 +203,7 @@ The game runs in **German, English and French** (a wish of the UK team). Before 
 
 ## ⬇️ Download
 
-The ready-made version to download: **[Professor Vacuumus, latest version](https://github.com/GSB-Deleven/vacuubrand-game/releases/latest)**
+The ready-made version to download: **[Professor Vacuumus, latest version](https://github.com/GSB-Deleven/vacuubrand-game/releases)**
 
 1. Under "Assets" at the bottom, download `Professor-Vacuumus-v….zip`.
 2. Unzip it (Windows: right-click → "Extract All", Mac: double-click, Raspberry Pi: right-click → "Extract Here").

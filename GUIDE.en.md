@@ -45,7 +45,7 @@ This guide explains step by step how the trade show game works at the booth: sta
 
 ## 2. Download and installation
 
-The ready-made download version is on GitHub: **[Download the latest version](https://github.com/GSB-Deleven/vacuubrand-game/releases/latest)**.
+The ready-made download version is on GitHub: **[Download the latest version](https://github.com/GSB-Deleven/vacuubrand-game/releases)**.
 At the bottom under "Assets", download `Professor-Vacuumus-v….zip` (not "Source code").
 
 | System | How |
@@ -294,7 +294,7 @@ On the title screen press **Ctrl + Shift + A** (tablet: 3 seconds on the logo), 
 > [!WARNING]
 > The default PIN is **1234**. Please change it before the show!
 
-![Admin area with top 3, export and settings (sample data)](docs/screenshots/en/15-admin.png)
+![Admin area with top 3, export, settings and the "Nickname only" switch (sample data)](docs/screenshots/en/15-admin.png)
 
 | Section | What it does |
 |---|---|
