@@ -222,6 +222,7 @@ Falls dir hier trotzdem etwas nicht gefällt, einfach die Nummer nennen.
 | Nr. | Text |
 |---|---|
 | T150 | ADMIN · PROFESSOR VACUUMUS, Übersicht, Top 3 heute (Tagespreis), Top 3 gesamte Messe, Export & Sicherung, Einstellungen, Letzte Runden, Gefahrenzone, Knöpfe und Bestätigungen. Sachlich und für das Personal verständlich |
+| T190 | 🆕 Admin, klein unter der Überschrift: Version … (Nummer aus `CONFIG.version`, z. B. 0.9.0), damit man am Stand sieht, welche Version läuft |
 
 ---
 
@@ -318,3 +319,4 @@ Den Admin-Bereich (T150) gibt es auf Deutsch und Englisch (Einstellung „Admin-
 | T171 | Kontakt-Seite | DEIN DIREKTER DRAHT / ZU VACUUBRAND. | YOUR DIRECT LINE / TO VACUUBRAND. | TA LIGNE DIRECTE / VERS VACUUBRAND. |
 | T172 | Kontakt-Seite, unten | ENTER = WEITER<br>TIPPEN = WEITER | ENTER = NEXT<br>TAP = NEXT | ENTRÉE = SUITE<br>TOUCHER = SUITE |
 | T188 | 🆕 Name, falls leer | SPIELER | PLAYER | JOUEUR |
+| T190 | 🆕 Admin, klein unter der Überschrift (Admin nur DE/EN) | Version … | Version … | (Admin nicht auf Französisch; wäre ebenfalls „Version …“) |

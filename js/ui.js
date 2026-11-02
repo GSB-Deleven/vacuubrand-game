@@ -208,6 +208,7 @@ class AdminScene {
     }).join('');
     Overlay.show(
       '<div class="panel admin" lang="' + I18N.adminLang + '"><h1>' + LA('adm.title') + '</h1>' +
+      '<p class="version">' + LA('adm.version', escapeHtml(CONFIG.version || '')) + '</p>' +
       (Store.available ? '' : '<div class="warn">' + LA('adm.noStorage') + '</div>') +
       (note ? '<p class="ok">' + escapeHtml(note) + '</p>' : '') +
       '<h2>' + LA('adm.overview') + '</h2><p>' + LA('adm.stats', st.playersToday, st.roundsToday, st.leads, st.rounds) + '</p>' +

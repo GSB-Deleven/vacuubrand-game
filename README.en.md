@@ -141,13 +141,23 @@ The English and French texts are drafts and are still being reviewed by marketin
 
 ---
 
+## ⬇️ Download
+
+The ready-made version to download: **[Professor Vacuumus, latest version](https://github.com/GSB-Deleven/vacuubrand-game/releases/latest)**
+
+1. Under "Assets" at the bottom, download `Professor-Vacuumus-v….zip`.
+2. Unzip it (Windows: right-click → "Extract All", Mac: double-click, Raspberry Pi: right-click → "Extract Here").
+3. Double-click the start file: `▶ START Windows.bat`, `▶ START Mac.command` or `▶ START Linux + Raspberry Pi.sh`.
+
+Details and help if something does not start: [GUIDE.en.md](GUIDE.en.md#download-and-installation).
+
 ## 💻 What you need
 
 | | |
 |---|---|
 | 🖥️ Hardware | A normal company laptop **or a tablet**. Next to a large screen or TV it looks best. |
 | 🎮 Optional | A USB gamepad or joystick |
-| 📦 Installation | None. Copy the folder, double-click, done. |
+| 📦 Installation | None. Download and unzip (or copy the folder), double-click, done. |
 | 🌐 Internet | Not needed, the game runs completely offline |
 | 💰 Licences | None. The game is developed in-house, without third-party software or subscriptions. |
 

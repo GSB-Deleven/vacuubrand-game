@@ -55,6 +55,21 @@ The game is available in **German, English and French**. Before every round the 
 (Switzerland, Germany, UK/Ireland, France) and the **language**. The country decides which contact page the
 QR code at the end leads to. The English and French texts are drafts and still have to be approved by marketing.
 
+## Download and installation
+
+The ready-made download version is on GitHub: **[Download the latest version](https://github.com/GSB-Deleven/vacuubrand-game/releases/latest)**.
+At the bottom under "Assets", download `Professor-Vacuumus-v….zip` (not "Source code").
+
+| System | How |
+|---|---|
+| 🪟 Windows | Right-click the ZIP → **Extract All**. Do not start it from inside the ZIP. In the folder `Professor-Vacuumus`, double-click `▶ START Windows.bat`. If Windows says "Windows protected your PC": **More info** → **Run anyway** |
+| 🍎 Mac | Double-click the ZIP (it unpacks automatically). The first time, start `▶ START Mac.command` with right-click → **Open** → Open. If it says "permission denied": type `chmod +x ` in Terminal, drag the file into the window, press Enter |
+| 🍓 Raspberry Pi / Linux | Unzip it (right-click → Extract Here, or in a terminal `unzip Professor-Vacuumus-v….zip`). Double-click `▶ START Linux + Raspberry Pi.sh`. If it does not start: in a terminal inside the folder run `chmod +x *.sh raspberry-pi/*.sh`. Automatic start when switched on: `raspberry-pi/README.md` |
+
+The running version is shown in small print at the top of the admin area (e.g. "Version 0.9.0").
+For a new version: first back up the high scores in the admin area (JSON), then put the new folder in the **same place**
+(replace the old one), otherwise the game cannot see the existing high score list. If needed, load the backup again in the admin area.
+
 ## Starting: no installation, no internet
 
 1. Copy the whole folder onto the show laptop (e.g. onto the desktop).
@@ -146,6 +161,7 @@ is used and the QR code at the end shows the contacts worldwide (all countries).
 
 On the title screen press **Ctrl + Shift + A**, enter the PIN (default **1234**, please change it!).
 
+- The **version** is shown in small print below the heading (e.g. "Version 0.9.0"), so you can see which version is running
 - **Top 3 today** (daily prize) and **Top 3 whole show** with full contact details
 - Export **Leads (CSV/Excel)** and **All rounds (CSV/Excel)** → saved in the Downloads folder
 - **Save / load backup** (JSON), e.g. to move data to another laptop

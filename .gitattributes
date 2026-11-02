@@ -1,0 +1,10 @@
+# Was NICHT in die Download-Version (ZIP auf der Release-Seite) kommt.
+# Das ZIP entsteht mit "git archive" (.github/workflows/release.yml); alles mit export-ignore bleibt draussen.
+# Spiel, Anleitungen, QR-Bilder (qr/), Start-Dateien und raspberry-pi/ bleiben drin.
+.github                         export-ignore
+.gitattributes                  export-ignore
+.gitignore                      export-ignore
+.nojekyll                       export-ignore
+docs/wiki                       export-ignore
+docs/discussions-willkommen.md  export-ignore
+CLAUDE.md                       export-ignore
