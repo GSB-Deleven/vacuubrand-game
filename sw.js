@@ -3,7 +3,7 @@
 // Bei jeder neuen Version VERSION erhöhen, damit Tablets die neuen Dateien holen.
 // Hinweis: Der Cache-Name behält absichtlich den alten Namen "vakuumus" (Professor heisst jetzt Vacuumus).
 // Nur die Nummer hochzählen, damit installierte Tablets sauber aktualisieren.
-const VERSION = 'vakuumus-v20';
+const VERSION = 'vakuumus-v21';
 const FILES = [
   './',
   'index.html',
