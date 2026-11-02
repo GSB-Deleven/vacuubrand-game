@@ -11,6 +11,7 @@ const Input = {
     right: ['ArrowRight', 'PadRight', 'TouchRight'],
     jump: ['ArrowUp', 'PadUp', 'PadJump', 'TouchJump'],
     down: ['ArrowDown', 'PadDown', 'TouchDown'],
+    up: ['ArrowUp', 'PadUp'],                   // nur für Menüs (Länderwahl)
     suck: ['Space', 'PadSuck', 'TouchSuck'],
     sprint: ['ShiftLeft', 'ShiftRight', 'ControlLeft', 'ControlRight', 'PadSprint', 'TouchSprint'],
     start: ['Enter', 'NumpadEnter', 'Space', 'PadStart', 'PadA', 'Digit1', 'Digit5'], // 1 und 5 = Start/Münze bei Arcade-Tastatur-Encodern

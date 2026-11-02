@@ -22,27 +22,28 @@ const Overlay = {
 
 // ---------------------------------------------------------------------
 class RegisterScene {
-  constructor() { this.allowAdmin = false; this.t = 0; this.idle = 0; this.demo = new DemoStrip(); }
+  // country = Kürzel aus der Länderwahl (CH, DE, UK, FR); die Sprache ist dann schon gesetzt
+  constructor(country) { this.country = country || ''; this.allowAdmin = false; this.t = 0; this.idle = 0; this.demo = new DemoStrip(); }
 
   enter() {
     if (CONFIG.mode === 'online') { this.enterOnline(); return; }
     const cfg = CONFIG.registration;
     const fields = cfg.fields.map(f =>
-      '<label class="field"><span>' + escapeHtml(f.label) + (f.required ? ' *' : '') + '</span>' +
+      '<label class="field"><span>' + escapeHtml(L('reg.' + f.key)) + (f.required ? ' *' : '') + '</span>' +
       '<input name="' + escapeHtml(f.key) + '" type="' + (f.type === 'email' ? 'email' : 'text') + '" maxlength="' + (f.maxLength || 60) +
       '" autocomplete="off" spellcheck="false"></label>').join('');
     Overlay.show(
-      '<form class="panel reg" novalidate>' +
+      '<form class="panel reg" novalidate lang="' + I18N.lang + '">' +
       '<div class="logo"><img src="assets/vacuubrand-logo.png" alt="VACUUBRAND"></div>' +
-      '<h1>SPIELER-ANMELDUNG</h1>' +
-      '<p class="hint">' + escapeHtml(cfg.intro) + '</p>' +
+      '<h1>' + escapeHtml(L('reg.title')) + '</h1>' +
+      '<p class="hint">' + escapeHtml(L('reg.intro')) + '</p>' +
       '<div class="fields">' + fields + '</div>' +
-      '<label class="check"><input type="checkbox" name="consent"><span>' + escapeHtml(cfg.consentText) + (cfg.consentRequired ? ' *' : '') + '</span></label>' +
-      (cfg.newsletterText ? '<label class="check"><input type="checkbox" name="newsletter"><span>' + escapeHtml(cfg.newsletterText) + '</span></label>' : '') +
+      '<label class="check"><input type="checkbox" name="consent"><span>' + escapeHtml(L('reg.consent')) + (cfg.consentRequired ? ' *' : '') + '</span></label>' +
+      (cfg.newsletter !== false ? '<label class="check"><input type="checkbox" name="newsletter"><span>' + escapeHtml(L('reg.newsletter')) + '</span></label>' : '') +
       '<div class="err" aria-live="polite"></div>' +
-      '<div class="buttons"><button type="button" class="btn ghost" data-act="cancel">ESC · ZURÜCK</button>' +
-      '<button type="submit" class="btn">ENTER · LOS GEHT\'S!</button></div>' +
-      '<p class="small">' + escapeHtml(cfg.privacyNote) + '</p>' +
+      '<div class="buttons"><button type="button" class="btn ghost" data-act="cancel">' + escapeHtml(L('reg.back')) + '</button>' +
+      '<button type="submit" class="btn">' + escapeHtml(L('reg.go')) + '</button></div>' +
+      '<p class="small">' + escapeHtml(L('reg.privacy')) + '</p>' +
       '</form>');
     Overlay.el.classList.add('top');
     const form = this.form = Overlay.el.querySelector('form');
@@ -63,22 +64,22 @@ class RegisterScene {
     let last = '';
     try { last = window.localStorage.getItem('vakuumprof_nick') || ''; } catch (e) { /* egal */ }
     Overlay.show(
-      '<form class="panel reg online" novalidate>' +
+      '<form class="panel reg online" novalidate lang="' + I18N.lang + '">' +
       '<div class="logo"><img src="assets/vacuubrand-logo.png" alt="VACUUBRAND"></div>' +
-      '<h1>ONLINE-DEMO</h1>' +
-      '<p class="hint">Keine Anmeldung nötig. Wie sollen wir dich in der Bestenliste nennen?</p>' +
-      '<label class="field"><span>Spitzname</span><input name="nick" type="text" maxlength="12" autocomplete="off" spellcheck="false" placeholder="GAST" value="' + escapeHtml(last) + '"></label>' +
-      '<div class="buttons"><button type="button" class="btn ghost" data-act="cancel">ZURÜCK</button>' +
-      '<button type="submit" class="btn">LOS GEHT\'S!</button></div>' +
-      '<p class="small">Deine Punkte werden nur auf diesem Gerät gespeichert. Es werden keine Daten übertragen.</p>' +
+      '<h1>' + escapeHtml(L('on.title')) + '</h1>' +
+      '<p class="hint">' + escapeHtml(L('on.hint')) + '</p>' +
+      '<label class="field"><span>' + escapeHtml(L('on.nick')) + '</span><input name="nick" type="text" maxlength="12" autocomplete="off" spellcheck="false" placeholder="' + escapeHtml(L('on.guest')) + '" value="' + escapeHtml(last) + '"></label>' +
+      '<div class="buttons"><button type="button" class="btn ghost" data-act="cancel">' + escapeHtml(L('on.back')) + '</button>' +
+      '<button type="submit" class="btn">' + escapeHtml(L('on.go')) + '</button></div>' +
+      '<p class="small">' + escapeHtml(L('on.privacy')) + '</p>' +
       '</form>');
     Overlay.el.classList.add('top');
     const form = this.form = Overlay.el.querySelector('form');
     form.addEventListener('submit', e => {
       e.preventDefault();
-      const nick = (form.elements.nick.value.trim() || 'GAST').slice(0, 12);
+      const nick = (form.elements.nick.value.trim() || L('on.guest')).slice(0, 12);
       try { window.localStorage.setItem('vakuumprof_nick', nick); } catch (err) { /* egal */ }
-      const lead = Store.upsertLead({ firstName: nick, lastName: '', company: '', email: 'online:' + nick.toLowerCase(), consent: false, newsletter: false, isOnline: true });
+      const lead = Store.upsertLead({ firstName: nick, lastName: '', company: '', email: 'online:' + nick.toLowerCase(), consent: false, newsletter: false, isOnline: true, country: this.country, lang: I18N.lang });
       Sound.sfx('select');
       Game.go(new PlayScene(lead));
     });
@@ -103,14 +104,17 @@ class RegisterScene {
       const input = form.elements[f.key];
       const v = input.value.trim();
       data[f.key] = v;
-      if (f.required && !v) { errors.push(f.label); input.classList.add('bad'); }
-      else if (f.type === 'email' && v && !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v)) { errors.push(f.label + ' (ungültig)'); input.classList.add('bad'); }
+      const label = L('reg.' + f.key);
+      if (f.required && !v) { errors.push(label); input.classList.add('bad'); }
+      else if (f.type === 'email' && v && !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v)) { errors.push(L('reg.err.invalid', label)); input.classList.add('bad'); }
     }
     data.consent = form.elements.consent.checked;
     data.newsletter = !!(form.elements.newsletter && form.elements.newsletter.checked);
+    data.country = this.country;
+    data.lang = I18N.lang;
     let msg = '';
-    if (errors.length) msg = 'Bitte ausfüllen: ' + errors.join(', ');
-    else if (cfg.consentRequired && !data.consent) msg = 'Bitte die Einwilligung ankreuzen, um am Gewinnspiel teilzunehmen.';
+    if (errors.length) msg = L('reg.err.fill', errors.join(', '));
+    else if (cfg.consentRequired && !data.consent) msg = L('reg.err.consent');
     if (msg) {
       form.querySelector('.err').textContent = msg;
       const bad = form.querySelector('.bad') || (!data.consent ? form.elements.consent : null);
@@ -123,12 +127,13 @@ class RegisterScene {
     Game.go(new PlayScene(lead));
   }
 
-  cancel() { Game.go(new TitleScene()); }
+  // Zurück zur Länderwahl; nach langer Pause ohne Eingabe zum Titel
+  cancel() { Game.go(new CountryScene()); }
 
   update() {
     this.t++;
     this.demo.update();
-    if (++this.idle > CONFIG.registrationTimeoutSeconds * 60) this.cancel();
+    if (++this.idle > CONFIG.registrationTimeoutSeconds * 60) Game.go(new TitleScene());
   }
   draw(ctx) {
     drawMenuBackground(ctx, this.t);
@@ -138,12 +143,14 @@ class RegisterScene {
 
 // ---------------------------------------------------------------------
 const PAD_SETUP_STEPS = [
-  { key: 'jump', label: 'SPRINGEN' },
-  { key: 'suck', label: 'SAUGEN' },
-  { key: 'sprint', label: 'SPRINTEN' },
-  { key: 'start', label: 'START / PAUSE' }
+  { key: 'jump' },
+  { key: 'suck' },
+  { key: 'sprint' },
+  { key: 'start' }
 ];
+const padStepLabel = s => LA('adm.step.' + s.key);
 
+// Admin-Bereich fürs Standpersonal. Texte in der Admin-Sprache (Deutsch oder Englisch, siehe LA in i18n.js)
 class AdminScene {
   constructor() { this.allowAdmin = false; this.t = 0; this.unlocked = false; }
 
@@ -161,15 +168,15 @@ class AdminScene {
 
   showPin() {
     Overlay.show(
-      '<form class="panel" style="width:40%" novalidate><h1>ADMIN</h1>' +
-      '<label class="field"><span>PIN</span><input name="pin" type="password" autocomplete="off"></label>' +
+      '<form class="panel" style="width:40%" novalidate lang="' + I18N.adminLang + '"><h1>ADMIN</h1>' +
+      '<label class="field"><span>' + LA('adm.pin') + '</span><input name="pin" type="password" autocomplete="off"></label>' +
       '<div class="err"></div>' +
-      '<div class="buttons"><button type="button" class="btn ghost" data-act="close">ESC · ZURÜCK</button><button class="btn" type="submit">ÖFFNEN</button></div></form>');
+      '<div class="buttons"><button type="button" class="btn ghost" data-act="close">' + LA('adm.back') + '</button><button class="btn" type="submit">' + LA('adm.open') + '</button></div></form>');
     const form = Overlay.el.querySelector('form');
     form.addEventListener('submit', e => {
       e.preventDefault();
       if (form.elements.pin.value === String(CONFIG.adminPin)) { this.unlocked = true; this.render(); }
-      else { form.querySelector('.err').textContent = 'Falsche PIN.'; form.elements.pin.select(); }
+      else { form.querySelector('.err').textContent = LA('adm.wrongPin'); form.elements.pin.select(); }
     });
     form.querySelector('[data-act=close]').addEventListener('click', () => this.close());
     setTimeout(() => form.elements.pin.focus(), 30);
@@ -181,6 +188,12 @@ class AdminScene {
       ' · ' + escapeHtml(l.email) + ' — <b>' + e.score + '</b></li>';
   }
 
+  // Auswahlfeld für Sprachen
+  langSelect(name, value, langs) {
+    return '<select name="' + name + '">' + langs.map(c =>
+      '<option value="' + c + '"' + (c === value ? ' selected' : '') + '>' + escapeHtml(I18N.names[c]) + '</option>').join('') + '</select>';
+  }
+
   render(note) {
     const st = Store.stats();
     const today = Store.board(todayKey()).slice(0, 3), all = Store.board(null).slice(0, 3);
@@ -189,51 +202,54 @@ class AdminScene {
     const rows = recent.map(r => {
       const l = leads[r.leadId] || {};
       return '<tr><td>' + formatDateTime(r.ts) + '</td><td>' + escapeHtml(l.firstName) + ' ' + escapeHtml(l.lastName) +
-        '</td><td>' + escapeHtml(l.company) + '</td><td>' + escapeHtml(l.email) + '</td><td>' + r.score +
+        '</td><td>' + escapeHtml(l.company) + '</td><td>' + escapeHtml(l.email) + '</td><td>' + escapeHtml(r.country || l.country || '') +
+        '</td><td>' + escapeHtml(r.lang || l.lang || '') + '</td><td>' + r.score +
         '</td><td><button class="btn small danger" data-del="' + escapeHtml(r.id) + '">✕</button></td></tr>';
     }).join('');
     Overlay.show(
-      '<div class="panel admin"><h1>ADMIN · PROFESSOR VAKUUMUS</h1>' +
-      (Store.available ? '' : '<div class="warn">Achtung: Der Browser-Speicher ist nicht verfügbar – Daten gehen beim Schliessen verloren! Bitte regelmässig exportieren.</div>') +
+      '<div class="panel admin" lang="' + I18N.adminLang + '"><h1>' + LA('adm.title') + '</h1>' +
+      (Store.available ? '' : '<div class="warn">' + LA('adm.noStorage') + '</div>') +
       (note ? '<p class="ok">' + escapeHtml(note) + '</p>' : '') +
-      '<h2>Übersicht</h2><p>Heute: <b>' + st.playersToday + '</b> Spieler, <b>' + st.roundsToday + '</b> Runden · Gesamt: <b>' +
-      st.leads + '</b> Leads, <b>' + st.rounds + '</b> Runden</p>' +
-      '<div class="cols"><div><h3>Top 3 heute (Tagespreis)</h3><ol>' + (today.map(e => this.personRow(e)).join('') || '<li>–</li>') + '</ol></div>' +
-      '<div><h3>Top 3 gesamte Messe</h3><ol>' + (all.map(e => this.personRow(e)).join('') || '<li>–</li>') + '</ol></div></div>' +
-      '<h2>Export &amp; Sicherung</h2><div class="row">' +
-      '<button class="btn" data-act="csvLeads">Leads (CSV/Excel)</button>' +
-      '<button class="btn" data-act="csvRounds">Alle Runden (CSV/Excel)</button>' +
-      '<button class="btn ghost" data-act="backup">Sicherung speichern (JSON)</button>' +
-      '<button class="btn ghost" data-act="restore">Sicherung laden</button>' +
-      (typeof REFERENCE_DATA !== 'undefined' ? '<button class="btn ghost" data-act="reference">Referenzdaten laden (Test)</button>' : '') +
+      '<h2>' + LA('adm.overview') + '</h2><p>' + LA('adm.stats', st.playersToday, st.roundsToday, st.leads, st.rounds) + '</p>' +
+      '<div class="cols"><div><h3>' + LA('adm.top3day') + '</h3><ol>' + (today.map(e => this.personRow(e)).join('') || '<li>–</li>') + '</ol></div>' +
+      '<div><h3>' + LA('adm.top3all') + '</h3><ol>' + (all.map(e => this.personRow(e)).join('') || '<li>–</li>') + '</ol></div></div>' +
+      '<h2>' + LA('adm.export') + '</h2><div class="row">' +
+      '<button class="btn" data-act="csvLeads">' + LA('adm.csvLeads') + '</button>' +
+      '<button class="btn" data-act="csvRounds">' + LA('adm.csvRounds') + '</button>' +
+      '<button class="btn ghost" data-act="backup">' + LA('adm.backup') + '</button>' +
+      '<button class="btn ghost" data-act="restore">' + LA('adm.restore') + '</button>' +
+      (typeof REFERENCE_DATA !== 'undefined' ? '<button class="btn ghost" data-act="reference">' + LA('adm.reference') + '</button>' : '') +
       '<input type="file" accept=".json,application/json" class="hidden" data-file></div>' +
-      '<p>Dateien landen im Download-Ordner. Tipp: am Ende jedes Messetags exportieren.</p>' +
-      (this.exported ? '<div class="export"><p><b>' + escapeHtml(this.exported.filename) + '</b> – falls kein Download gestartet ist (z.B. in der Online-Vorschau): Inhalt kopieren und in Excel bzw. eine Textdatei einfügen.</p>' +
-        '<textarea readonly data-export>' + escapeHtml(this.exported.text.replace(/^\ufeff/, '')) + '</textarea>' +
-        '<div class="row"><button class="btn" data-act="copy">Inhalt kopieren</button><button class="btn ghost" data-act="hideExport">Ausblenden</button></div></div>' : '') +
-      '<h2>Einstellungen</h2><form class="row" data-settings>' +
-      '<label>Messename<input type="text" name="eventName" maxlength="30" value="' + escapeHtml(CONFIG.eventName) + '"></label>' +
-      '<label>Rundenzeit (Sek.)<input type="number" name="roundSeconds" min="30" max="600" value="' + CONFIG.roundSeconds + '"></label>' +
-      '<label>Admin-PIN<input type="text" name="adminPin" maxlength="12" value="' + escapeHtml(CONFIG.adminPin) + '"></label>' +
-      '<label>Tagespreis<input type="text" name="prizeDay" maxlength="17" placeholder="leer = keine Anzeige" value="' + escapeHtml(CONFIG.prizeDay || '') + '"></label>' +
-      '<label>Hauptpreis (ganze Messe)<input type="text" name="prizeMain" maxlength="17" placeholder="leer = keine Anzeige" value="' + escapeHtml(CONFIG.prizeMain || '') + '"></label>' +
-      '<button class="btn" type="submit">Speichern</button></form>' +
-      '<h2>Letzte Runden</h2><table><tr><th>Zeit</th><th>Name</th><th>Firma</th><th>E-Mail</th><th>Punkte</th><th></th></tr>' +
-      (rows || '<tr><td colspan="6">Noch keine Runden.</td></tr>') + '</table>' +
-      '<h2>Controller / Joystick</h2>' + this.padHtml() +
-      '<h2>Gefahrenzone</h2><div class="row"><label>Zum Löschen LÖSCHEN eintippen<input type="text" data-wipe autocomplete="off"></label>' +
-      '<button class="btn danger" data-act="wipe">Alle Daten löschen</button></div>' +
-      '<div class="buttons" style="margin-top:1em"><button class="btn ghost" data-act="fullscreen">Vollbild an/aus</button>' +
-      '<button class="btn ghost" data-act="mute">Ton ' + (Sound.muted ? 'an' : 'aus') + '</button>' +
-      '<button class="btn" data-act="close">Schliessen (ESC)</button></div></div>');
+      '<p>' + LA('adm.exportHint') + '</p>' +
+      (this.exported ? '<div class="export"><p><b>' + escapeHtml(this.exported.filename) + '</b> – ' + LA('adm.exportFallback') + '</p>' +
+        '<textarea readonly data-export>' + escapeHtml(this.exported.text.replace(/^﻿/, '')) + '</textarea>' +
+        '<div class="row"><button class="btn" data-act="copy">' + LA('adm.copy') + '</button><button class="btn ghost" data-act="hideExport">' + LA('adm.hide') + '</button></div></div>' : '') +
+      '<h2>' + LA('adm.settings') + '</h2><form class="row" data-settings>' +
+      '<label>' + LA('adm.eventName') + '<input type="text" name="eventName" maxlength="30" value="' + escapeHtml(CONFIG.eventName) + '"></label>' +
+      '<label>' + LA('adm.roundSeconds') + '<input type="number" name="roundSeconds" min="30" max="600" value="' + CONFIG.roundSeconds + '"></label>' +
+      '<label>' + LA('adm.adminPin') + '<input type="text" name="adminPin" maxlength="12" value="' + escapeHtml(CONFIG.adminPin) + '"></label>' +
+      '<label>' + LA('adm.prizeDay') + '<input type="text" name="prizeDay" maxlength="17" placeholder="' + LA('adm.prizeEmpty') + '" value="' + escapeHtml(CONFIG.prizeDay || '') + '"></label>' +
+      '<label>' + LA('adm.prizeMain') + '<input type="text" name="prizeMain" maxlength="17" placeholder="' + LA('adm.prizeEmpty') + '" value="' + escapeHtml(CONFIG.prizeMain || '') + '"></label>' +
+      '<label>' + LA('adm.defaultLang') + this.langSelect('defaultLang', CONFIG.defaultLang, I18N.langs) + '</label>' +
+      '<label>' + LA('adm.adminLang') + this.langSelect('adminLang', I18N.adminLang, ['de', 'en']) + '</label>' +
+      '<button class="btn" type="submit">' + LA('adm.save') + '</button></form>' +
+      '<h2>' + LA('adm.recent') + '</h2><table><tr><th>' + LA('adm.colTime') + '</th><th>' + LA('adm.colName') + '</th><th>' + LA('adm.colCompany') +
+      '</th><th>' + LA('adm.colEmail') + '</th><th>' + LA('adm.colCountry') + '</th><th>' + LA('adm.colLang') + '</th><th>' + LA('adm.colScore') + '</th><th></th></tr>' +
+      (rows || '<tr><td colspan="8">' + LA('adm.noRounds') + '</td></tr>') + '</table>' +
+      '<h2>' + LA('adm.pad') + '</h2>' + this.padHtml() +
+      '<h2>' + LA('adm.danger') + '</h2><div class="row"><label>' + LA('adm.wipeLabel') + '<input type="text" data-wipe autocomplete="off"></label>' +
+      '<button class="btn danger" data-act="wipe">' + LA('adm.wipe') + '</button></div>' +
+      '<div class="buttons" style="margin-top:1em"><button class="btn ghost" data-act="fullscreen">' + LA('adm.fullscreen') + '</button>' +
+      '<button class="btn ghost" data-act="mute">' + LA(Sound.muted ? 'adm.soundOn' : 'adm.soundOff') + '</button>' +
+      '<button class="btn" data-act="close">' + LA('adm.close') + '</button></div></div>');
 
     const root = Overlay.el;
     root.querySelectorAll('[data-act]').forEach(b => b.addEventListener('click', () => this.action(b.dataset.act)));
     // Löschen ohne Browser-Dialog (die sind in der Online-Vorschau gesperrt): zweimal klicken
     root.querySelectorAll('[data-del]').forEach(b => b.addEventListener('click', () => {
-      if (b.dataset.sure) { Store.deleteRound(b.dataset.del); this.render('Runde gelöscht.'); return; }
+      if (b.dataset.sure) { Store.deleteRound(b.dataset.del); this.render(LA('adm.n.roundDeleted')); return; }
       b.dataset.sure = '1';
-      b.textContent = 'Sicher? Nochmals klicken';
+      b.textContent = LA('adm.sure');
     }));
     root.querySelector('[data-settings]').addEventListener('submit', e => {
       e.preventDefault();
@@ -243,11 +259,14 @@ class AdminScene {
         roundSeconds: clamp(parseInt(f.elements.roundSeconds.value, 10) || CONFIG.roundSeconds, 30, 600),
         adminPin: f.elements.adminPin.value.trim() || CONFIG.adminPin,
         prizeDay: f.elements.prizeDay.value.trim().toUpperCase(),
-        prizeMain: f.elements.prizeMain.value.trim().toUpperCase()
+        prizeMain: f.elements.prizeMain.value.trim().toUpperCase(),
+        defaultLang: f.elements.defaultLang.value,
+        adminLang: f.elements.adminLang.value
       };
       Object.assign(CONFIG, s);
+      I18N.adminLang = s.adminLang;
       Store.saveSettings(s);
-      this.render('Einstellungen gespeichert.');
+      this.render(LA('adm.n.saved'));
     });
     root.querySelector('[data-file]').addEventListener('change', e => {
       const file = e.target.files[0];
@@ -256,8 +275,8 @@ class AdminScene {
       reader.onload = () => {
         try {
           const res = Store.importJSON(JSON.parse(reader.result));
-          this.render('Sicherung geladen: ' + res.leads + ' neue Leads, ' + res.rounds + ' neue Runden.');
-        } catch (err) { this.render('Fehler: ' + err.message); }
+          this.render(LA('adm.n.restored', res.leads, res.rounds));
+        } catch (err) { this.render(LA('adm.n.error', err.message)); }
       };
       reader.readAsText(file);
     });
@@ -271,17 +290,17 @@ class AdminScene {
   }
   padHtml() {
     const gp = this.firstPad();
-    if (!gp) return '<p>Kein Controller erkannt. Einstecken und eine Taste drücken, dann <button class="btn small ghost" data-act="padRefresh">Neu suchen</button></p>';
+    if (!gp) return '<p>' + LA('adm.padNone') + ' <button class="btn small ghost" data-act="padRefresh">' + LA('adm.padRefresh') + '</button></p>';
     const custom = Input.padMap(gp.id);
     const steps = PAD_SETUP_STEPS;
-    let html = '<p>Erkannt: <b>' + escapeHtml(gp.id.slice(0, 60)) + '</b> · Belegung: ' + (custom ? 'eigene' : 'Standard') + '</p>';
+    let html = '<p>' + LA('adm.padFound', escapeHtml(gp.id.slice(0, 60)), LA(custom ? 'adm.padCustom' : 'adm.padDefault')) + '</p>';
     if (this.padStep != null) {
-      html += '<div class="export"><b>Drücke jetzt am Controller: ' + steps[this.padStep].label + '</b> (' + (this.padStep + 1) + ' von ' + steps.length + ')' +
-        ' <button class="btn small ghost" data-act="padCancel">Abbrechen</button></div>';
+      html += '<div class="export"><b>' + LA('adm.padPress', padStepLabel(steps[this.padStep])) + '</b> ' + LA('adm.padOf', this.padStep + 1, steps.length) +
+        ' <button class="btn small ghost" data-act="padCancel">' + LA('adm.padCancel') + '</button></div>';
     } else {
-      html += '<div class="row"><button class="btn" data-act="padSetup">Controller einrichten</button>' +
-        (custom ? '<button class="btn ghost" data-act="padReset">Standard wiederherstellen</button>' : '') + '</div>' +
-        '<p class="small" style="text-align:left">Nötig, wenn Springen/Saugen auf falschen Knöpfen liegen (z. B. bei Arcade-Automaten). Laufen geht immer mit Stick bzw. Steuerkreuz.</p>';
+      html += '<div class="row"><button class="btn" data-act="padSetup">' + LA('adm.padSetup') + '</button>' +
+        (custom ? '<button class="btn ghost" data-act="padReset">' + LA('adm.padReset') + '</button>' : '') + '</div>' +
+        '<p class="small" style="text-align:left">' + LA('adm.padHelp') + '</p>';
     }
     return html;
   }
@@ -301,7 +320,7 @@ class AdminScene {
     if (this.padStep >= PAD_SETUP_STEPS.length) {
       Input.savePadMap(gp.id, this.padNew);
       this.padStep = null;
-      this.render('Controller gespeichert: ' + PAD_SETUP_STEPS.map(s => s.label + ' = Knopf ' + (this.padNew[s.key] + 1)).join(', '));
+      this.render(LA('adm.n.padSaved', PAD_SETUP_STEPS.map(s => padStepLabel(s) + ' = ' + LA('adm.padButton', this.padNew[s.key] + 1)).join(', ')));
     } else this.render();
   }
 
@@ -309,15 +328,15 @@ class AdminScene {
     switch (a) {
       case 'padRefresh': this.render(); break;
       case 'padSetup': this.padStep = 0; this.padNew = {}; this.padPrev = null; this.render(); break;
-      case 'padCancel': this.padStep = null; this.render('Einrichtung abgebrochen.'); break;
-      case 'padReset': { const gp = this.firstPad(); if (gp) Input.savePadMap(gp.id, null); this.render('Standard-Belegung wiederhergestellt.'); break; }
+      case 'padCancel': this.padStep = null; this.render(LA('adm.n.padCancel')); break;
+      case 'padReset': { const gp = this.firstPad(); if (gp) Input.savePadMap(gp.id, null); this.render(LA('adm.n.padReset')); break; }
       case 'close': this.close(); break;
-      case 'csvLeads': this.exported = Store.exportLeadsCSV(); this.render('Leads exportiert.'); break;
-      case 'csvRounds': this.exported = Store.exportRoundsCSV(); this.render('Runden exportiert.'); break;
-      case 'backup': this.exported = Store.exportJSON(); this.render('Sicherung erstellt.'); break;
+      case 'csvLeads': this.exported = Store.exportLeadsCSV(); this.render(LA('adm.n.leads')); break;
+      case 'csvRounds': this.exported = Store.exportRoundsCSV(); this.render(LA('adm.n.rounds')); break;
+      case 'backup': this.exported = Store.exportJSON(); this.render(LA('adm.n.backup')); break;
       case 'reference': {
         const res = Store.importJSON(REFERENCE_DATA);
-        this.render('Referenzdaten geladen: ' + res.leads + ' neue Leads, ' + res.rounds + ' neue Runden. Vor der Messe mit «Alle Daten löschen» entfernen!');
+        this.render(LA('adm.n.reference', res.leads, res.rounds));
         break;
       }
       case 'hideExport': this.exported = null; this.render(); break;
@@ -328,16 +347,17 @@ class AdminScene {
         try { ok = document.execCommand('copy'); } catch (e) { ok = false; }
         if (!ok && navigator.clipboard) navigator.clipboard.writeText(ta.value).catch(() => {});
         const btn = Overlay.el.querySelector('[data-act=copy]');
-        if (btn) btn.textContent = 'Kopiert (sonst markieren + Strg+C)';
+        if (btn) btn.textContent = LA('adm.copied');
         break;
       }
       case 'restore': Overlay.el.querySelector('[data-file]').click(); break;
       case 'fullscreen': toggleFullscreen(); break;
       case 'mute': Sound.toggleMute(); this.render(); break;
       case 'wipe': {
-        const v = Overlay.el.querySelector('[data-wipe]').value;
-        if (v.trim().toUpperCase() === 'LÖSCHEN') { Store.clearAll(); this.exported = null; this.render('Alle Daten gelöscht.'); }
-        else this.render('Nicht gelöscht: Bitte zuerst LÖSCHEN in das Feld eintippen.');
+        const v = Overlay.el.querySelector('[data-wipe]').value.trim().toUpperCase();
+        // LÖSCHEN oder DELETE, egal in welcher Admin-Sprache
+        if (v === I18N.de['adm.wipeWord'] || v === I18N.en['adm.wipeWord']) { Store.clearAll(); this.exported = null; this.render(LA('adm.n.wiped')); }
+        else this.render(LA('adm.n.notWiped'));
         break;
       }
     }

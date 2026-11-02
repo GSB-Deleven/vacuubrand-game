@@ -28,14 +28,15 @@ const Level = {
     const brick = (x, y, w, h) => { for (let i = 0; i < (w || 1); i++) for (let j = 0; j < (h || 1); j++) set(x + i, y + j, 'B'); };
     const q = (x, y, c) => set(x, y, c);
     const e = (type, x, y) => spawns.push({ type, x, y: y === undefined ? 9 : y });
-    const sign = (x, text) => signs.push({ x, text });
+    // Schilder: Texte stehen in js/i18n.js ("sign.1" usw.), damit sie in jeder Sprache erscheinen
+    const sign = (x, key) => signs.push({ x, key });
 
     ground(0, W - 1);
 
     // ---------------- Zone 1: FILTRATIONSLABOR (ME 1C) ----------------
-    sign(4, 'SPRING VON UNTEN GEGEN\nDEN KOLBEN-BLOCK!');
+    sign(4, 'sign.1');
     brick(7, 6); q(8, 6, '1'); brick(9, 6);
-    sign(14, 'LEERTASTE HALTEN\n= SAUGEN!');
+    sign(14, 'sign.2');
     e('d', 18); e('t', 20); e('f', 24);
     q(26, 6, '?');
     e('p', 29, 6); q(31, 6, '1'); e('f', 33);
@@ -43,14 +44,14 @@ const Level = {
     q(37, 3, '?');
     e('H2O', 40, 4);
     pit(43, 44);
-    sign(47, 'ME 1C: IDEAL FÜR\nDIE FILTRATION');
+    sign(47, 'sign.3');
     e('f', 49); e('t', 51); e('d', 53); e('p', 55, 5); e('p', 58, 6);
     brick(61, 9); brick(62, 8, 1, 2);
     e('v', 62, 3);
     e('d', 66); e('t', 69); e('d', 73); e('H2O', 71, 5); e('p', 76, 6);
 
     // ---------------- Zone 2: ZELLKULTUR-LABOR (BVC professional) ----------------
-    sign(82, 'ZELLKULTUR-LABOR:\nHOL DIR DIE BVC!');
+    sign(82, 'sign.4');
     brick(85, 6); q(86, 6, 'V'); brick(87, 6);
     e('n', 90); e('e', 93); e('H2O2', 95, 5); e('w', 96); e('n', 99);
     lan(98, 8, 2); lan(101, 7, 4); e('e', 102, 6); q(103, 3, '?');
@@ -59,7 +60,7 @@ const Level = {
     e('e', 118);
 
     // ---------------- Zone 3: VERDAMPFER-LABOR (PC 3001 VARIO select) ----------------
-    sign(122, 'PC 3001 VARIO SELECT:\nIDEAL FÜR DEN ROTAVAP');
+    sign(122, 'sign.5');
     q(125, 6, '2');
     e('k', 128); e('c', 131, 6); e('y', 134); e('h', 138, 6);
     lan(138, 8, 2); lan(141, 7, 4); e('k', 142, 6); lan(146, 5, 4); e('h', 147, 3); q(148, 2, '?');
@@ -74,7 +75,7 @@ const Level = {
     e('k', 196); e('c', 198, 6);
 
     // ---------------- Zone 4: CHEMIELABOR (MD 4C VARIO select) ----------------
-    sign(202, 'CHEMIELABOR:\nMD 4C VARIO SELECT');
+    sign(202, 'sign.6');
     q(205, 6, '3');
     e('a', 208, 6); e('g', 210); e('c', 213, 6); e('MEOH', 215, 5);
     lan(215, 8, 2); lan(218, 7, 4); e('g', 219, 6); q(220, 3, '?');
@@ -85,14 +86,14 @@ const Level = {
     e('a', 244, 5); e('g', 246); e('c', 248, 6);
 
     // ---------------- Zone 5: HOCHVAKUUM-TECHNIKUM (VACUU·PURE 10C) ----------------
-    sign(252, 'VACUU·PURE 10C:\nIDEAL FÜR ÖLFREIE TROCKNUNG');
+    sign(252, 'sign.7');
     q(255, 6, '4');
     e('i', 258, 6); e('N2', 260, 4); e('z', 261); e('l', 264);
     lan(264, 8, 2); lan(267, 7, 3); lan(271, 5, 3); e('i', 272, 3); q(272, 2, '?');
     e('b', 276, 7); e('O2', 278, 4); e('l', 279); e('i', 282, 5);
     pit(285, 286);
     e('z', 289); e('N2', 290, 5); e('b', 291, 6); e('O2', 295, 4); e('H2O', 299, 3); e('d', 293); e('l', 296); e('i', 299, 6);
-    sign(301, 'ACHTUNG:\nDAMPF-KRAKE!');
+    sign(301, 'sign.8');
     q(305, 6, '4');
     e('v', 309, 5);
     e('K', 317, 7);

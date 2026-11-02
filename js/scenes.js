@@ -13,10 +13,10 @@ function drawMenuBackground(ctx, t) {
 function drawBoards(ctx, t, highlightId) {
   ctx.fillStyle = 'rgba(16,32,74,0.55)';
   ctx.fillRect(0, 0, VIEW_W, VIEW_H);
-  Font.draw(ctx, 'BESTENLISTE', 160, 5, { color: THEME.gold, scale: 2, align: 'center', outline: '#1a1c2c' });
+  Font.draw(ctx, L('board.title'), 160, 5, { color: THEME.gold, scale: 2, align: 'center', outline: '#1a1c2c' });
   const cols = [
-    { title: 'HEUTE', list: Store.board(todayKey()), x: 8, prize: CONFIG.prizeDay },
-    { title: 'GESAMT · ' + CONFIG.eventName, list: Store.board(null), x: 164, prize: CONFIG.prizeMain }
+    { title: L('board.today'), list: Store.board(todayKey()), x: 8, prize: CONFIG.prizeDay },
+    { title: L('board.all', CONFIG.eventName), list: Store.board(null), x: 164, prize: CONFIG.prizeMain }
   ];
   const showPrize = CONFIG.mode !== 'online';
   for (const c of cols) {
@@ -26,10 +26,10 @@ function drawBoards(ctx, t, highlightId) {
     // Preis unten im Kasten (im Admin einstellbar)
     if (showPrize && c.prize) {
       ctx.fillStyle = THEME.gold; ctx.fillRect(c.x, 153, 148, 11);
-      Font.draw(ctx, ('PREIS: ' + c.prize).slice(0, 24), c.x + 74, 155, { color: PAL.k, align: 'center' });
+      Font.draw(ctx, L('board.prize', c.prize).slice(0, 24), c.x + 74, 155, { color: PAL.k, align: 'center' });
     }
     if (!c.list.length) {
-      Font.draw(ctx, 'NOCH KEINE EINTRÄGE.\nSEI DER ERSTE!', c.x + 74, 90, { color: '#ffffff', align: 'center' });
+      Font.draw(ctx, L('board.empty'), c.x + 74, 90, { color: '#ffffff', align: 'center' });
       continue;
     }
     c.list.slice(0, CONFIG.leaderboardSize).forEach((e, i) => {
@@ -102,7 +102,7 @@ class TitleScene {
     this.t = 0; this.mode = 'title'; this.modeT = 0;
     this.demo = new DemoStrip();
   }
-  enter() { Sound.music('title'); }
+  enter() { setLang(deviceLang()); Sound.music('title'); }
   update() {
     this.t++; this.modeT++;
     this.demo.update();
@@ -111,7 +111,7 @@ class TitleScene {
     if (Input.pressed('start')) { this.startGame(); return; }
     if (Input.pressed('fullscreen')) toggleFullscreen();
   }
-  startGame() { Sound.sfx('select'); Game.go(new RegisterScene()); }
+  startGame() { Sound.sfx('select'); Game.go(new CountryScene()); }
   toggleBoard() {
     Sound.sfx('select');
     this.mode = this.mode === 'title' ? 'board' : 'title';
@@ -128,7 +128,7 @@ class TitleScene {
     drawMenuBackground(ctx, this.t);
     if (this.mode === 'board') {
       drawBoards(ctx, this.t, null);
-      Font.draw(ctx, hint('B / ESC = ZURÜCK    ENTER = START', 'TIPPEN = ZURÜCK'), 160, 170, { color: THEME.gold, align: 'center', outline: '#1a1c2c' });
+      Font.draw(ctx, LT('board.back'), 160, 170, { color: THEME.gold, align: 'center', outline: '#1a1c2c' });
       return;
     }
     // Demo: der Professor saugt Laborchaos ein
@@ -139,17 +139,17 @@ class TitleScene {
     const bob = Math.round(Math.sin(this.t * 0.05) * 2);
     Font.draw(ctx, 'PROFESSOR', 160, 15 + bob, { color: '#ffffff', scale: 3, align: 'center', outline: THEME.navy });
     Font.draw(ctx, 'VAKUUMUS', 160, 40 + bob, { color: THEME.gold, scale: 4, align: 'center', outline: PAL.k });
-    Font.draw(ctx, 'SAUG DAS LABOR-CHAOS WEG!', 160, 79, { color: PAL.k, align: 'center' });
+    Font.draw(ctx, L('title.sub'), 160, 79, { color: PAL.k, align: 'center' });
     const cx = 233;
     const [sx, sy, sw, sh] = TITLE_BTN_START, [bx, by, bw, bh] = TITLE_BTN_BOARD;
     drawPanel(ctx, sx, sy, sw, sh);
-    Font.draw(ctx, hint('ENTER = START', 'TIPPEN = START'), sx + sw / 2, sy + 4, { color: this.t % 60 < 42 ? THEME.gold : '#ffffff', align: 'center' });
+    Font.draw(ctx, LT('title.start'), sx + sw / 2, sy + 4, { color: this.t % 60 < 42 ? THEME.gold : '#ffffff', align: 'center' });
     drawPanel(ctx, bx, by, bw, bh);
-    Font.draw(ctx, hint('B = BESTENLISTE', 'BESTENLISTE'), bx + bw / 2, by + 4, { color: '#c8f2ff', align: 'center' });
+    Font.draw(ctx, LT('title.board'), bx + bw / 2, by + 4, { color: '#c8f2ff', align: 'center' });
     const top = Store.board(todayKey())[0];
     if (top) {
       const line = top.name + '  ' + top.score;
-      const pw = Math.max(Font.width('HEUTE FÜHRT:'), Font.width(line)) + 10;
+      const pw = Math.max(Font.width(L('title.leader')), Font.width(line)) + 10;
       // Goldenes Siegerschild, damit es sich von den blauen Knöpfen abhebt
       const px = Math.round(cx - pw / 2);
       ctx.fillStyle = PAL.k; ctx.fillRect(px - 2, 131, pw + 4, 26);
@@ -157,12 +157,12 @@ class TitleScene {
       ctx.fillStyle = THEME.gold; ctx.fillRect(px, 133, pw, 22);
       ctx.fillStyle = '#ffd966'; ctx.fillRect(px, 133, pw, 1);
       ctx.fillStyle = '#d27410'; ctx.fillRect(px, 154, pw, 1);
-      Font.draw(ctx, 'HEUTE FÜHRT:', cx, 135, { color: THEME.navy, align: 'center' });
+      Font.draw(ctx, L('title.leader'), cx, 135, { color: THEME.navy, align: 'center' });
       Font.draw(ctx, line, cx, 145, { color: PAL.k, align: 'center' });
     }
     Font.draw(ctx, CONFIG.eventName, 316, 170, { color: '#ffffff', align: 'right' });
     const prize = CONFIG.mode !== 'online' && (CONFIG.prizeDay || CONFIG.prizeMain);
-    if (prize) Font.draw(ctx, ('ZU GEWINNEN: ' + prize).slice(0, 30), 4, 170, { color: THEME.gold, outline: PAL.k });
+    if (prize) Font.draw(ctx, L('title.prize', prize).slice(0, 30), 4, 170, { color: THEME.gold, outline: PAL.k });
   }
 }
 
@@ -175,7 +175,7 @@ class ResultScene {
     this.test = !!res.lead.isTest;
     if (this.test) return; // Testrunde (ADMIN): wird nicht gespeichert
     Store.addRound({
-      leadId: res.lead.id, score: res.total, base: res.score, timeBonus: res.timeBonus,
+      leadId: res.lead.id, country: res.lead.country || '', lang: I18N.lang, score: res.total, base: res.score, timeBonus: res.timeBonus,
       finished: res.finished, timeLeft: res.timeLeft, pump: res.pump, captures: res.captures, ppe: res.ppe, views: res.views,
       medals: res.medals || [], medalBonus: res.medalBonus || 0, maxCombo: res.maxCombo || 0
     });
@@ -195,28 +195,28 @@ class ResultScene {
     }
     if ((this.t > 60 && Input.pressed('start')) || this.t > CONFIG.resultAutoReturnSeconds * 60) {
       Sound.sfx('select');
-      Game.go(afterResult(this.res.lead.id));
+      Game.go(afterResult(this.res.lead));
     }
   }
   click() {
-    if (this.t > 60) { Sound.sfx('select'); Game.go(afterResult(this.res.lead.id)); }
+    if (this.t > 60) { Sound.sfx('select'); Game.go(afterResult(this.res.lead)); }
   }
   draw(ctx) {
     const r = this.res;
     drawMenuBackground(ctx, this.t);
     drawPanel(ctx, 8, 8, 304, 164);
-    Font.draw(ctx, r.finished ? 'LABOR GERETTET!' : 'ZEIT ABGELAUFEN!', 160, 13, { color: r.finished ? '#7be07b' : THEME.gold, scale: 2, align: 'center' });
+    Font.draw(ctx, L(r.finished ? 'res.saved' : 'res.timeup'), 160, 13, { color: r.finished ? '#7be07b' : THEME.gold, scale: 2, align: 'center' });
     Font.draw(ctx, displayName(r.lead), 160, 32, { color: '#c8f2ff', align: 'center' });
     const k = Math.min(1, this.t / 70);
     const got = r.medals || [];
     const rows = [
-      ['EINGESAUGT', String(r.captures)],
-      ['PUMPE', r.pump ? CONFIG.pumps[r.pump].short : '-'],
-      ['SCHUTZ', (r.ppe || 0) + '/4'],
-      ['BESTE COMBO', r.maxCombo > 1 ? '×' + r.maxCombo : '-'],
-      ['PUNKTE', String(Math.round(r.score * k))],
-      ['ZEITBONUS', r.finished ? String(Math.round(r.timeBonus * k)) : '-'],
-      ['MEDAILLEN', r.medalBonus ? '+' + Math.round(r.medalBonus * k) : '-']
+      [L('res.captures'), String(r.captures)],
+      [L('res.pump'), r.pump ? CONFIG.pumps[r.pump].short : '-'],
+      [L('res.ppe'), (r.ppe || 0) + '/4'],
+      [L('res.combo'), r.maxCombo > 1 ? '×' + r.maxCombo : '-'],
+      [L('res.points'), String(Math.round(r.score * k))],
+      [L('res.timebonus'), r.finished ? String(Math.round(r.timeBonus * k)) : '-'],
+      [L('res.medals'), r.medalBonus ? '+' + Math.round(r.medalBonus * k) : '-']
     ];
     rows.forEach((row, i) => {
       const y = 44 + i * 9;
@@ -224,60 +224,62 @@ class ResultScene {
       Font.draw(ctx, row[1], 180, y, { color: i === 6 && r.medalBonus ? THEME.gold : '#ffffff', align: 'right' });
     });
     ctx.fillStyle = '#3aa0e8'; ctx.fillRect(18, 108, 162, 1);
-    Font.draw(ctx, 'GESAMT', 18, 112, { color: THEME.gold, scale: 2 });
+    Font.draw(ctx, L('res.total'), 18, 112, { color: THEME.gold, scale: 2 });
     Font.draw(ctx, String(Math.round(r.total * k)), 180, 112, { color: THEME.gold, scale: 2, align: 'right' });
     // Medaillen-Spalte: verdiente leuchten, die anderen zeigen, was noch möglich ist
     ctx.fillStyle = '#5a7aa3'; ctx.fillRect(190, 42, 1, 84);
-    Font.draw(ctx, 'MEDAILLEN', 250, 44, { color: THEME.gold, align: 'center' });
+    Font.draw(ctx, L('res.medals'), 250, 44, { color: THEME.gold, align: 'center' });
     CONFIG.medals.forEach((m, i) => {
       const y = 53 + i * 9;
       const idx = got.indexOf(m.key);
       const on = idx >= 0 && idx < (this.medalShown || 0);
       const pop = on && this.t < 80 + idx * 14 + 6;
       drawMedal(ctx, 198, y - 2 - (pop ? 1 : 0), on);
-      Font.draw(ctx, m.name, 210, y, { color: on ? '#ffffff' : '#7f93b0' });
+      Font.draw(ctx, L('medal.' + m.key), 210, y, { color: on ? '#ffffff' : '#7f93b0' });
     });
     if (this.t > 70 && this.test) {
-      Font.draw(ctx, 'TESTRUNDE - NICHT IN DER BESTENLISTE', 134, 134, { color: '#c8f2ff', align: 'center' });
+      Font.draw(ctx, L('res.test'), 134, 134, { color: '#c8f2ff', align: 'center' });
     } else if (this.t > 70) {
-      const rankTxt = 'PLATZ ' + (this.rankDay || '-') + ' HEUTE  ·  PLATZ ' + (this.rankAll || '-') + ' GESAMT';
+      const rankTxt = L('res.rank', this.rankDay || '-', this.rankAll || '-');
       Font.draw(ctx, rankTxt, 134, 134, { color: '#ffffff', align: 'center' });
-      if (!this.newBest) Font.draw(ctx, 'DEIN BESTWERT: ' + this.best, 134, 145, { color: '#c8f2ff', align: 'center' });
-      else if (this.rankDay === 1 && this.t % 30 < 20) Font.draw(ctx, '★ TAGESBESTWERT! ★', 134, 145, { color: '#ffd23f', align: 'center' });
+      if (!this.newBest) Font.draw(ctx, L('res.best', this.best), 134, 145, { color: '#c8f2ff', align: 'center' });
+      else if (this.rankDay === 1 && this.t % 30 < 20) Font.draw(ctx, L('res.dayBest'), 134, 145, { color: '#ffd23f', align: 'center' });
     }
-    if (this.t > 60 && this.t % 50 < 35) Font.draw(ctx, hint('ENTER = BESTENLISTE', 'TIPPEN = BESTENLISTE'), 134, 159, { color: THEME.gold, align: 'center' });
+    if (this.t > 60 && this.t % 50 < 35) Font.draw(ctx, LT('res.next'), 134, 159, { color: THEME.gold, align: 'center' });
     // QR-Code zum Kontakt: wird als eigenes, scharfes Bild darübergelegt (QRView)
   }
 }
 
-// Nach dem Ergebnis: zuerst die Kontakt-Seite mit grossem QR-Code (falls ein Link eingestellt ist), dann die Bestenliste
-function afterResult(leadId) {
-  return CONFIG.contactUrl ? new ContactScene(leadId) : new BoardScene(leadId);
+// Nach dem Ergebnis: zuerst die Kontakt-Seite mit grossem QR-Code (Link des gewählten Landes), dann die Bestenliste
+function afterResult(lead) {
+  const url = contactUrlFor(lead && lead.country);
+  return url ? new ContactScene(lead.id, url) : new BoardScene(lead.id);
 }
 
-// Kontakt-Seite: grosser QR-Code, damit ihn jede Handykamera auch aus etwas Abstand erkennt
+// Kontakt-Seite: grosser QR-Code, damit ihn jede Handykamera auch aus etwas Abstand erkennt.
+// Sie bleibt stehen, bis jemand Enter drückt, tippt oder einen Knopf drückt (Zeit zum Scannen).
 class ContactScene {
-  constructor(leadId) { this.leadId = leadId; this.t = 0; this.allowAdmin = true; }
+  constructor(leadId, url) { this.leadId = leadId; this.url = url; this.t = 0; this.allowAdmin = true; }
   enter() {
-    this.ok = QRView.show(CONFIG.contactUrl, [166, 30, 140, 140]);
+    this.ok = QRView.show(this.url, [166, 30, 140, 140]);
     if (!this.ok) Game.go(new BoardScene(this.leadId));
   }
   exit() { QRView.hide(); }
   next() { Sound.sfx('select'); Game.go(new BoardScene(this.leadId)); }
   update() {
     this.t++;
-    if ((this.t > 30 && Input.pressed('start')) || this.t > CONFIG.contactSeconds * 60) this.next();
+    if (this.t > 30 && Input.pressed('start')) this.next();
   }
   click() { if (this.t > 30) this.next(); }
   draw(ctx) {
     drawMenuBackground(ctx, this.t);
     drawPanel(ctx, 8, 8, 304, 164);
-    Font.draw(ctx, 'KONTAKT', 87, 16, { color: THEME.gold, scale: 2, align: 'center' });
-    Font.draw(ctx, 'HANDY-KAMERA AUF\nDEN CODE RICHTEN:', 87, 44, { color: '#ffffff', align: 'center', lineHeight: 11 });
-    Font.draw(ctx, 'DEIN DIREKTER DRAHT\nZU VACUUBRAND.', 87, 72, { color: '#c8f2ff', align: 'center', lineHeight: 11 });
+    Font.draw(ctx, L('contact.title'), 87, 16, { color: THEME.gold, scale: 2, align: 'center' });
+    Font.draw(ctx, L('contact.aim'), 87, 44, { color: '#ffffff', align: 'center', lineHeight: 11 });
+    Font.draw(ctx, L('contact.line'), 87, 72, { color: '#c8f2ff', align: 'center', lineHeight: 11 });
     Font.draw(ctx, '→', 150, 96, { color: THEME.gold, scale: 2, align: 'center' });
     drawProfessor(ctx, 60, 150, { face: 1, pump: 4, pose: 'idle', ppe: {} });
-    if (this.t > 30 && this.t % 50 < 35) Font.draw(ctx, hint('ENTER = WEITER', 'TIPPEN = WEITER'), 87, 158, { color: THEME.gold, align: 'center' });
+    if (this.t > 30 && this.t % 50 < 35) Font.draw(ctx, LT('contact.next'), 87, 158, { color: THEME.gold, align: 'center' });
   }
 }
 
@@ -346,6 +348,110 @@ class BoardScene {
   draw(ctx) {
     drawMenuBackground(ctx, this.t);
     drawBoards(ctx, this.t, this.hl);
-    if (this.t % 60 < 40) Font.draw(ctx, hint('DANKE FÜRS SPIELEN!  ENTER = WEITER', 'DANKE FÜRS SPIELEN!  TIPPEN = WEITER'), 160, 170, { color: THEME.gold, align: 'center', outline: '#1a1c2c' });
+    if (this.t % 60 < 40) Font.draw(ctx, LT('board.thanks'), 160, 170, { color: THEME.gold, align: 'center', outline: '#1a1c2c' });
+  }
+}
+
+// ---------------------------------------------------------------------
+// Länderwahl vor jeder Runde: Flaggen (Land = Link im QR-Code) und Sprachzeile (Sprache der Runde).
+// Tastatur/Gamepad: ← → Flagge, ↑ ↓ zwischen Flaggen und Sprachzeile, Enter bestätigt.
+// Touch/Maus: zuerst die Sprache antippen (optional), dann die Flagge: das startet direkt.
+const COUNTRY_FLAG_Y = 38, COUNTRY_LANG_Y = 116;
+
+class CountryScene {
+  constructor() {
+    this.allowAdmin = true;
+    this.t = 0; this.idle = 0;
+    this.list = CONFIG.countries || [];
+    // Vorwahl: erstes Land mit der Gerätesprache
+    const dl = I18N.lang;
+    this.idx = Math.max(0, this.list.findIndex(c => c.lang === dl));
+    this.row = 'flags';
+    this.lang = dl;
+    this.langPicked = false; // Sprache von Hand gewählt (dann ändert die Flagge die Sprache nicht mehr)
+  }
+  enter() { Sound.music('title'); }
+  cellX(i) { const w = 304 / this.list.length; return Math.round(8 + w * i + w / 2); }
+  langX(i) { return 160 + (i - 1) * 92; }
+  setLangLive(code) { this.lang = code; setLang(code); }
+  pickFlag(i) {
+    this.idx = i;
+    if (!this.langPicked) this.setLangLive(this.list[i].lang);
+  }
+  confirm() {
+    const c = this.list[this.idx];
+    if (!c) return;
+    setLang(this.lang);
+    Sound.sfx('select');
+    Game.go(new RegisterScene(c.key));
+  }
+  update() {
+    this.t++;
+    if (++this.idle > (CONFIG.countrySelectSeconds || 60) * 60) { Game.go(new TitleScene()); return; }
+    const any = Object.keys(Input.just).length > 0;
+    if (any) this.idle = 0;
+    if (Input.pressed('back')) { Game.go(new TitleScene()); return; }
+    if (Input.pressed('start')) { this.confirm(); return; }
+    if (Input.pressed('up') || Input.pressed('down')) { this.row = this.row === 'flags' ? 'langs' : 'flags'; Sound.sfx('bump'); }
+    const dir = (Input.pressed('right') ? 1 : 0) - (Input.pressed('left') ? 1 : 0);
+    if (dir) {
+      Sound.sfx('bump');
+      if (this.row === 'flags') {
+        this.langPicked = false;
+        this.pickFlag((this.idx + dir + this.list.length) % this.list.length);
+      } else {
+        const ls = I18N.langs, li = ls.indexOf(this.lang);
+        this.langPicked = true;
+        this.setLangLive(ls[(li + dir + ls.length) % ls.length]);
+      }
+    }
+  }
+  click(x, y) {
+    this.idle = 0;
+    // Sprachzeile
+    if (y >= COUNTRY_LANG_Y - 3 && y <= COUNTRY_LANG_Y + 15) {
+      I18N.langs.forEach((code, i) => {
+        if (Math.abs(x - this.langX(i)) <= 44) {
+          this.langPicked = true; this.row = 'langs';
+          this.setLangLive(code);
+          Sound.sfx('bump');
+        }
+      });
+      return;
+    }
+    // Flaggen (mit Namen darunter): Antippen startet direkt
+    if (y >= COUNTRY_FLAG_Y - 6 && y <= COUNTRY_FLAG_Y + 62) {
+      const w = 304 / this.list.length, i = Math.floor((x - 8) / w);
+      if (i >= 0 && i < this.list.length) { this.row = 'flags'; this.pickFlag(i); this.confirm(); }
+    }
+  }
+  draw(ctx) {
+    drawMenuBackground(ctx, this.t);
+    drawPanel(ctx, 8, 8, 304, 164);
+    Font.draw(ctx, L('country.title'), 160, 14, { color: THEME.gold, scale: 2, align: 'center' });
+    const blink = this.t % 40 < 26;
+    this.list.forEach((c, i) => {
+      const spr = SPR['flag_' + c.key];
+      const cx = this.cellX(i), sel = i === this.idx;
+      const fw = spr ? spr.width : 48, fh = spr ? spr.height : 32;
+      const fx = Math.round(cx - fw / 2), fy = COUNTRY_FLAG_Y + (32 - fh) / 2 - (sel ? 2 : 0);
+      if (sel) {
+        ctx.fillStyle = this.row === 'flags' && !blink ? '#ffffff' : THEME.gold;
+        ctx.fillRect(fx - 4, fy - 4, fw + 8, fh + 8);
+      }
+      ctx.fillStyle = PAL.k; ctx.fillRect(fx - 1, fy - 1, fw + 2, fh + 2);
+      if (spr) ctx.drawImage(spr, fx, fy);
+      Font.draw(ctx, String(c.name || c.key).replace(' / ', '\n'), cx, COUNTRY_FLAG_Y + 42, { color: sel ? THEME.gold : '#ffffff', align: 'center' });
+    });
+    // Sprachzeile
+    ctx.fillStyle = '#5a7aa3'; ctx.fillRect(20, COUNTRY_LANG_Y - 8, 280, 1);
+    I18N.langs.forEach((code, i) => {
+      const x = this.langX(i), w = 84, on = code === this.lang;
+      ctx.fillStyle = PAL.k; ctx.fillRect(x - w / 2 - 1, COUNTRY_LANG_Y - 1, w + 2, 14);
+      ctx.fillStyle = on ? THEME.gold : THEME.navyDark; ctx.fillRect(x - w / 2, COUNTRY_LANG_Y, w, 12);
+      if (on && this.row === 'langs' && blink) { ctx.fillStyle = '#ffffff'; ctx.fillRect(x - w / 2, COUNTRY_LANG_Y + 11, w, 1); }
+      Font.draw(ctx, I18N.names[code], x, COUNTRY_LANG_Y + 3, { color: on ? PAL.k : '#ffffff', align: 'center' });
+    });
+    Font.draw(ctx, LT('country.hint'), 160, 152, { color: '#c8f2ff', align: 'center' });
   }
 }

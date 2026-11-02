@@ -37,10 +37,9 @@ function displayName(lead) {
   if (!lead) return '???';
   const f = String(lead.firstName || '').trim().toUpperCase().slice(0, 9);
   const l = String(lead.lastName || '').trim().toUpperCase();
-  return (f + (l ? ' ' + l[0] + '.' : '')).trim() || 'SPIELER';
+  return (f + (l ? ' ' + l[0] + '.' : '')).trim() || L('player');
 }
-// Hinweistext je nach Bedienung (Tastatur oder Touch)
-function hint(keys, touch) { return Input.touch ? touch : keys; }
+// Hinweistexte je nach Bedienung (Tastatur oder Touch): siehe LT() in i18n.js
 
 function toggleFullscreen() {
   try {

@@ -4,6 +4,8 @@ Alle Texte im Spiel sind nummeriert (T1, T2 …) und stehen mit Korrekturvorschl
 
 **Text ändern:** neues Issue mit der Vorlage **„✏️ Textänderung“**, Nummer und neuen Text eintragen, **@claude** erwähnen.
 
+**Sprachen:** Das Spiel gibt es auf Deutsch, Englisch und Französisch. Alle Texte stehen in `js/i18n.js`, die Übersetzungen (Entwürfe) als Spalten in TEXTE.md.
+
 **Regeln für Spieltexte:**
 - nur GROSSBUCHSTABEN (Pixelschrift)
 - ca. 50 Zeichen pro Zeile, Schilder und Banner max. 2 Zeilen

@@ -1,6 +1,6 @@
 # 🛠️ Professor Vakuumus: Technisches Handbuch
 
-Dieses Dokument erklärt, wie das Spiel aufgebaut ist, was jede Datei macht und wie man es anpasst oder erweitert. Für den Überblick fürs Management gibt es [README.md](README.md), für das Standpersonal [ANLEITUNG.md](ANLEITUNG.md). Alle Zahlen hier stammen direkt aus dem Code (Stand dieses Dokuments).
+Dieses Dokument erklärt, wie das Spiel aufgebaut ist, was jede Datei macht und wie man es anpasst oder erweitert. Für den Überblick fürs Management gibt es [README.md](README.md) (englisch: [README.en.md](README.en.md)), für das Standpersonal [ANLEITUNG.md](ANLEITUNG.md) (englisch: [GUIDE.en.md](GUIDE.en.md)). Alle Zahlen hier stammen direkt aus dem Code (Stand dieses Dokuments).
 
 ---
 
@@ -9,6 +9,7 @@ Dieses Dokument erklärt, wie das Spiel aufgebaut ist, was jede Datei macht und 
 1. [Technik auf einen Blick](#-technik-auf-einen-blick)
 2. [Ordner und Dateien](#-ordner-und-dateien)
 3. [Architektur](#-architektur)
+   (darin auch: Mehrsprachigkeit, Länder und QR-Codes)
 4. [Spielmechanik](#-spielmechanik)
 5. [Level, Gegner und Endgegner](#-level-gegner-und-endgegner)
 6. [Steuerung](#-steuerung)
@@ -32,7 +33,7 @@ Dieses Dokument erklärt, wie das Spiel aufgebaut ist, was jede Datei macht und 
 | Internet | nicht nötig. Grafik, Schrift und Sound werden im Code erzeugt, nur das Logo ist eine Bilddatei |
 | Speicher | `localStorage` des Browsers, also pro Browser und pro Ordner |
 | Browser | Edge, Chrome, Firefox, Safari (auch iPad/iPhone und Android) |
-| Grösse | ca. 4500 Zeilen Code in 15 JavaScript-Dateien |
+| Grösse | ca. 5300 Zeilen Code in 16 JavaScript-Dateien (ohne Bibliothek) |
 
 ---
 
@@ -45,10 +46,11 @@ vacuubrand-game/
 ├── ▶ START Mac.command            Mac: Chrome/Edge im App-/Vollbildmodus, sonst Safari
 ├── ▶ START Linux + Raspberry Pi.sh  Linux/Pi: Chromium im Kiosk-Modus
 ├── raspberry-pi/                 Kiosk-Start und Autostart-Installation für Raspberry Pi OS
-├── README.md                     Pitch fürs Management
-├── ANLEITUNG.md                  Anleitung fürs Standpersonal
+├── README.md / README.en.md       Pitch fürs Management (deutsch / englisch)
+├── ANLEITUNG.md / GUIDE.en.md     Anleitung fürs Standpersonal (deutsch / englisch)
 ├── TECHNIK.md                    dieses Dokument
-├── TEXTE.md                      alle Spieltexte mit Korrekturvorschlägen
+├── TEXTE.md                      alle Spieltexte mit Korrekturvorschlägen, mit Englisch und Französisch
+├── qr/                           Prüfseite für die QR-Codes (index.html) und QR-Bilder pro Land
 ├── css/style.css                 Aussehen von Anmeldung und Admin-Bereich (HTML-Overlay)
 ├── assets/                       Logo und App-Icons (icon-192.png, icon-512.png)
 ├── manifest.webmanifest          App-Beschreibung für „Zum Home-Bildschirm“ (PWA)
@@ -66,10 +68,11 @@ Die Reihenfolge in `index.html` ist wichtig, weil spätere Dateien Dinge aus fr�
 
 | Datei | Aufgabe |
 |---|---|
-| `config.js` | **Alle Einstellungen**: Rundenzeit, PIN, Zeitabzüge, Boni, Combo, Medaillen, Pumpen mit Werten und Slogans, Schutzausrüstung, Anmeldefelder und Einwilligungstexte. Gut kommentiert, zum Anpassen gedacht |
+| `config.js` | **Alle Einstellungen**: Rundenzeit, PIN, Zeitabzüge, Boni, Combo, Medaillen, Pumpen mit Werten, Schutzausrüstung, Anmeldefelder, Länder mit QR-Links, Gerätesprache. Gut kommentiert, zum Anpassen gedacht |
+| `i18n.js` | **Alle Texte** in Deutsch, Englisch und Französisch (Admin nur Deutsch/Englisch), dazu `L()`, `LA()`, `LT()`, `setLang()`, `deviceLang()`, `contactUrlFor()`. Siehe Abschnitt „Mehrsprachigkeit“ |
 | `util.js` | Hilfsfunktionen: Kachelgrösse `T = 16`, Bildgrösse, `clamp`, Kollision `overlap`, Datum (`todayKey`, `formatDateTime`), `escapeHtml`, `displayName` („Vorname N.“), Vollbild |
-| `font.js` | eigene 5×7-Pixelschrift (nur Grossbuchstaben, Umlaute, Ziffern, Zeichen) und das VACUUBRAND-Schriftlogo |
-| `sprites.js` | erzeugt beim Start **alle Grafiken** im Code: Professor, Haare, Pumpen, Gegner, Moleküle, Kacheln, Deko, Farbthema (`THEME`, `PAL`) und die Zonen-Stile (`ZONE_STYLE`) |
+| `font.js` | eigene 5×7-Pixelschrift (nur Grossbuchstaben, Umlaute, französische Akzente É È Ê Ë À Â Ç Î Ï Ô Û Ù Œ, Ziffern, Zeichen) und das VACUUBRAND-Schriftlogo |
+| `sprites.js` | erzeugt beim Start **alle Grafiken** im Code: Professor, Haare, Pumpen, Gegner, Moleküle, Kacheln, Deko, Flaggen der Länderwahl, Farbthema (`THEME`, `PAL`) und die Zonen-Stile (`ZONE_STYLE`) |
 | `sound.js` | 8-Bit-Musik und Soundeffekte über die WebAudio-API, ohne Audiodateien |
 | `input.js` | Tastatur, Gamepad und Joystick, übersetzt alles in Aktionen (links, springen, saugen …) |
 | `touch.js` | Bildschirm-Tasten für Tablet und Handy, erscheinen beim ersten Antippen. Admin per 3 s Druck aufs Logo |
@@ -77,11 +80,11 @@ Die Reihenfolge in `index.html` ist wichtig, weil spätere Dateien Dinge aus fr�
 | `level.js` | Aufbau des Levels (Kacheln, Blöcke, Gegner, Schilder) und die automatische Erreichbarkeits-Korrektur |
 | `entities.js` | Figuren: Professor (`Player`), Gegner (`Enemy`, `ENEMY_DEFS`), Items (`Item`), Endgegner (`Boss`), Kollision mit Kacheln (`moveBody`) |
 | `game.js` | die **Spielrunde** (`PlayScene`): Bewegung, Saugen, Blöcke, Items, Treffer, Combo, Medaillen, Anzeige (HUD), Hintergrund, Auffangwannen |
-| `scenes.js` | Startbildschirm mit Demo, Ergebnis mit Medaillen, Bestenliste |
+| `scenes.js` | Startbildschirm mit Demo, Länderwahl (`CountryScene`), Ergebnis mit Medaillen, Kontakt-Seite mit QR-Code, Bestenliste |
 | `referenzdaten.js` | die Referenzdaten als JavaScript, damit sie auch offline ohne Dateizugriff ladbar sind |
 | `ui.js` | HTML-Overlay: Anmeldeformular und Admin-Bereich |
 | `main.js` | Start, Szenenwechsel, Spielschleife, Skalierung, Mausklicks, Schnellstart |
-| `lib/qrcode.js` | QR-Code-Erzeugung (fremde Bibliothek „qrcode-generator“ von Kazuhiko Arase, MIT-Lizenz), für den Kontakt-QR-Code auf dem Ergebnisbildschirm. Ziel-Link: `contactUrl` in `config.js` |
+| `lib/qrcode.js` | QR-Code-Erzeugung (fremde Bibliothek „qrcode-generator“ von Kazuhiko Arase, MIT-Lizenz), für den Kontakt-QR-Code nach dem Ergebnis. Ziel-Link: `contactUrl` des gewählten Landes in `config.js` (`countries`) |
 
 ---
 
@@ -102,7 +105,7 @@ Online-Runden werden als Lead mit `isOnline: true`, Spitzname als Vorname und E-
 
 - `touch.js` blendet beim ersten Antippen Bildschirm-Tasten ein (links ◀ ▶; rechts ein Bedienfeld mit SPRUNG oben und SAUGEN unten; Pause oben rechts; kein Sprint und kein Ducken auf Touch). Sie erzeugen virtuelle Tasten (`TouchLeft`, `TouchJump` …) wie das Gamepad. Mehrere Finger gleichzeitig gehen.
 - Die Tasten sind nur während der Runde sichtbar. In Menüs genügt Tippen. Im Hochformat erscheint „Bitte Gerät quer halten“.
-- Texte passen sich an (`hint()` in `util.js`): „TIPPEN = START“ statt „ENTER = START“.
+- Texte passen sich an: `LT('schlüssel')` nimmt auf Touch-Geräten den Text `schlüssel.touch`, z. B. „TIPPEN = START“ statt „ENTER = START“.
 - Admin auf dem Tablet (nur `messe`): 3 Sekunden auf das VACUUBRAND-Logo oben drücken.
 - `manifest.webmanifest` und `sw.js` machen die Online-Version zur installierbaren App („Zum Home-Bildschirm“, Vollbild, Querformat). Der Service Worker cached alle Spieldateien, danach läuft sie ohne Internet. Er ist nur auf `*.github.io` aktiv. **Bei jeder Änderung `VERSION` in `sw.js` erhöhen**, sonst behalten Tablets die alte Version.
 
@@ -116,12 +119,12 @@ Online-Runden werden als Lead mit `isOnline: true`, Spitzname als Vorname und E-
 Das Spiel besteht aus Szenen. Es ist immer genau eine aktiv, `Game.go(neueSzene)` wechselt. Jede Szene hat `update()` (Logik, 60× pro Sekunde) und `draw(ctx)` (Zeichnen), optional `enter()`, `exit()` und `click(x, y)`.
 
 ```
- TitleScene ──Enter──► RegisterScene ──Formular ok──► PlayScene
-     ▲  │ B                (HTML-Overlay)              │ Zeit um / Ausgang
-     │  ▼                                              ▼
-     │ Bestenliste                                ResultScene
-     │                                                 │ Enter / Timeout
-     └───────────────── BoardScene ◄───────────────────┘
+ TitleScene ──Enter──► CountryScene ──Flagge──► RegisterScene ──Formular ok──► PlayScene
+     ▲  │ B             (Land + Sprache)          (HTML-Overlay)              │ Zeit um / Ausgang
+     │  ▼                                                                    ▼
+     │ Bestenliste                                                      ResultScene
+     │                                                                       │ Enter / Timeout
+     └──── BoardScene ◄──Enter / Tippen── ContactScene (QR, bleibt stehen) ◄──┘
 
  Strg+Shift+A  ► AdminScene (HTML-Overlay, mit PIN)
  Strg+Shift+Enter ► PlayScene als „ADMIN“ (Testrunde, wird nicht gespeichert)
@@ -139,12 +142,75 @@ Das Spiel selbst ist ein Canvas mit 320 × 180 Pixeln. Formulare (Anmeldung, Adm
 
 ### Datenfluss einer Runde
 
-1. `RegisterScene` prüft das Formular und speichert oder aktualisiert den Lead (`Store.upsertLead`, erkannt an der E-Mail).
-2. `PlayScene` läuft mit diesem Lead.
-3. Am Ende berechnet `PlayScene.end()` Zeitbonus und Medaillen und übergibt alles an `ResultScene`.
-4. `ResultScene` speichert die Runde (`Store.addRound`), ausser bei Testrunden, und zeigt die Platzierung.
-5. `ContactScene` zeigt einen grossen QR-Code zur Kontaktseite (`contactUrl`, `contactSeconds` in `config.js`). Der QR-Code wird als eigenes, scharfes Bild über das Spiel gelegt (`QRView`), weil er beim Hochskalieren des Pixelbilds unlesbar würde. Ist `contactUrl` leer, entfällt die Seite.
-6. `BoardScene` zeigt die Bestenlisten.
+1. `CountryScene` setzt die Sprache (`setLang`) und übergibt das Land an `RegisterScene`.
+2. `RegisterScene` prüft das Formular und speichert oder aktualisiert den Lead (`Store.upsertLead`, erkannt an der E-Mail), mit `country` und `lang`.
+3. `PlayScene` läuft mit diesem Lead.
+4. Am Ende berechnet `PlayScene.end()` Zeitbonus und Medaillen und übergibt alles an `ResultScene`.
+5. `ResultScene` speichert die Runde (`Store.addRound`) mit Land und Sprache, ausser bei Testrunden, und zeigt die Platzierung.
+6. `ContactScene` zeigt einen grossen QR-Code zur Kontaktseite des gewählten Landes (`contactUrlFor(lead.country)`, Rückfall `contactUrl`). Die Seite bleibt stehen, bis Enter, Tippen oder ein Knopf kommt. Der QR-Code wird als eigenes, scharfes Bild über das Spiel gelegt (`QRView`), weil er beim Hochskalieren des Pixelbilds unlesbar würde. Ist kein Link gesetzt, entfällt die Seite.
+7. `BoardScene` zeigt die Bestenlisten und geht nach `boardAutoReturnSeconds` zum Titel. Der Titel stellt wieder die Gerätesprache ein.
+
+---
+
+## 🌍 Mehrsprachigkeit
+
+Das Spiel läuft auf **Deutsch (de), Englisch (en) und Französisch (fr)**. Alle Texte stehen in `js/i18n.js`:
+
+```js
+const I18N = {
+  lang: 'de',              // aktuelle Spielsprache
+  adminLang: 'de',         // Sprache des Admin-Bereichs (de/en)
+  de: { 'title.sub': 'SAUG DAS LABOR-CHAOS WEG!', 'howto.goal': 'SAUG IN {0} SEK …', … },
+  en: { … }, fr: { … }
+};
+```
+
+| Funktion | Zweck |
+|---|---|
+| `L('schlüssel', a, b)` | Text in der Spielsprache, `{0}`, `{1}` werden durch `a`, `b` ersetzt. Fehlt die Übersetzung, kommt Deutsch |
+| `LT('schlüssel')` | wie `L`, aber auf Touch-Geräten `schlüssel.touch`, falls vorhanden |
+| `LA('schlüssel')` | Text in der Admin-Sprache (für `adm.…` und `csv.…`) |
+| `setLang('fr')` | Sprache umschalten, setzt auch `<html lang>` und beschriftet die Touch-Knöpfe neu |
+| `deviceLang()` | Gerätesprache: in der Messe-Version `CONFIG.defaultLang` (Admin), online die Browsersprache, falls de/en/fr, sonst `defaultLang` |
+
+**Wann gilt welche Sprache?**
+- Titelbild, Bestenliste vom Titel aus und Admin-Schnellstart: Gerätesprache
+- Ab der Länderwahl bis zur Bestenliste nach der Runde: die gewählte Sprache
+- Zurück auf dem Titelbild (auch nach Abbruch oder Timeout): wieder die Gerätesprache (`TitleScene.enter()`)
+
+**Regeln für Texte**
+- Deutsche Texte sind vom Marketing freigegeben bzw. in Prüfung und werden nicht eigenmächtig geändert. Englisch und Französisch sind Entwürfe
+- Neue Texte immer in allen drei Sprachen in `i18n.js` **und** mit Nummer in `TEXTE.md` eintragen
+- Die Pixelschrift kennt Grossbuchstaben, Umlaute und É È Ê Ë À Â Ç Î Ï Ô Û Ù Œ. Unbekannte Zeichen (z. B. « », ’, ₂) nicht verwenden
+- Platz: ca. 50 Zeichen pro Zeile, Schilder und Banner max. 2 Zeilen, Knöpfe und Spalten deutlich weniger. Beim Testen prüft ein Playwright-Skript alle Texte aller Sprachen gegen die Breite ihres Kastens (`Font.width`) und auf fehlende Zeichen
+- HTML-Texte (Anmeldung, Admin) dürfen klein geschrieben sein
+
+## 🏳️ Länder und QR-Codes
+
+Vor jeder Runde wählt der Spieler in der `CountryScene` sein Land und seine Sprache. Die Länder stehen in `CONFIG.countries` (`js/config.js`):
+
+```js
+countries: [
+  { key: 'CH', name: 'SCHWEIZ / SUISSE', lang: 'de', contactUrl: 'https://…' },
+  { key: 'DE', name: 'DEUTSCHLAND',      lang: 'de', contactUrl: 'https://…' },
+  { key: 'UK', name: 'UK / IRELAND',     lang: 'en', contactUrl: 'https://…' },
+  { key: 'FR', name: 'FRANCE',           lang: 'fr', contactUrl: 'https://…' }
+]
+```
+
+- `lang` ist die Sprache, die die Flagge vorwählt. In der Sprachzeile ist jede Sprache wählbar (wichtig für die Schweiz)
+- Die Flaggen sind Pixel-Sprites `SPR.flag_CH` usw. in `sprites.js` (`buildFlags`). Für ein neues Land: Eintrag in `countries` und eine Flagge `flag_<key>` zeichnen
+- Bedienung: ← → Flagge, ↑ ↓ (`Input` Aktion `up`/`down`) zwischen Flaggen und Sprachzeile, Enter/A bestätigt, Esc zurück. Touch und Maus: Sprache antippen (optional), dann Flagge antippen, das startet direkt. Nach `countrySelectSeconds` (60 s) ohne Eingabe zurück zum Titel
+- Vorgewählt ist das erste Land, dessen Sprache der Gerätesprache entspricht
+- Der Schnellstart (`Strg + Shift + Enter`) überspringt die Wahl: Gerätesprache und der allgemeine `contactUrl`
+
+### QR-Codes prüfen und Bilder neu erzeugen
+
+`qr/index.html` lädt `js/lib/qrcode.js` und `js/config.js` und zeigt für jedes Land den QR-Code (gleiche Einstellung wie im Spiel: `qrcode(0, 'L')`, Rand 4 Kästchen), den Link als Text und als Link. Die Seite läuft per Doppelklick und online unter https://gsb-deleven.github.io/vacuubrand-game/qr/. Nach einer Link-Änderung ist sie sofort aktuell.
+
+Die Bilder `qr/QR_CH.png`, `QR_DE.png`, `QR_UK.png`, `QR_FR.png` (10 Pixel pro Kästchen) sind zum Weiterschicken gedacht und müssen nach einer Link-Änderung **neu erzeugt** werden:
+- **Von Hand:** `qr/index.html` öffnen, Rechtsklick auf den QR-Code → „Bild speichern unter …“ und mit dem passenden Namen (z. B. `QR_UK.png`) in den Ordner `qr/` speichern
+- **Automatisch (Claude/Entwicklung):** mit Playwright `qr/index.html` öffnen, von jedem `.card canvas` `toDataURL('image/png')` speichern (`data-key` der Karte = Länderkürzel) und jedes Bild mit jsQR gegen `data-url` prüfen
 
 ---
 
@@ -429,9 +495,9 @@ Ist der Speicher gesperrt (z. B. strenge Datenschutzeinstellung), läuft das Spi
 
 ### Datenmodell
 
-**Lead:** `id`, `firstName`, `lastName`, `company`, `email` (klein geschrieben, eindeutig), `consent`, `newsletter`, `created`, `updated`. Wer sich mit derselben E-Mail wieder anmeldet, aktualisiert seinen Lead.
+**Lead:** `id`, `firstName`, `lastName`, `company`, `email` (klein geschrieben, eindeutig), `consent`, `newsletter`, `country` (CH, DE, UK, FR), `lang` (de, en, fr), `created`, `updated`. Wer sich mit derselben E-Mail wieder anmeldet, aktualisiert seinen Lead.
 
-**Runde:** `id`, `ts` (Zeitstempel), `day` (JJJJ-MM-TT), `eventName`, `leadId`, `score` (Gesamt), `base` (Grundpunkte), `timeBonus`, `medalBonus`, `medals` (Liste), `finished`, `timeLeft`, `pump`, `captures`, `ppe`, `views`, `maxCombo`.
+**Runde:** `id`, `ts` (Zeitstempel), `day` (JJJJ-MM-TT), `eventName`, `leadId`, `country`, `lang`, `score` (Gesamt), `base` (Grundpunkte), `timeBonus`, `medalBonus`, `medals` (Liste), `finished`, `timeLeft`, `pump`, `captures`, `ppe`, `views`, `maxCombo`.
 
 ### Bestenliste
 
@@ -444,11 +510,11 @@ Ist der Speicher gesperrt (z. B. strenge Datenschutzeinstellung), läuft das Spi
 
 | Export | Inhalt |
 |---|---|
-| Leads (CSV) | Vorname, Name, Firma, E-Mail, Einwilligung, Newsletter, bester Score, Platz gesamt, Anzahl Runden, erstmals gespielt |
-| Runden (CSV) | Datum/Zeit, Tag, Messe, Kontaktdaten, Punkte, Grundpunkte, Zeitbonus, Medaillenbonus, Medaillen, Labor gerettet, Eingesaugt, beste Pumpe |
+| Leads (CSV) | Vorname, Name, Firma, E-Mail, Einwilligung, Newsletter, Land, Sprache, bester Score, Platz gesamt, Anzahl Runden, erstmals gespielt |
+| Runden (CSV) | Datum/Zeit, Tag, Messe, Kontaktdaten, Land, Sprache, Punkte, Grundpunkte, Zeitbonus, Medaillenbonus, Medaillen, Labor gerettet, Eingesaugt, beste Pumpe |
 | Sicherung (JSON) | alle Leads und Runden, zum Übertragen auf einen anderen Laptop |
 
-Die CSV-Dateien haben Strichpunkt als Trenner und eine UTF-8-Kennung, damit Excel sie mit Umlauten direkt richtig öffnet. Einträge, die mit `=`, `+`, `-` oder `@` beginnen, werden entschärft, damit Excel keine Formeln ausführt.
+Die Spaltennamen folgen der Admin-Sprache (Deutsch oder Englisch). Die CSV-Dateien haben Strichpunkt als Trenner und eine UTF-8-Kennung, damit Excel sie mit Umlauten direkt richtig öffnet. Einträge, die mit `=`, `+`, `-` oder `@` beginnen, werden entschärft, damit Excel keine Formeln ausführt.
 
 Beim **Laden einer Sicherung** werden nur neue Einträge ergänzt, nichts wird überschrieben.
 
@@ -460,7 +526,7 @@ Beim **Laden einer Sicherung** werden nur neue Einträge ergänzt, nichts wird �
 
 - Keine Datenübertragung ins Internet, keine externen Dienste
 - Einwilligung ist Pflicht (`consentRequired`), Newsletter separat und freiwillig
-- Texte der Einwilligung in `config.js` (`registration`)
+- Texte der Einwilligung und des Datenschutz-Hinweises in `i18n.js` (`reg.consent`, `reg.privacy`), je Sprache. Englisch und Französisch sind Entwürfe und brauchen die Freigabe für UK/Irland bzw. Frankreich
 - Das Anmeldeformular schliesst sich nach `registrationTimeoutSeconds` = 90 s ohne Eingabe, damit keine halb ausgefüllten Daten stehen bleiben
 - Nach der Messe: Admin → „Alle Daten löschen“
 
@@ -475,9 +541,9 @@ Beim **Laden einer Sicherung** werden nur neue Einträge ergänzt, nichts wird �
 | Übersicht | Spieler und Runden heute und gesamt |
 | Top 3 | heute (Tagespreis) und gesamte Messe, mit vollen Kontaktdaten |
 | Export & Sicherung | Leads-CSV, Runden-CSV, JSON-Sicherung speichern und laden, Referenzdaten laden. Nach jedem Export steht der Inhalt zusätzlich in einem Textfeld mit „Inhalt kopieren“, falls der Browser keinen Download zulässt |
-| Einstellungen | Messename, Rundenzeit (30 bis 600 s), Admin-PIN, Tagespreis und Hauptpreis (je max. 17 Zeichen, erscheinen auf Startbildschirm und Bestenliste, nicht in der Online-Demo) |
-| Letzte Runden | die letzten 40 Runden, einzeln löschbar (✕ zweimal klicken) |
-| Gefahrenzone | alle Daten löschen, nur nach Eintippen von „LÖSCHEN“ |
+| Einstellungen | Messename, Rundenzeit (30 bis 600 s), Admin-PIN, Tagespreis und Hauptpreis (je max. 17 Zeichen, erscheinen auf Startbildschirm und Bestenliste, nicht in der Online-Demo), Gerätesprache (`defaultLang`: de/en/fr), Admin-Sprache (`adminLang`: de/en) |
+| Letzte Runden | die letzten 40 Runden mit Land und Sprache, einzeln löschbar (✕ zweimal klicken) |
+| Gefahrenzone | alle Daten löschen, nur nach Eintippen von „LÖSCHEN“ (oder „DELETE“) |
 | Sonstiges | Vollbild, Ton an/aus |
 
 ---
@@ -490,10 +556,10 @@ Alle Dateien lassen sich mit einem normalen Texteditor (z. B. Notepad, besser No
 Am einfachsten im Admin-Bereich. Die Standardwerte stehen oben in `js/config.js`.
 
 **Texte ändern**
-- Pumpen-Slogans, Schutzausrüstung, Anmeldung, Einwilligung, Medaillen: `js/config.js`
-- Schilder im Level: `sign(...)` in `js/level.js`
-- Meldungen im Spiel: `showMsg(...)` und `banner` in `js/game.js`
-- Wichtig: Spieltexte nur in Grossbuchstaben, ca. 50 Zeichen pro Zeile, Zeilenumbruch mit `\n`. Eine vollständige Liste steht in [TEXTE.md](TEXTE.md)
+- **Alle Texte** stehen in `js/i18n.js`, je Sprache ein Block (`de`, `en`, `fr`) mit denselben Schlüsseln. Den Text beim passenden Schlüssel ändern
+- Schilder im Level: `sign(x, 'sign.3')` in `js/level.js` verweist auf den Schlüssel in `i18n.js`
+- Wichtig: Spieltexte nur in Grossbuchstaben, ca. 50 Zeichen pro Zeile, Zeilenumbruch mit `\n`. Eine vollständige Liste mit Nummern steht in [TEXTE.md](TEXTE.md)
+- Neue Texte immer in **allen drei Sprachen** in `i18n.js` und in `TEXTE.md` eintragen
 
 **Punkte, Boni, Schwierigkeit**
 In `js/config.js`: Zeitabzüge, Boni, Combo-Fenster, Saug-Energie, Sprint, Medaillen-Boni. Pumpenwerte (`range`, `power`, `pull`, `tank`) ebenfalls dort.
@@ -507,7 +573,7 @@ In `js/level.js` in der passenden Zone eine Zeile ergänzen, z. B. `e('k', 150);
 3. In `js/level.js` platzieren
 
 **Neue Medaille**
-In `CONFIG.medals` einen Eintrag ergänzen und in `earnedMedals()` (`js/game.js`) die Bedingung eintragen.
+In `CONFIG.medals` einen Eintrag ergänzen, in `earnedMedals()` (`js/game.js`) die Bedingung eintragen und den Namen als `medal.<key>` in `js/i18n.js` (alle Sprachen).
 
 **Musik ändern**
 In `SONGS` (`js/sound.js`) die Notenfolgen `lead` (Melodie) und `bass` bearbeiten. `step` ist die Dauer eines Schritts in Sekunden.
@@ -538,10 +604,11 @@ In `SONGS` (`js/sound.js`) die Notenfolgen `lead` (Melodie) und `bass` bearbeite
 **Grenzen**
 - Ein Level mit fester Anordnung, kein Zufall
 - Daten nur lokal, keine zentrale Bestenliste über mehrere Laptops (Zusammenführen geht über JSON-Sicherungen)
-- Die Pixelschrift kennt nur Grossbuchstaben
+- Die Pixelschrift kennt nur Grossbuchstaben (mit Umlauten und französischen Akzenten)
 
 **Ideen für später**
 - Wissens-Quiz zwischen den Zonen mit Bonuszeit
 - QR-Code am Ende mit Link zur Produktseite der erreichten Pumpe
+- Weitere Länder oder Sprachen (Italienisch für das Tessin und Italien)
 - Weitere Zonen mit anderen Anwendungen und Pumpen
 - Preis-Anzeige, im Admin einstellbar

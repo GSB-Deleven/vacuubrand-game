@@ -17,6 +17,7 @@ const Game = {
   quickStart() {
     if (!this.scene || !(this.scene.allowAdmin || this.scene instanceof RegisterScene)) return;
     Sound.sfx('select');
+    setLang(deviceLang()); // ohne Länderwahl: Gerätesprache, QR-Code mit dem allgemeinen Link
     this.go(new PlayScene({ id: 'ADMIN', firstName: 'ADMIN', lastName: '', isTest: true }));
   },
   update() {
@@ -31,7 +32,7 @@ const Game = {
   draw(ctx) {
     this.scene.draw(ctx);
     if (Input.padToast > 0 && !Overlay.visible) {
-      const txt = 'CONTROLLER VERBUNDEN';
+      const txt = L('pad.connected');
       const w = Font.width(txt) + 10;
       drawPanel(ctx, 160 - w / 2, 163, w, 11);
       Font.draw(ctx, txt, 160, 165, { color: '#7be07b', align: 'center' });
@@ -47,7 +48,7 @@ function showHomeScreenHint() {
   try { if (window.localStorage.getItem('vakuumprof_a2hs')) return; } catch (e) { /* egal */ }
   const el = document.createElement('div');
   el.id = 'a2hs';
-  el.innerHTML = '📲 Für Vollbild: unten auf <b>Teilen</b> tippen und <b>„Zum Home-Bildschirm“</b> wählen.<button aria-label="Schliessen">✕</button>';
+  el.innerHTML = L('a2hs') + '<button aria-label="Schliessen">✕</button>';
   el.querySelector('button').addEventListener('click', () => {
     el.remove();
     try { window.localStorage.setItem('vakuumprof_a2hs', '1'); } catch (e) { /* egal */ }
@@ -63,6 +64,8 @@ function showHomeScreenHint() {
   ctx.imageSmoothingEnabled = false;
 
   Object.assign(CONFIG, Store.loadSettings());
+  I18N.adminLang = CONFIG.adminLang === 'en' ? 'en' : 'de';
+  setLang(deviceLang());
   if (CONFIG.mode === 'online') CONFIG.eventName = 'ONLINE-DEMO';
   document.body.classList.add('mode-' + CONFIG.mode);
   Store.check();

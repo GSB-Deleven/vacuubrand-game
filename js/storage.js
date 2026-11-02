@@ -135,21 +135,22 @@ const Store = {
   exportRoundsCSV() {
     const leads = this.leadMap();
     const rows = this.rounds().slice().sort((a, b) => a.ts - b.ts).map(r => Object.assign({}, r, { lead: leads[r.leadId] || {} }));
-    const yn = v => (v ? 'ja' : 'nein');
+    const yn = v => LA(v ? 'csv.yes' : 'csv.no');
     const text = this.csv([
-      ['Datum/Zeit', r => formatDateTime(r.ts)], ['Tag', r => r.day], ['Messe', r => r.eventName],
-      ['Vorname', r => r.lead.firstName], ['Name', r => r.lead.lastName], ['Firma', r => r.lead.company],
-      ['E-Mail', r => r.lead.email], ['Einwilligung', r => yn(r.lead.consent)], ['Newsletter', r => yn(r.lead.newsletter)],
-      ['Punkte', r => r.score], ['Grundpunkte', r => r.base], ['Zeitbonus', r => r.timeBonus],
-      ['Medaillenbonus', r => r.medalBonus || 0],
-      ['Medaillen', r => (r.medals || []).map(k => (CONFIG.medals.find(m => m.key === k) || { name: k }).name).join(', ')],
-      ['Labor gerettet', r => yn(r.finished)], ['Eingesaugt', r => r.captures], ['Beste Pumpe', r => (CONFIG.pumps[r.pump] || {}).short || '-']
+      [LA('csv.dateTime'), r => formatDateTime(r.ts)], [LA('csv.day'), r => r.day], [LA('csv.event'), r => r.eventName],
+      [LA('csv.firstName'), r => r.lead.firstName], [LA('csv.lastName'), r => r.lead.lastName], [LA('csv.company'), r => r.lead.company],
+      [LA('csv.email'), r => r.lead.email], [LA('csv.consent'), r => yn(r.lead.consent)], [LA('csv.newsletter'), r => yn(r.lead.newsletter)],
+      [LA('csv.country'), r => r.country || r.lead.country || ''], [LA('csv.lang'), r => r.lang || r.lead.lang || ''],
+      [LA('csv.score'), r => r.score], [LA('csv.base'), r => r.base], [LA('csv.timeBonus'), r => r.timeBonus],
+      [LA('csv.medalBonus'), r => r.medalBonus || 0],
+      [LA('csv.medals'), r => (r.medals || []).map(k => LA('medal.' + k)).join(', ')],
+      [LA('csv.finished'), r => yn(r.finished)], [LA('csv.captures'), r => r.captures], [LA('csv.pump'), r => (CONFIG.pumps[r.pump] || {}).short || '-']
     ], rows);
     return this.download('vakuum-professor_runden_' + this.fileStamp() + '.csv', text);
   },
   exportLeadsCSV() {
     const rounds = this.rounds();
-    const yn = v => (v ? 'ja' : 'nein');
+    const yn = v => LA(v ? 'csv.yes' : 'csv.no');
     const rows = this.leads().map(l => {
       const mine = rounds.filter(r => r.leadId === l.id);
       return Object.assign({}, l, {
@@ -159,10 +160,11 @@ const Store = {
       });
     }).sort((a, b) => b.best - a.best);
     const text = this.csv([
-      ['Vorname', r => r.firstName], ['Name', r => r.lastName], ['Firma', r => r.company], ['E-Mail', r => r.email],
-      ['Einwilligung', r => yn(r.consent)], ['Newsletter', r => yn(r.newsletter)],
-      ['Bester Score', r => r.best], ['Platz gesamt', r => r.rankAll], ['Anzahl Runden', r => r.n],
-      ['Erstmals', r => formatDateTime(r.created)]
+      [LA('csv.firstName'), r => r.firstName], [LA('csv.lastName'), r => r.lastName], [LA('csv.company'), r => r.company], [LA('csv.email'), r => r.email],
+      [LA('csv.consent'), r => yn(r.consent)], [LA('csv.newsletter'), r => yn(r.newsletter)],
+      [LA('csv.country'), r => r.country || ''], [LA('csv.lang'), r => r.lang || ''],
+      [LA('csv.best'), r => r.best], [LA('csv.rankAll'), r => r.rankAll], [LA('csv.rounds'), r => r.n],
+      [LA('csv.first'), r => formatDateTime(r.created)]
     ], rows);
     return this.download('vakuum-professor_leads_' + this.fileStamp() + '.csv', text);
   },
@@ -171,7 +173,7 @@ const Store = {
     return this.download('vakuum-professor_backup_' + this.fileStamp() + '.json', JSON.stringify(data, null, 1), 'application/json');
   },
   importJSON(data) {
-    if (!data || data.app !== 'vakuum-professor') throw new Error('Keine gültige Sicherungsdatei.');
+    if (!data || data.app !== 'vakuum-professor') throw new Error(LA('adm.badBackup'));
     const leads = this.leads(), rounds = this.rounds();
     const leadIds = new Set(leads.map(l => l.id)), roundIds = new Set(rounds.map(r => r.id));
     let nl = 0, nr = 0;

@@ -629,11 +629,40 @@ function buildSprites() {
 
   buildHair();
   buildMolecules();
+  buildFlags();
   // 16-Bit-Schattierung auf alle Figuren, Gegner und Items
   for (const key of Object.keys(SPR)) {
     if (/^(boss|pump|bvc|view|ppe_|coin)/.test(key) || ENEMY_SPRITE_NAMES.has(key.replace(/2$/, ''))) shade16(SPR[key]);
   }
   buildDecor();
+}
+
+// Pixel-Flaggen für die Länderwahl (48×32, Schweiz quadratisch 32×32). Schlüssel wie in CONFIG.countries.
+function buildFlags() {
+  SPR.flag_CH = paint(32, 32, P => {
+    P.rect(0, 0, 32, 32, '#d52b1e');
+    P.rect(13, 6, 6, 20, '#ffffff'); P.rect(6, 13, 20, 6, '#ffffff');
+  });
+  SPR.flag_DE = paint(48, 32, P => {
+    P.rect(0, 0, 48, 11, '#1a1c2c'); P.rect(0, 11, 48, 10, '#dd0000'); P.rect(0, 21, 48, 11, '#ffce00');
+  });
+  SPR.flag_FR = paint(48, 32, P => {
+    P.rect(0, 0, 16, 32, '#002395'); P.rect(16, 0, 16, 32, '#ffffff'); P.rect(32, 0, 16, 32, '#ed2939');
+  });
+  // Union Jack, vereinfacht: blaue Fläche, weisse und rote Diagonalen, weisses und rotes Kreuz
+  SPR.flag_UK = paint(48, 32, P => {
+    P.rect(0, 0, 48, 32, '#012169');
+    for (let y = 0; y < 32; y++) {
+      for (let x = 0; x < 48; x++) {
+        const fx = (x + 0.5) * 32 / 48, fy = y + 0.5;
+        const d = Math.min(Math.abs(fy - fx), Math.abs(fy - (32 - fx)));
+        if (d < 1.2) P.px(x, y, '#c8102e');
+        else if (d < 3.4) P.px(x, y, '#ffffff');
+      }
+    }
+    P.rect(19, 0, 10, 32, '#ffffff'); P.rect(0, 11, 48, 10, '#ffffff');
+    P.rect(21, 0, 6, 32, '#c8102e'); P.rect(0, 13, 48, 6, '#c8102e');
+  });
 }
 
 // Grosse, abstehende Haare wie beim Maskottchen-Pin (wird über den Kopf gelegt).

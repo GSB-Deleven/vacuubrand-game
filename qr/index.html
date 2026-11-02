@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>QR-Codes prüfen – Professor Vakuumus</title>
+<style>
+  :root { --navy: #46648c; --gold: #f9b000; --blue: #4f8fcf; --ink: #1a1c2c; }
+  body { margin: 0; background: #e9edf2; color: var(--ink); font: 16px/1.45 system-ui, -apple-system, "Segoe UI", Arial, sans-serif; }
+  header { background: var(--navy); color: #fff; padding: 16px; border-bottom: 4px solid var(--gold); }
+  header h1 { margin: 0 0 4px; font-size: 1.5em; }
+  header p { margin: 0; max-width: 60em; }
+  main { padding: 16px; display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 16px; }
+  .card { background: #fff; border: 2px solid var(--navy); padding: 16px; display: flex; flex-direction: column; gap: 8px; }
+  .card h2 { margin: 0; font-size: 1.25em; color: var(--navy); }
+  .card .lang { color: #5d6b80; font-size: 0.9em; }
+  .card canvas { width: 100%; max-width: 300px; height: auto; image-rendering: pixelated; align-self: center; border: 1px solid #c3cedd; }
+  .card code { display: block; word-break: break-all; background: #f4f7fb; padding: 6px; font-size: 0.8em; }
+  .card a.open { align-self: flex-start; background: var(--gold); color: var(--ink); font-weight: bold; padding: 6px 12px; text-decoration: none; border: 2px solid var(--ink); }
+  .card .png { font-size: 0.85em; }
+  .err { background: #e04848; color: #fff; padding: 12px; margin: 16px; }
+  footer { padding: 0 16px 24px; color: #5d6b80; font-size: 0.9em; max-width: 60em; }
+</style>
+</head>
+<body>
+<header>
+  <h1>QR-Codes prüfen</h1>
+  <p>Diese Seite zeigt die QR-Codes, die am Ende einer Runde auf der Kontakt-Seite erscheinen, für jedes Land. Mit dem Handy scannen oder auf „Link öffnen“ klicken.
+     Die Links stehen in <b>js/config.js</b> (Abschnitt <b>countries</b>). Nach einer Änderung dort diese Seite neu laden (F5), dann ist sie aktuell.</p>
+</header>
+<div id="msg"></div>
+<main id="list"></main>
+<footer>
+  <p>Die Bilder <b>QR_CH.png</b>, <b>QR_DE.png</b>, <b>QR_UK.png</b> und <b>QR_FR.png</b> in diesem Ordner sind zum Weiterschicken gedacht.
+     Sie werden nach einer Link-Änderung nicht automatisch neu erzeugt (Anleitung in TECHNIK.md, Abschnitt „QR-Codes“). Diese Seite ist dagegen immer aktuell.</p>
+</footer>
+<!-- Gleiche Bibliothek und gleiche Einstellungen wie im Spiel (qrcode(0, 'L')) -->
+<script src="../js/lib/qrcode.js"></script>
+<script src="../js/config.js"></script>
+<script>
+'use strict';
+(function () {
+  const LANG = { de: 'Deutsch', en: 'Englisch', fr: 'Französisch' };
+  const list = document.getElementById('list');
+  if (typeof CONFIG === 'undefined' || typeof qrcode === 'undefined') {
+    document.getElementById('msg').innerHTML = '<div class="err">js/config.js oder js/lib/qrcode.js konnte nicht geladen werden.</div>';
+    return;
+  }
+  const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  // QR-Code als Bild: 10 Pixel pro Kästchen und weisser Rand von 4 Kästchen (wie im Spiel)
+  function qrCanvas(text) {
+    const q = qrcode(0, 'L'); q.addData(text); q.make();
+    const n = q.getModuleCount(), m = 10, px = (n + 8) * m;
+    const c = document.createElement('canvas'); c.width = px; c.height = px;
+    const g = c.getContext('2d');
+    g.fillStyle = '#ffffff'; g.fillRect(0, 0, px, px);
+    g.fillStyle = '#000000';
+    for (let r = 0; r < n; r++) for (let col = 0; col < n; col++) if (q.isDark(r, col)) g.fillRect((col + 4) * m, (r + 4) * m, m, m);
+    return c;
+  }
+  const entries = (CONFIG.countries || []).map(c => ({ key: c.key, title: c.name, sub: 'Sprache vorgewählt: ' + (LANG[c.lang] || c.lang), url: c.contactUrl || CONFIG.contactUrl, png: 'QR_' + c.key + '.png' }));
+  entries.push({ key: 'ALLGEMEIN', title: 'Ohne Land (Schnellstart)', sub: 'Allgemeiner Link contactUrl, gilt nur, wenn kein Land gewählt wurde', url: CONFIG.contactUrl });
+  for (const e of entries) {
+    const card = document.createElement('section');
+    card.className = 'card';
+    card.dataset.key = e.key;
+    card.innerHTML = '<h2>' + esc(e.title) + '</h2><div class="lang">' + esc(e.sub) + '</div>';
+    const canvas = qrCanvas(e.url);
+    canvas.dataset.url = e.url;
+    card.appendChild(canvas);
+    card.insertAdjacentHTML('beforeend', '<code>' + esc(e.url) + '</code>' +
+      '<a class="open" href="' + esc(e.url) + '" target="_blank" rel="noopener">Link öffnen</a>' +
+      (e.png ? '<div class="png">Bild zum Weiterschicken: <a href="' + e.png + '" download>' + e.png + '</a></div>' : ''));
+    list.appendChild(card);
+  }
+})();
+</script>
+</body>
+</html>

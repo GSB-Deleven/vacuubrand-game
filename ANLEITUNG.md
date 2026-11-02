@@ -1,5 +1,7 @@
 # Professor Vakuumus: Anleitung fürs Standpersonal
 
+🇬🇧 English version: **[GUIDE.en.md](GUIDE.en.md)**
+
 Ein kleines Retro-Jump'n'Run (Pixelart wie auf dem Game Boy) für den Messestand.
 Der verrückte Professor (oranges Wuschelhaar, runde Brille – wie unser Maskottchen) saugt mit
 seiner Saugpistole das Labor-Chaos weg. Aus den **Kolben-Blöcken** holt er sich immer stärkere Pumpen,
@@ -112,9 +114,15 @@ Sprinten geht auch mit Ctrl.
 ## Ablauf am Stand
 
 1. Titelbild mit Demo lockt Besucher an. **B** (oder Klick auf den Knopf) zeigt die Bestenliste.
-2. **Enter** → Anmeldung: Vorname, Name, Firma, E-Mail + Einwilligung (Pflicht), Newsletter (freiwillig).
-3. Kurze Anleitung → Countdown → spielen.
-4. Ergebnis mit Platzierung (heute / ganze Messe) → Bestenliste → zurück zum Titelbild.
+2. **Enter** → **Land und Sprache wählen:** vier Flaggen (Schweiz, Deutschland, UK/Irland, Frankreich), darunter die Sprachen DEUTSCH · ENGLISH · FRANÇAIS.
+   - Tastatur/Gamepad: ← → Flagge, ↑ ↓ wechselt zur Sprachzeile, Enter bestätigt. Die Flagge wählt die Landessprache vor (Schweiz: Deutsch), in der Sprachzeile geht jede andere Sprache.
+   - Tablet/Handy: zuerst die Sprache antippen (nur nötig, wenn sie anders sein soll), dann auf die Flagge tippen. Das startet direkt.
+   - Nach 60 Sekunden ohne Eingabe geht es zurück zum Titelbild.
+3. Anmeldung in der gewählten Sprache: Vorname, Name, Firma, E-Mail + Einwilligung (Pflicht), Newsletter (freiwillig).
+4. Kurze Anleitung → Countdown → spielen.
+5. Ergebnis mit Platzierung (heute / ganze Messe).
+6. **Kontakt-Seite mit grossem QR-Code** zu den Ansprechpartnern des gewählten Landes. Sie bleibt stehen, bis jemand Enter drückt, tippt oder einen Knopf drückt. So hat der Besucher Zeit zum Scannen.
+7. Bestenliste → nach 20 Sekunden zurück zum Titelbild, wieder in der Gerätesprache.
 
 In der öffentlichen Bestenliste erscheint nur **„Vorname N.“**. Wer mehrmals spielt (gleiche E-Mail),
 steht mit seinem besten Ergebnis drin.
@@ -123,7 +131,8 @@ steht mit seinem besten Ergebnis drin.
 
 Auf dem Titelbild, der Bestenliste oder im Anmeldeformular **Strg + Shift + Enter** drücken:
 Das Spiel startet sofort mit dem Spieler **ADMIN**. Diese Testrunden werden **nicht** gespeichert
-und erscheinen weder in der Bestenliste noch im Export.
+und erscheinen weder in der Bestenliste noch im Export. Die Länderwahl wird übersprungen: Es gilt die Gerätesprache,
+der QR-Code am Ende zeigt den allgemeinen Kontakt-Link.
 
 ## Admin-Bereich (für das Standpersonal)
 
@@ -133,6 +142,9 @@ Auf dem Titelbild **Strg + Shift + A** drücken, PIN eingeben (Standard **1234**
 - **Leads (CSV/Excel)** und **Alle Runden (CSV/Excel)** exportieren → landen im Download-Ordner
 - **Sicherung speichern / laden** (JSON) – z.B. um Daten auf einen anderen Laptop zu übertragen
 - Messename, Rundenzeit, PIN, Tagespreis und Hauptpreis ändern (Preise erscheinen auf Startbildschirm und Bestenliste)
+- **Gerätesprache:** Sprache des Titelbildes (Deutsch, Englisch oder Französisch). Nach jeder Runde springt das Spiel dorthin zurück. Auf einer Messe in Frankreich z. B. auf Französisch stellen.
+- **Admin-Sprache:** Deutsch oder Englisch, z. B. für das Team in UK
+- Im Export stehen pro Runde und pro Lead zusätzlich **Land** (CH, DE, UK, FR) und **Sprache** (de, en, fr)
 - **Referenzdaten laden (Test):** lädt Beispieldaten mit erfundenen Personen (Ordner `daten/`: JSON und CSV-Beispiele), um Bestenliste und Export auszuprobieren – vor der Messe mit „Alle Daten löschen“ wieder entfernen
 - Einzelne Runden löschen (✕ zweimal klicken), **alle Daten löschen** nach der Messe (LÖSCHEN ins Feld tippen)
 - Nach jedem Export erscheint der Inhalt zusätzlich in einem Textfeld mit „Inhalt kopieren“ – praktisch, falls der Browser keinen Download erlaubt (z.B. in der Online-Vorschau)
@@ -143,15 +155,26 @@ dieses Laptops. Wenn jemand den Browserverlauf/Cookies löscht, sind sie weg.
 ## Datenschutz
 
 Alle Daten bleiben lokal auf dem Laptop, es wird nichts ins Internet gesendet.
-Einwilligungstext und Hinweise stehen in `js/config.js` und sollten vor der Messe
-kurz mit der Marketing-/Datenschutzstelle abgestimmt werden. Nach der Messe im Admin-Bereich
+Einwilligungstext und Hinweise stehen in `js/i18n.js` (in allen drei Sprachen) und sollten vor der Messe
+kurz mit der Marketing-/Datenschutzstelle abgestimmt werden. Die englische und französische Fassung sind
+Entwürfe und brauchen die Freigabe für UK/Irland bzw. Frankreich. Nach der Messe im Admin-Bereich
 **Alle Daten löschen**.
+
+## QR-Codes prüfen
+
+Im Ordner `qr/` liegt eine Prüfseite: **`qr/index.html`** doppelklicken (läuft ohne Internet) oder online
+**https://gsb-deleven.github.io/vacuubrand-game/qr/** öffnen. Sie zeigt für jedes Land den QR-Code gross,
+dazu den Link als Text und zum Anklicken. Einfach mit dem Handy scannen und schauen, ob die richtige Seite kommt.
+
+Die Links stehen in `js/config.js` im Abschnitt `countries` und lassen sich dort austauschen. Die Prüfseite ist danach
+sofort aktuell (F5). Für E-Mails liegen die Bilder `QR_CH.png`, `QR_DE.png`, `QR_UK.png` und `QR_FR.png` im gleichen Ordner.
 
 ## Anpassen
 
 Die meisten Einstellungen stehen gut kommentiert in **`js/config.js`**:
-Rundenzeit, Punkte, Zeitabzüge, Saug-Energie, Sprint, Item-Boni, Pumpen-Namen und -Slogans,
-Schutzausrüstung, Anmeldefelder und Texte.
+Rundenzeit, Punkte, Zeitabzüge, Saug-Energie, Sprint, Item-Boni, Pumpen, Schutzausrüstung, Anmeldefelder,
+Länder mit ihren QR-Links und die Gerätesprache.
+Alle **Texte** (Deutsch, Englisch, Französisch) stehen in **`js/i18n.js`**.
 Datei mit einem Texteditor öffnen, ändern, speichern, im Browser **F5** drücken.
 
 ## Technik
