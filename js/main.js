@@ -3,7 +3,10 @@
 const Game = {
   scene: null,
   t: 0,
+  updateReady: false, // neue Version geladen: beim nächsten Titelbildschirm neu starten
   go(scene) {
+    // Nie mitten in einer Runde neu laden, erst wenn wieder der Titel kommt
+    if (this.updateReady && scene instanceof TitleScene) { location.reload(); return; }
     if (this.scene && this.scene.exit) this.scene.exit();
     this.scene = scene;
     Input.clear();
@@ -114,6 +117,14 @@ function showHomeScreenHint() {
   window.__game = Game; // für Tests
   // Offline-Fähigkeit (PWA) nur auf GitHub Pages
   if ('serviceWorker' in navigator && /\.github\.io$/i.test(location.hostname)) {
-    navigator.serviceWorker.register('sw.js').catch(() => {});
+    // Gab es schon eine ältere Version, übernimmt die neue sofort (skipWaiting in sw.js).
+    // Dann neu laden: gleich, wenn der Titel zu sehen ist, sonst nach der laufenden Runde.
+    const hadOld = !!navigator.serviceWorker.controller;
+    navigator.serviceWorker.addEventListener('controllerchange', () => {
+      if (!hadOld || Game.updateReady) return;
+      Game.updateReady = true;
+      if (Game.scene instanceof TitleScene) location.reload();
+    });
+    navigator.serviceWorker.register('sw.js', { updateViaCache: 'none' }).catch(() => {});
   }
 })();
