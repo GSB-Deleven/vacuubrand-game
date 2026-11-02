@@ -1,8 +1,13 @@
-## 🇩🇪 Professor Vacuumus 0.9.0 (Vorabversion)
+## 🇩🇪 Professor Vacuumus 0.9.1 (Vorabversion)
 
 Das VACUUBRAND Messespiel zum Herunterladen. Läuft ohne Installation und ohne Internet.
 
 > ⚠️ **Vorabversion:** Die Tests auf echten Geräten (Tablet, iPhone, Mac, Raspberry Pi, Arcade-Joystick) und die Freigabe der Texte durch das Marketing stehen noch aus.
+
+**Neu in 0.9.1**
+- **Länderwahl klarer:** Flagge antippen markiert nur das Land und stellt die passende Sprache ein (UK = Englisch, Frankreich = Französisch). Die Sprache kann man darunter noch ändern, der grosse Knopf **START** startet das Spiel.
+- **Admin-Schalter „Nur Spitzname“:** Für Anlässe ohne Lead-Erfassung geben die Leute nur einen Spitznamen ein, wie in der Online-Version. Solange er an ist, zeigt der Admin einen gelben Balken. Spitznamen erscheinen nicht im Leads-Export.
+- Anleitung und Beschreibung (Deutsch und Englisch) neu gestaltet, mit frischen Screenshots.
 
 **Installieren**
 1. Unten bei „Assets“ die Datei **`Professor-Vacuumus-v….zip`** herunterladen.
@@ -17,11 +22,16 @@ Alles Weitere steht in `ANLEITUNG.md` im Ordner. Die Versionsnummer steht im Adm
 
 ---
 
-## 🇬🇧 Professor Vacuumus 0.9.0 (pre-release)
+## 🇬🇧 Professor Vacuumus 0.9.1 (pre-release)
 
 The VACUUBRAND trade show game to download. Runs without installation and without internet.
 
 > ⚠️ **Pre-release:** Tests on real devices (tablet, iPhone, Mac, Raspberry Pi, arcade joystick) and the marketing approval of the texts are still pending.
+
+**New in 0.9.1**
+- **Clearer country selection:** tapping a flag only marks the country and sets the matching language (UK = English, France = French). The language can still be changed below it, the big **START** button starts the game.
+- **Admin switch "Nickname only":** for events without lead capture, people only enter a nickname, like in the online version. While it is on, the admin area shows a yellow bar. Nicknames do not appear in the leads export.
+- Guide and description (German and English) redesigned with fresh screenshots.
 
 **Installation**
 1. Under "Assets" below, download **`Professor-Vacuumus-v….zip`**.
