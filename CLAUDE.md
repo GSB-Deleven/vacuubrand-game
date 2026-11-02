@@ -34,6 +34,9 @@ Siehe `TECHNIK.md` (Dateien, Mechanik, Datenformat, Mehrsprachigkeit, Länder, K
 ## Arbeitsweise
 - Arbeits-Branch `claude/vakuum-browsergame-concept-ir16iu`; nach jedem gemergten PR neu auf `origin/main` aufsetzen. Änderungen per PR nach `main`; David möchte, dass Claude nach erfolgreichem Test selbst mergt. PRs nicht beobachten (keine Abos).
 - Vor dem PR testen: Playwright (Chromium unter `/opt/pw-browsers`) mit Screenshots, Konsole ohne Fehler. Bewährte Checks: Bot-Durchlauf, Erreichbarkeit aller Blöcke/Gegner, Touch (iPad/iPhone-Emulation), Gamepad-Stubs, QR mit jsQR aus Screenshots dekodieren.
+- Testskripte liegen nicht im Repo; die Rezepte zum Neuschreiben stehen in TECHNIK.md („Testen und Fehlersuche“, Abschnitt „Test-Rezepte für Claude“).
+- Bei einem Merge-Konflikt mit `main` (andere Sitzungen mergen parallel): auf `origin/main` rebasen und `VERSION` in `sw.js` über die Zahl auf `main` hinaus erhöhen.
+- vacuubrand.com ist aus der Cloud-Umgebung per curl gesperrt; Seiten (z. B. Ansprechpartner-Links) mit dem Firecrawl-Werkzeug prüfen.
 - Echte Geräte (iPhone, Mac, Raspberry Pi, Arcade-Joystick) kann Claude nicht testen: ehrlich sagen und Test-Issues nutzen.
 - Das Artifact auf claude.ai wird nicht mehr gepflegt; Testen läuft über GitHub Pages.
 
@@ -50,4 +53,4 @@ Siehe `TECHNIK.md` (Dateien, Mechanik, Datenformat, Mehrsprachigkeit, Länder, K
   - Discussions-Kategorien und Willkommens-Beitrag (#13, Text in `docs/discussions-willkommen.md`)
   - Secret für die Claude-Automatik (#14)
   - Erste Wiki-Seite anlegen (#15); danach `docs/wiki/*.md` ins Wiki übertragen (Claude)
-- **Offen fachlich/Tests:** Texte durchs Marketing (#6, jetzt auch EN/FR-Entwürfe; Einwilligung/Datenschutz für UK und FR durch Recht/Datenschutz), genauere Kontakt-Links pro Land (David), Datenschutz (#7), Preise (#8), PIN/Personal (#5), Hardware (#9), Tablet (#10), iPhone (#27), Raspberry Pi (#28), Arcade-Joystick (#29), QR-Code mit echtem iPhone bestätigen.
+- **Offen fachlich/Tests:** Texte durchs Marketing (#6, jetzt auch EN/FR-Entwürfe; Einwilligung/Datenschutz für UK und FR durch Recht/Datenschutz), Kontakt-Links pro Land sind seit PR #42 direkt (UK braucht `/gb`, nicht `/uk`); David hat sie noch nicht auf dem echten iPhone gescannt, Datenschutz (#7), Preise (#8), PIN/Personal (#5), Hardware (#9), Tablet (#10), iPhone (#27), Raspberry Pi (#28), Arcade-Joystick (#29), QR-Code mit echtem iPhone bestätigen.
