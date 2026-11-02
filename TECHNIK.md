@@ -49,6 +49,7 @@ vacuubrand-game/
 ├── README.md / README.en.md       Pitch fürs Management (deutsch / englisch)
 ├── ANLEITUNG.md / GUIDE.en.md     Anleitung fürs Standpersonal (deutsch / englisch)
 ├── TECHNIK.md                    dieses Dokument
+├── RELEASE_NOTES.md              Text für die Download-Version (Release), Deutsch und Englisch
 ├── TEXTE.md                      alle Spieltexte mit Korrekturvorschlägen, mit Englisch und Französisch
 ├── qr/                           Prüfseite für die QR-Codes (index.html, DE/EN) und QR-Bilder pro Land und ohne Land (QR_ALLE.png)
 ├── css/style.css                 Aussehen von Anmeldung und Admin-Bereich (HTML-Overlay)
@@ -56,7 +57,8 @@ vacuubrand-game/
 ├── manifest.webmanifest          App-Beschreibung für „Zum Home-Bildschirm“ (PWA)
 ├── sw.js                         Service Worker: Online-Version offline verfügbar machen
 ├── CLAUDE.md                     Regeln für Claude und Mitwirkende
-├── .github/                      Claude-Automatik, Vorlagen für Issues, Discussions und PRs
+├── .gitattributes                was nicht ins Download-ZIP kommt (export-ignore)
+├── .github/                      Release-Workflow, Claude-Automatik, Vorlagen für Issues, Discussions und PRs
 ├── daten/                        Beispieldaten (erfundene Personen) als JSON und CSV
 ├── docs/                         Screenshots für die Dokumentation
 └── js/                           der eigentliche Spielcode (siehe unten)
@@ -112,6 +114,7 @@ Online-Runden werden als Lead mit `isOnline: true`, Spitzname als Vorname und E-
 ### GitHub Pages und Automatik
 
 - GitHub Pages veröffentlicht bei jedem Push auf `main` automatisch das ganze Repo (Einstellung: Settings → Pages → „Deploy from a branch“, `main`, `/ (root)`). Die Datei `.nojekyll` sorgt dafür, dass die Dateien unverändert ausgeliefert werden.
+- `.github/workflows/release.yml` baut die **Download-Version**: Sobald ein Tag `v…` (z. B. `v0.9.0`) gepusht wird, packt `git archive --prefix=Professor-Vacuumus/` das Repo in `Professor-Vacuumus-v….zip`, erstellt das Release mit dem Text aus `RELEASE_NOTES.md` und hängt das ZIP an. Tags mit `v0.` oder `-` (z. B. `v1.0.0-beta`) werden als Vorabversion (Pre-release) markiert. Was nicht ins ZIP gehört (`.github/`, `docs/wiki/`, `docs/discussions-willkommen.md`, `CLAUDE.md`, Punkt-Dateien), steht mit `export-ignore` in `.gitattributes`. `git archive` übernimmt die Ausführbarkeit der Start-Dateien (`.command`, `.sh`) ins ZIP; Windows ignoriert sie, Mac und Pi behalten sie beim Entpacken normalerweise. Falls nicht: `chmod +x` (siehe ANLEITUNG.md). Download-Link für alle: https://github.com/GSB-Deleven/vacuubrand-game/releases/latest
 - `.github/workflows/claude.yml` startet Claude, wenn in einem Issue oder Kommentar `@claude` steht oder das Label `claude` gesetzt wird. Claude setzt die Aufgabe auf einem eigenen Branch um und bereitet einen Pull Request vor. Voraussetzung: Repository-Secret `CLAUDE_CODE_OAUTH_TOKEN` (Claude-Abo, erzeugt mit `claude setup-token`) oder `ANTHROPIC_API_KEY`. Regeln für Claude stehen in `CLAUDE.md`.
 
 ### Szenen
@@ -549,6 +552,7 @@ Beim **Laden einer Sicherung** werden nur neue Einträge ergänzt, nichts wird �
 
 | Bereich | Funktion |
 |---|---|
+| Version | klein unter der Überschrift, aus `CONFIG.version` (`js/config.js`) |
 | Übersicht | Spieler und Runden heute und gesamt |
 | Top 3 | heute (Tagespreis) und gesamte Messe, mit vollen Kontaktdaten |
 | Export & Sicherung | Leads-CSV, Runden-CSV, JSON-Sicherung speichern und laden, Referenzdaten laden. Nach jedem Export steht der Inhalt zusätzlich in einem Textfeld mit „Inhalt kopieren“, falls der Browser keinen Download zulässt |
@@ -585,6 +589,14 @@ In `js/level.js` in der passenden Zone eine Zeile ergänzen, z. B. `e('k', 150);
 
 **Neue Medaille**
 In `CONFIG.medals` einen Eintrag ergänzen, in `earnedMedals()` (`js/game.js`) die Bedingung eintragen und den Namen als `medal.<key>` in `js/i18n.js` (alle Sprachen).
+
+**Neue Version veröffentlichen (Download-ZIP auf GitHub)**
+1. In `js/config.js` `version` erhöhen (z. B. `'0.9.1'`), in `sw.js` `VERSION` erhöhen
+2. `RELEASE_NOTES.md` anpassen (Deutsch zuerst, dann Englisch): Versionsnummer, was neu ist, Hinweis auf Vorabversion solange `0.x`
+3. Per Pull Request nach `main` mergen
+4. Tag auf den Merge-Commit setzen und pushen: `git fetch origin main && git tag v0.9.1 origin/main && git push origin v0.9.1`
+5. Unter Actions läuft „Release erstellen“; nach ca. 1 Minute steht das Release mit ZIP unter https://github.com/GSB-Deleven/vacuubrand-game/releases. `v0.…` und Versionen mit `-` (z. B. `v1.0.0-beta`) erscheinen als Vorabversion, ab `v1.0.0` als normale Version
+6. Ging etwas schief: Fehler per PR beheben, dann altes Release und Tag löschen (Release-Seite → Delete; `git push origin :refs/tags/v0.9.1`) und den Tag neu setzen
 
 **Musik ändern**
 In `SONGS` (`js/sound.js`) die Notenfolgen `lead` (Melodie) und `bass` bearbeiten. `step` ist die Dauer eines Schritts in Sekunden.

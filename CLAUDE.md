@@ -40,6 +40,9 @@ Siehe `TECHNIK.md` (Dateien, Mechanik, Datenformat, Mehrsprachigkeit, Länder, K
 - Echte Geräte (iPhone, Mac, Raspberry Pi, Arcade-Joystick) kann Claude nicht testen: ehrlich sagen und Test-Issues nutzen.
 - Das Artifact auf claude.ai wird nicht mehr gepflegt; Testen läuft über GitHub Pages.
 
+### Neue Version veröffentlichen (Download-ZIP)
+Release-Seite: https://github.com/GSB-Deleven/vacuubrand-game/releases/latest. `CONFIG.version` (js/config.js, steht klein im Admin) und `sw.js` VERSION erhöhen, `RELEASE_NOTES.md` (DE zuerst, dann EN) anpassen, per PR mergen, dann Tag auf den Merge-Commit setzen und pushen (`git tag v0.9.1 origin/main && git push origin v0.9.1`). `.github/workflows/release.yml` baut mit `git archive` das ZIP `Professor-Vacuumus-vX.Y.Z.zip` und erstellt das Release (`v0.*` oder mit `-` = Pre-release). Was nicht ins ZIP soll: `export-ignore` in `.gitattributes`. Details: TECHNIK.md, Kochrezept „Neue Version veröffentlichen“.
+
 ### Bei Issues
 1. Kurz im Issue bestätigen, was umgesetzt wird.
 2. Auf eigenem Branch umsetzen, im Browser testen (Konsole ohne Fehler), Pull Request mit „Schliesst #Nr.“ öffnen.

@@ -1,0 +1,41 @@
+# Download-Version (Release) automatisch erstellen.
+# Auslöser: ein Tag, der mit "v" beginnt, z. B. v0.9.0 (Ablauf: TECHNIK.md, "Neue Version veröffentlichen").
+# Baut Professor-Vacuumus-vX.Y.Z.zip mit "git archive" (Dateien aus .gitattributes mit export-ignore
+# bleiben draussen), erstellt das Release mit dem Text aus RELEASE_NOTES.md und hängt das ZIP an.
+# Versionen mit "v0." am Anfang oder mit "-" (z. B. v1.0.0-beta) werden als Vorabversion (Pre-release) markiert.
+name: Release erstellen
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: ZIP bauen
+        run: |
+          ZIP="Professor-Vacuumus-${GITHUB_REF_NAME}.zip"
+          # git archive übernimmt die Ausführbarkeit der Start-Dateien (.command, .sh) ins ZIP
+          git archive --format=zip --prefix=Professor-Vacuumus/ -o "$ZIP" "$GITHUB_REF_NAME"
+          unzip -l "$ZIP"
+          echo "ZIP=$ZIP" >> "$GITHUB_ENV"
+
+      - name: Release erstellen
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          PRE=""
+          case "$GITHUB_REF_NAME" in
+            v0.*|*-*) PRE="--prerelease" ;;
+          esac
+          gh release create "$GITHUB_REF_NAME" "$ZIP" \
+            --title "Professor Vacuumus ${GITHUB_REF_NAME}" \
+            --notes-file RELEASE_NOTES.md \
+            --verify-tag $PRE

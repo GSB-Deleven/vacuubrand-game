@@ -137,6 +137,7 @@ input.bad { border-color: #ff6b6b; }
 
 .admin { width: 90%; font-weight: normal; font-size: 0.8em; }
 .admin p { margin: 0.3em 0; }
+.admin .version { font-size: 0.8em; opacity: 0.75; margin-top: -0.4em; }
 .admin .cols { display: grid; grid-template-columns: 1fr 1fr; gap: 1em; }
 .admin ol { margin: 0; padding-left: 1.4em; }
 .admin table { width: 100%; border-collapse: collapse; }

@@ -50,6 +50,21 @@ Der goldene Combo-Kasten oben links zeigt die Stufe und einen ablaufenden Timer.
 
 Jede Zone hat ihre eigene Musik, die Dampf-Krake ein eigenes Boss-Thema.
 
+## Herunterladen und installieren
+
+Die fertige Download-Version liegt auf GitHub: **[Neueste Version herunterladen](https://github.com/GSB-Deleven/vacuubrand-game/releases/latest)**.
+Dort unten bei „Assets“ die Datei `Professor-Vacuumus-v….zip` laden (nicht „Source code“).
+
+| System | So geht's |
+|---|---|
+| 🪟 Windows | ZIP rechtsklicken → **Alle extrahieren**. Nicht direkt im ZIP starten. Im Ordner `Professor-Vacuumus` die Datei `▶ START Windows.bat` doppelklicken. Fragt Windows „Der Computer wurde geschützt“: **Weitere Informationen** → **Trotzdem ausführen** |
+| 🍎 Mac | ZIP doppelklicken (entpackt automatisch). `▶ START Mac.command` beim ersten Mal mit Rechtsklick → **Öffnen** → Öffnen starten. Kommt „keine Berechtigung“: im Terminal `chmod +x ` eintippen, die Datei ins Fenster ziehen, Enter |
+| 🍓 Raspberry Pi / Linux | ZIP entpacken (Rechtsklick → Hier entpacken, oder im Terminal `unzip Professor-Vacuumus-v….zip`). `▶ START Linux + Raspberry Pi.sh` doppelklicken. Startet es nicht: im Ordner im Terminal `chmod +x *.sh raspberry-pi/*.sh`. Automatischer Start beim Einschalten: `raspberry-pi/README.md` |
+
+Welche Version läuft, steht klein oben im Admin-Bereich (z. B. „Version 0.9.0“).
+Bei einer neuen Version: Bestenliste vorher im Admin sichern (JSON), neuen Ordner an **dieselbe Stelle** legen
+(alten ersetzen), sonst sieht das Spiel die bisherige Bestenliste nicht. Notfalls die Sicherung im Admin wieder laden.
+
 ## Starten – ohne Installation, ohne Internet
 
 1. Den ganzen Ordner auf den Messe-Laptop kopieren (z.B. auf den Desktop).
@@ -140,6 +155,7 @@ der QR-Code am Ende zeigt die Ansprechpartner weltweit (alle Länder).
 
 Auf dem Titelbild **Strg + Shift + A** drücken, PIN eingeben (Standard **1234** – bitte ändern!).
 
+- Klein unter der Überschrift steht die **Version** (z. B. „Version 0.9.0“), damit man sieht, welche Version läuft
 - **Top 3 heute** (Tagespreis) und **Top 3 gesamte Messe** mit vollen Kontaktdaten
 - **Leads (CSV/Excel)** und **Alle Runden (CSV/Excel)** exportieren → landen im Download-Ordner
 - **Sicherung speichern / laden** (JSON) – z.B. um Daten auf einen anderen Laptop zu übertragen
