@@ -360,7 +360,7 @@ Die BVC professional saugt alle Gegner ein. `liquid: true` (d, t, n, e, w) ist n
 | Ton an/aus | M | | |
 | Vollbild | F | | |
 
-**Touch (Tablet, Handy):** links ◀ ▶ zum Laufen, rechts ein Bedienfeld mit **SPRUNG** oben und **SAUGEN** unten (halten). Die Felder werden nach Fingerposition ausgewertet (`zoneCodes()` in `touch.js`): man kann ohne Loslassen wischen, und ein Daumen auf der Naht zwischen SPRUNG und SAUGEN drückt beide. Ein zweiter Finger geht natürlich auch. Oben rechts **II** für Pause. Sprinten und Ducken gibt es auf Touch nicht. Tippen startet, schaltet weiter und beendet die Pause. Eine Runde lässt sich per Touch absichtlich nicht abbrechen.
+**Touch (Tablet, Handy):** links ◀ ▶ zum Laufen, rechts ein Bedienfeld mit **SPRUNG** oben und **SAUGEN** unten (halten). Die Felder werden nach Fingerposition ausgewertet (`zoneCodes()` in `touch.js`): man kann ohne Loslassen wischen, und ein Daumen auf der Naht zwischen SPRUNG und SAUGEN drückt beide. Ein zweiter Finger geht natürlich auch. Oben rechts **II** für Pause. Sprinten und Ducken gibt es auf Touch nicht, darum fehlen dort auch die SPRINT-Leiste und der Sprint-Hinweis in der Anleitung. Tippen startet, schaltet weiter und beendet die Pause. Eine Runde lässt sich per Touch absichtlich nicht abbrechen.
 
 **Tastenkürzel fürs Personal:**
 - `Strg + Shift + A`: Admin-Bereich (PIN)

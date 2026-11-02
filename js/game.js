@@ -672,7 +672,8 @@ class PlayScene {
     const heat = p.overheat && p.bvcT <= 0;
     const sogCol = p.bvcT > 0 ? '#ff8fb8' : heat ? (this.t % 20 < 10 ? '#e04848' : '#ff8f8f') : '#3aa0e8';
     this.drawBar(ctx, 4, 14, 50, p.bvcT > 0 ? 1 : p.energy, sogCol, heat ? 'HEISS' : 'SOG', heat ? '#ff8f8f' : '#ffffff');
-    this.drawBar(ctx, 96, 14, 40, p.stamina, p.tired ? '#8795a8' : '#7be07b', 'SPRINT');
+    // Auf Touch gibt es kein Sprinten, darum dort keine SPRINT-Leiste
+    if (!Input.touch) this.drawBar(ctx, 96, 14, 40, p.stamina, p.tired ? '#8795a8' : '#7be07b', 'SPRINT');
     // Schutzausrüstung (bei Vollschutz goldener Rahmen)
     if (p.fullPPE()) {
       ctx.fillStyle = THEME.gold; ctx.fillRect(240, 11, 76, 12);
@@ -809,7 +810,7 @@ class PlayScene {
     const right = Input.touch ? [['SAUGEN', 'HALTEN'], ['II', 'PAUSE']] : [['LEERTASTE', 'SAUGEN'], ['SHIFT/CTRL', 'SPRINTEN'], ['CONTROLLER', 'GEHT AUCH']];
     left.forEach((r, i) => { drawKey(ctx, 88, 33 + i * 13, r[0]); Font.draw(ctx, r[1], 94, 35 + i * 13, { color: '#ffffff' }); });
     right.forEach((r, i) => { drawKey(ctx, 232, 33 + i * 13, r[0]); Font.draw(ctx, r[1], 238, 35 + i * 13, { color: '#ffffff' }); });
-    Font.draw(ctx, 'SOG + SPRINT SIND BEGRENZT: LEISTEN BEACHTEN!', 160, 75, { color: '#c8f2ff', align: 'center' });
+    if (!Input.touch) Font.draw(ctx, 'SOG + SPRINT SIND BEGRENZT: LEISTEN BEACHTEN!', 160, 75, { color: '#c8f2ff', align: 'center' });
     ctx.fillStyle = THEME.gold; ctx.fillRect(28, 86, 264, 1);
     Font.draw(ctx, 'KOLBEN-BLÖCKE VON UNTEN ANSPRINGEN:', 160, 91, { color: THEME.gold, align: 'center' });
     // Block + Inhalte
