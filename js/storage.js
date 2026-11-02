@@ -7,14 +7,17 @@ const Store = {
   mem: {},
   available: true,
 
+  // Gelesene Daten werden zwischengespeichert: Titel und Bestenliste lesen sie in jedem Bild,
+  // und das Entschlüsseln von hunderten Runden 60-mal pro Sekunde bremst schwache Geräte (Raspberry Pi).
   load(key, def) {
+    if (key in this.mem) return this.mem[key];
     try {
       const s = window.localStorage.getItem(key);
-      if (s) return JSON.parse(s);
+      if (s) return (this.mem[key] = JSON.parse(s));
     } catch (e) {
       this.available = false;
     }
-    return key in this.mem ? this.mem[key] : def;
+    return def;
   },
   save(key, val) {
     this.mem[key] = val;

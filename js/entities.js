@@ -116,10 +116,6 @@ function drawProfessor(ctx, x, y, o) {
       ctx.fillStyle = o.bvc ? '#ff8fb8' : '#3aa0e8'; ctx.fillRect(Math.round(hx), Math.round(hy), 1, 1);
     }
   }
-  if (false) {
-    ctx.fillStyle = 'rgba(255,230,102,0.45)';
-    ctx.fillRect(bx - 2, by - 2, 20, spr.height + 4);
-  }
   ctx.drawImage(spr, bx, by);
   // grosse, abstehende Haare (wie beim Pin)
   ctx.drawImage(SPR['prof_hair' + (face < 0 ? '_L' : '')], bx - 7, by - 10);
@@ -162,7 +158,7 @@ function drawProfessor(ctx, x, y, o) {
 
 // ---------------------------------------------------------------------
 // weight: 1 = ME 1C reicht, 2 = PC 3001 VARIO select nötig, 3 = VACUU·PURE nötig
-// liquid: kann mit der BVC professional immer abgesaugt werden
+// liquid: Flüssigkeit (nur zur Info; die BVC professional saugt im Zellkultur-Labor ohnehin alles)
 const ENEMY_DEFS = {
   // Filtration
   d: { name: 'FILTRAT-TROPFEN', w: 8, h: 9, weight: 1, points: 100, beh: 'hopper', speed: 0.9, harm: true, spr: 'drop', liquid: true },

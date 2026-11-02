@@ -129,6 +129,8 @@ Falls dir hier trotzdem etwas nicht gefällt, einfach die Nummer nennen.
 
 ### Banner im Boden (beim Einsammeln)
 
+> Die Produkt-Banner (Pumpen, BVC professional, VACUU·VIEW extended) sind vorerst **ausgeschaltet**, bis das Marketing die Texte freigegeben hat. Einschalten: `productBanners: true` in `js/config.js`. Schutzausrüstung und „LABOR GERETTET!“ erscheinen immer.
+
 | Nr. | Titel | Text |
 |---|---|---|
 | T80 | MEMBRANPUMPE ME 1C | IDEAL FÜR DIE FILTRATION |

@@ -23,8 +23,8 @@ Siehe `TECHNIK.md` (Dateien, Mechanik, Datenformat, Kochrezepte), `ANLEITUNG.md`
 ## Aktueller Spielstand (Kurzfassung)
 - **Ablauf:** Titel → Anmeldung (messe: Vorname, Name, Firma, E-Mail, Einwilligung, Newsletter / online: Spitzname) → Anleitung → Runde (120 s) → Ergebnis mit Medaillen → Kontakt-Seite mit grossem QR-Code → Bestenliste (heute / ganze Messe, öffentlich nur „Vorname N.“).
 - **5 Zonen, 330 Kacheln:** Filtrationslabor (ME 1C), Zellkultur-Labor (BVC professional mit VHC, saugt dort alles, ×2 Punkte), Verdampfer-Labor (PC 3001 VARIO select), Chemielabor (MD 4C VARIO select), Hochvakuum-Technikum (VACUU·PURE 10C, Endgegner Dampf-Krake, nur mit Pumpe Stufe 4). Abgründe sind Auffangwannen.
-- **Extras:** Schutzausrüstung (Brille, Handschuhe, Helm, Schuhe), VACUU·VIEW extended (+10 s), VACUU·LAN-Plattformen, Combo bis ×8 mit Timer-Kasten, 6 Medaillen, Zeitleiste, Musik pro Zone, Preis-Anzeige (Admin), Kontakt-QR (`contactUrl`).
-- **Steuerung:** Tastatur, Gamepad, Joystick (inkl. Hat-Steuerkreuz), Touch-Tasten, eigene Knopfbelegung im Admin („Controller einrichten“).
+- **Extras:** Schutzausrüstung (Brille, Handschuhe, Helm, Schuhe), VACUU·VIEW extended (+10 s), VACUU·LAN-Plattformen, Combo bis ×8 mit Timer-Kasten, 6 Medaillen, Zeitleiste, Musik pro Zone, Preis-Anzeige (Admin), Kontakt-QR (`contactUrl`). Produkt-Banner beim Einsammeln vorerst aus (`productBanners`), bis Marketing die Texte freigibt.
+- **Steuerung:** Tastatur, Gamepad, Joystick (inkl. Hat-Steuerkreuz), Touch (links ◀ ▶, rechts SPRUNG über SAUGEN, Naht drückt beide; kein Sprint/Ducken auf Touch), eigene Knopfbelegung im Admin („Controller einrichten“).
 - **Admin:** Strg+Shift+A (Tablet: 3 s aufs Logo), PIN 1234. Export CSV/JSON, Preise, Messename, Rundenzeit, Controller. Schnellstart ohne Speicherung: Strg+Shift+Enter.
 - **Online:** https://gsb-deleven.github.io/vacuubrand-game/ (Pages: „Deploy from a branch“, `main`, Root; `.nojekyll`). Mit `?messe` volle Stand-Version (z. B. Tablet). PWA mit Offline-Cache.
 
@@ -43,7 +43,6 @@ Siehe `TECHNIK.md` (Dateien, Mechanik, Datenformat, Kochrezepte), `ANLEITUNG.md`
 - **Epics mit Sub-Issues:** #2 Messe-bereit, #3 GitHub einrichten, #4 Ideen-Backlog.
 - **Automatik:** `.github/workflows/claude.yml` reagiert auf `@claude` oder Label `claude` (braucht Secret `CLAUDE_CODE_OAUTH_TOKEN` oder `ANTHROPIC_API_KEY`, siehe #14). Vorlagen für Issues, Discussions und PRs liegen in `.github/`.
 - **Offen bei David (nur im Browser möglich):**
-  - Default-Branch auf `main` stellen (#11)
   - Milestones und Project-Board anlegen (#12); danach Issues den Milestones zuordnen
   - Discussions-Kategorien und Willkommens-Beitrag (#13, Text in `docs/discussions-willkommen.md`)
   - Secret für die Claude-Automatik (#14)

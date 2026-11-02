@@ -40,6 +40,8 @@ class PlayScene {
     if (this.state === 'howto' && this.stateT > 30) this.setState('count');
   }
 
+  // Produkt-Einblendung nur, wenn in der Konfiguration eingeschaltet
+  productBanner(b) { if (CONFIG.productBanners) this.banner = b; }
   showMsg(text, dur, color) { this.msg = { text, t: dur || 100, color: color || '#ffffff' }; }
   popup(x, y, text, color) { this.popups.push({ x, y, text, color: color || '#ffffff', t: 36 }); }
   burst(x, y, colors, n) {
@@ -494,7 +496,7 @@ class PlayScene {
         this.bestPump = Math.max(this.bestPump, p.pump);
         p.energy = 1; p.overheat = false;
         const cfg = CONFIG.pumps[p.pump];
-        this.banner = { title: cfg.title, sub: cfg.slogan, t: 220, icon: 'pump' + p.pump };
+        this.productBanner({ title: cfg.title, sub: cfg.slogan, t: 220, icon: 'pump' + p.pump });
         this.shake(12, 2); this.flashT = 4;
         Sound.sfx('upgrade');
         this.addScore(500);
@@ -517,14 +519,14 @@ class PlayScene {
     } else if (it.kind === 'bvc') {
       p.bvcZone = zoneOf(p.x) === BVC_ZONE;
       p.bvcT = p.bvcZone ? 1 : CONFIG.bvcSeconds * 60;
-      this.banner = { title: 'PUMPE BVC PROFESSIONAL', sub: 'MIT VHC: MEDIENABSAUGUNG\nPUNKTE ×2', t: 220, icon: 'bvc' };
+      this.productBanner({ title: 'PUMPE BVC PROFESSIONAL', sub: 'MIT VHC: MEDIENABSAUGUNG\nPUNKTE ×2', t: 220, icon: 'bvc' });
       this.addScore(300);
       if (p.sucking) Sound.suckStart(2);
       Sound.sfx('powerup');
     } else if (it.kind === 'view') {
       this.views++;
       this.addTime(CONFIG.viewTimeBonus, p.x, p.y - 26);
-      this.banner = { title: 'VACUU·VIEW EXTENDED', sub: 'ZEITVAKUUM: +' + CONFIG.viewTimeBonus + ' SEKUNDEN!', t: 180, icon: 'view' };
+      this.productBanner({ title: 'VACUU·VIEW EXTENDED', sub: 'ZEITVAKUUM: +' + CONFIG.viewTimeBonus + ' SEKUNDEN!', t: 180, icon: 'view' });
       this.addScore(300);
       Sound.sfx('timebonus');
     }
@@ -787,7 +789,16 @@ class PlayScene {
       Font.draw(ctx, b.title, tx, y0 + 2, { color: THEME.gold });
       Font.draw(ctx, b.sub.split('\n').slice(0, 2).join('\n'), tx, y0 + 11, { color: '#ffffff' });
     } else if (this.msg) {
-      Font.draw(ctx, this.msg.text, 160, y0 + Math.round((h - 7) / 2), { color: this.msg.color, align: 'center' });
+      // zu lange Meldungen an der Lücke nahe der Mitte auf zwei Zeilen verteilen
+      let text = this.msg.text;
+      if (Font.width(text) > VIEW_W - 8) {
+        const mid = text.length / 2;
+        let cut = -1;
+        for (let i = 0; i < text.length; i++) if (text[i] === ' ' && (cut < 0 || Math.abs(i - mid) < Math.abs(cut - mid))) cut = i;
+        if (cut > 0) text = text.slice(0, cut) + '\n' + text.slice(cut + 1);
+      }
+      const lines = text.split('\n').length;
+      Font.draw(ctx, text, 160, y0 + Math.round((h - lines * 9 + 2) / 2), { color: this.msg.color, align: 'center' });
     }
   }
 

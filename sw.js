@@ -1,7 +1,7 @@
 'use strict';
 // Service Worker: macht die Online-Version offline-fähig (z. B. Tablet am Stand ohne WLAN).
 // Bei jeder neuen Version VERSION erhöhen, damit Tablets die neuen Dateien holen.
-const VERSION = 'vakuumus-v8';
+const VERSION = 'vakuumus-v9';
 const FILES = [
   './',
   'index.html',
