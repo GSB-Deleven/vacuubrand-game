@@ -116,10 +116,14 @@ Das Titelbild ist **immer auf Englisch** (z. B. „B = HIGH SCORES“), damit es
 
 ![Länderwahl mit vier Flaggen und drei Sprachen](docs/screenshots/de/02-land.png)
 
-Vier Flaggen (Schweiz, Deutschland, UK/Irland, Frankreich), darunter die Sprachen DEUTSCH · ENGLISH · FRANÇAIS.
+Vier Flaggen (Schweiz, Deutschland, UK/Irland, Frankreich), darunter die Zeile SPRACHE: DEUTSCH · ENGLISH · FRANÇAIS und ganz unten der grosse Knopf **START**.
 
-- **Tastatur/Gamepad:** ← → wählt die Flagge, ↑ ↓ wechselt zur Sprachzeile, Enter bestätigt. Die Flagge wählt die Landessprache vor (Schweiz: Deutsch), in der Sprachzeile geht jede andere Sprache.
-- **Tablet/Handy:** zuerst die Sprache antippen (nur nötig, wenn sie anders sein soll), dann auf die Flagge tippen. Das startet direkt.
+1. **Flagge wählen:** Das markiert nur das Land und stellt gleich die passende Sprache ein (Schweiz und Deutschland: Deutsch, UK: Englisch, Frankreich: Französisch). Es startet noch nicht.
+2. **Sprache ändern (nur wenn nötig):** z. B. ein Gast aus der Westschweiz wählt die Schweizer Flagge und dann FRANÇAIS. Wer danach nochmals eine Flagge wählt, bekommt wieder deren Sprache.
+3. **START** drücken: Jetzt geht es zur Anmeldung in der gewählten Sprache.
+
+- **Tastatur/Gamepad:** ↑ ↓ wechselt zwischen den drei Zeilen (Flaggen, Sprache, START), ← → wählt in der Zeile, Enter startet von überall.
+- **Tablet/Handy:** Flagge antippen, falls nötig Sprache antippen, dann START antippen.
 - Nach 60 Sekunden ohne Eingabe geht es zurück zum Titelbild.
 
 ### Schritt 3: Anmelden

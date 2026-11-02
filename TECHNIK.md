@@ -122,7 +122,7 @@ Online-Runden werden als Lead mit `isOnline: true`, Spitzname als Vorname und E-
 Das Spiel besteht aus Szenen. Es ist immer genau eine aktiv, `Game.go(neueSzene)` wechselt. Jede Szene hat `update()` (Logik, 60× pro Sekunde) und `draw(ctx)` (Zeichnen), optional `enter()`, `exit()` und `click(x, y)`.
 
 ```
- TitleScene ──Enter──► CountryScene ──Flagge──► RegisterScene ──Formular ok──► PlayScene
+ TitleScene ──Enter──► CountryScene ──START──► RegisterScene ──Formular ok──► PlayScene
      ▲  │ B             (Land + Sprache)          (HTML-Overlay)              │ Zeit um / Ausgang
      │  ▼                                                                    ▼
      │ Bestenliste                                                      ResultScene
@@ -203,9 +203,9 @@ countries: [
 ]
 ```
 
-- `lang` ist die Sprache, die die Flagge vorwählt. In der Sprachzeile ist jede Sprache wählbar (wichtig für die Schweiz)
+- `lang` ist die Sprache, die die Flagge einstellt. Jede Flaggenwahl setzt die Sprache wieder auf `lang`; danach ist in der Sprachzeile jede Sprache wählbar (wichtig für die Schweiz)
 - Die Flaggen sind Pixel-Sprites `SPR.flag_CH` usw. in `sprites.js` (`buildFlags`). Für ein neues Land: Eintrag in `countries` und eine Flagge `flag_<key>` zeichnen
-- Bedienung: ← → Flagge, ↑ ↓ (`Input` Aktion `up`/`down`) zwischen Flaggen und Sprachzeile, Enter/A bestätigt, Esc zurück. Touch und Maus: Sprache antippen (optional), dann Flagge antippen, das startet direkt. Nach `countrySelectSeconds` (60 s) ohne Eingabe zurück zum Titel
+- Bedienung: drei Zeilen (`COUNTRY_ROWS`: Flaggen, Sprache, START). ↑ ↓ (`Input` Aktion `up`/`down`) wechselt die Zeile, ← → wählt darin, Enter/A startet aus jeder Zeile, Esc zurück. Touch und Maus: Flagge antippen (markiert nur, startet nicht), Sprache antippen (optional), START-Knopf antippen. Texte: `country.lang` (Vorsatz SPRACHE:), `country.start` (Knopf), `country.hint` / `.touch`. Nach `countrySelectSeconds` (60 s) ohne Eingabe zurück zum Titel
 - Vorgewählt ist das erste Land, dessen Sprache der Gerätesprache entspricht
 - Der Schnellstart (`Strg + Shift + Enter`) überspringt die Wahl: Gerätesprache und der allgemeine `contactUrl` (Ansprechpartner weltweit, `https://www.vacuubrand.com/service-advice/contact/contacts-worldwide`, englische Seite mit allen Ländern). Er gilt auch für ein Land ohne eigenen `contactUrl`
 
@@ -613,7 +613,7 @@ In `SONGS` (`js/sound.js`) die Notenfolgen `lead` (Melodie) und `bass` bearbeite
 **Test-Rezepte für Claude** (Skripte im Scratchpad neu schreiben; `require('playwright')` geht überall, `npm install jsqr pngjs` im Scratchpad)
 - **Textbreiten:** im Browser über alle Schlüssel von `I18N.de` und jede Sprache laufen, `Font.width()` jeder Zeile gegen den Platz des Kastens prüfen (z. B. Schilder `sign.1` ≤ 137 px, übrige Schilder ≤ 230 px, Banner ≤ 283 px, Medaillen ≤ 101 px, Knöpfe auf dem Titel ≤ 144 px, Meldungen ≤ 312 px bzw. 2 Zeilen) und jedes Zeichen gegen `FONT_GLYPHS`. Fehlende EN/FR-Schlüssel melden
 - **Durchlauf pro Land/Sprache:** Titel → Enter → Pfeiltasten in der Länderwahl (mit ~80 ms Pause zwischen Tasten, sonst geht ein Druck verloren) → Formular mit erfundenen Daten (`@example.com`) → in der Anleitung erst nach 0,5 s Enter drücken → Spiel per `__game.update(); Input.endFrame();` in einer Schleife vorspulen → `__game.scene.time = 0.05` beendet die Runde → Kontakt-Seite: Screenshot, QR mit jsQR lesen und mit `contactUrlFor(land)` vergleichen, dann 61 s vorspulen und prüfen, dass die Seite noch steht
-- **Touch:** `devices['iPhone 13 landscape']` bzw. iPad, Punkte im 320×180-Bild per `page.touchscreen.tap` antippen (Startknopf ca. 233/99, Flaggen bei y 55, Sprachzeile bei y 122)
+- **Touch:** `devices['iPhone 13 landscape']` bzw. iPad, Punkte im 320×180-Bild per `page.touchscreen.tap` antippen (Startknopf ca. 233/99, in der Länderwahl Flaggen bei y 50, Sprachzeile bei y 108, START-Knopf bei 160/135)
 - **Gamepad:** vor dem Laden `navigator.getGamepads` mit einem Stub überschreiben (`mapping: 'standard'`, Knöpfe 0 = A, 9 = Start, 12 bis 15 = Steuerkreuz)
 - **Online-Modus:** `index.html?online` mit `locale` en-GB / fr-CH / it-IT; der Titel ist immer Englisch, `deviceLang()` folgt dem Browser
 - **Service Worker:** wird nur auf `*.github.io` registriert. Zum Testen das Spiel mit `python3 -m http.server` ausliefern und `navigator.serviceWorker.register('sw.js')` von Hand aufrufen; prüfen, dass eine geänderte Datei sofort ankommt und das Spiel ohne Server aus dem Cache startet

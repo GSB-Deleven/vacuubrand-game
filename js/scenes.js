@@ -354,10 +354,15 @@ class BoardScene {
 }
 
 // ---------------------------------------------------------------------
-// Länderwahl vor jeder Runde: Flaggen (Land = Link im QR-Code) und Sprachzeile (Sprache der Runde).
-// Tastatur/Gamepad: ← → Flagge, ↑ ↓ zwischen Flaggen und Sprachzeile, Enter bestätigt.
-// Touch/Maus: zuerst die Sprache antippen (optional), dann die Flagge: das startet direkt.
-const COUNTRY_FLAG_Y = 38, COUNTRY_LANG_Y = 116;
+// Länderwahl vor jeder Runde: Flaggen (Land = Link im QR-Code), Sprachzeile (Sprache der Runde)
+// und ein grosser START-Knopf.
+// Eine Flagge wählen markiert nur das Land und stellt immer dessen Sprache ein (UK → Englisch).
+// Danach kann man die Sprache in der Sprachzeile noch ändern. Erst START (oder Enter) startet.
+// Tastatur/Gamepad: drei Zeilen (Flaggen, Sprache, START), ↑ ↓ wechselt, ← → wählt, Enter startet überall.
+// Touch/Maus: Flagge antippen, Sprache antippen (optional), START antippen.
+const COUNTRY_FLAG_Y = 34, COUNTRY_LANG_Y = 102, COUNTRY_START_Y = 124;
+const COUNTRY_START_W = 128, COUNTRY_START_H = 22;
+const COUNTRY_ROWS = ['flags', 'langs', 'start'];
 
 class CountryScene {
   constructor() {
@@ -370,15 +375,21 @@ class CountryScene {
     this.idx = Math.max(0, this.list.findIndex(c => c.lang === dl));
     this.row = 'flags';
     this.lang = dl;
-    this.langPicked = false; // Sprache von Hand gewählt (dann ändert die Flagge die Sprache nicht mehr)
   }
   enter() { Sound.music('title'); }
   cellX(i) { const w = 304 / this.list.length; return Math.round(8 + w * i + w / 2); }
-  langX(i) { return 160 + (i - 1) * 92; }
+  // Sprachzeile: Vorsatz „SPRACHE:“ links, daneben die drei Sprachknöpfe (Breite nach dem längsten Text)
+  langLayout() {
+    const label = L('country.lang'), lw = Font.width(label), bw = 72, gap = 4, n = I18N.langs.length;
+    const total = lw + 6 + n * bw + (n - 1) * gap, x0 = Math.round(160 - total / 2);
+    return { label, x0, bw, first: x0 + lw + 6, gap };
+  }
+  langX(i) { const l = this.langLayout(); return l.first + i * (l.bw + l.gap) + l.bw / 2; }
   setLangLive(code) { this.lang = code; setLang(code); }
+  // Flagge wählen: Land markieren und immer die Landessprache einstellen
   pickFlag(i) {
     this.idx = i;
-    if (!this.langPicked) this.setLangLive(this.list[i].lang);
+    this.setLangLive(this.list[i].lang);
   }
   confirm() {
     const c = this.list[this.idx];
@@ -394,37 +405,48 @@ class CountryScene {
     if (any) this.idle = 0;
     if (Input.pressed('back')) { Game.go(new TitleScene()); return; }
     if (Input.pressed('start')) { this.confirm(); return; }
-    if (Input.pressed('up') || Input.pressed('down')) { this.row = this.row === 'flags' ? 'langs' : 'flags'; Sound.sfx('bump'); }
+    const vdir = (Input.pressed('down') ? 1 : 0) - (Input.pressed('up') ? 1 : 0);
+    if (vdir) {
+      const ri = COUNTRY_ROWS.indexOf(this.row), n = COUNTRY_ROWS.length;
+      this.row = COUNTRY_ROWS[(ri + vdir + n) % n];
+      Sound.sfx('bump');
+    }
     const dir = (Input.pressed('right') ? 1 : 0) - (Input.pressed('left') ? 1 : 0);
-    if (dir) {
+    if (dir && this.row !== 'start') {
       Sound.sfx('bump');
       if (this.row === 'flags') {
-        this.langPicked = false;
         this.pickFlag((this.idx + dir + this.list.length) % this.list.length);
       } else {
         const ls = I18N.langs, li = ls.indexOf(this.lang);
-        this.langPicked = true;
         this.setLangLive(ls[(li + dir + ls.length) % ls.length]);
       }
     }
   }
   click(x, y) {
     this.idle = 0;
+    // START-Knopf (etwas grosszügiger als gezeichnet, für Finger)
+    if (y >= COUNTRY_START_Y - 4 && y <= COUNTRY_START_Y + COUNTRY_START_H + 4 &&
+        Math.abs(x - 160) <= COUNTRY_START_W / 2 + 6) {
+      this.row = 'start';
+      this.confirm();
+      return;
+    }
     // Sprachzeile
-    if (y >= COUNTRY_LANG_Y - 3 && y <= COUNTRY_LANG_Y + 15) {
+    if (y >= COUNTRY_LANG_Y - 4 && y <= COUNTRY_LANG_Y + 16) {
+      const bw = this.langLayout().bw;
       I18N.langs.forEach((code, i) => {
-        if (Math.abs(x - this.langX(i)) <= 44) {
-          this.langPicked = true; this.row = 'langs';
+        if (Math.abs(x - this.langX(i)) <= bw / 2 + 2) {
+          this.row = 'langs';
           this.setLangLive(code);
           Sound.sfx('bump');
         }
       });
       return;
     }
-    // Flaggen (mit Namen darunter): Antippen startet direkt
-    if (y >= COUNTRY_FLAG_Y - 6 && y <= COUNTRY_FLAG_Y + 62) {
+    // Flaggen (mit Namen darunter): Antippen markiert nur das Land, startet nicht
+    if (y >= COUNTRY_FLAG_Y - 6 && y <= COUNTRY_FLAG_Y + 58) {
       const w = 304 / this.list.length, i = Math.floor((x - 8) / w);
-      if (i >= 0 && i < this.list.length) { this.row = 'flags'; this.pickFlag(i); this.confirm(); }
+      if (i >= 0 && i < this.list.length) { this.row = 'flags'; this.pickFlag(i); Sound.sfx('bump'); }
     }
   }
   draw(ctx) {
@@ -445,15 +467,24 @@ class CountryScene {
       if (spr) ctx.drawImage(spr, fx, fy);
       Font.draw(ctx, String(c.name || c.key).replace(' / ', '\n'), cx, COUNTRY_FLAG_Y + 42, { color: sel ? THEME.gold : '#ffffff', align: 'center' });
     });
-    // Sprachzeile
-    ctx.fillStyle = '#5a7aa3'; ctx.fillRect(20, COUNTRY_LANG_Y - 8, 280, 1);
+    // Sprachzeile mit Vorsatz „SPRACHE:“ (gehört zur gewählten Flagge)
+    ctx.fillStyle = '#5a7aa3'; ctx.fillRect(20, COUNTRY_LANG_Y - 7, 280, 1);
+    const ll = this.langLayout();
+    Font.draw(ctx, ll.label, ll.x0, COUNTRY_LANG_Y + 3, { color: this.row === 'langs' ? THEME.gold : '#c8f2ff' });
     I18N.langs.forEach((code, i) => {
-      const x = this.langX(i), w = 84, on = code === this.lang;
+      const x = Math.round(this.langX(i)), w = ll.bw, on = code === this.lang;
       ctx.fillStyle = PAL.k; ctx.fillRect(x - w / 2 - 1, COUNTRY_LANG_Y - 1, w + 2, 14);
       ctx.fillStyle = on ? THEME.gold : THEME.navyDark; ctx.fillRect(x - w / 2, COUNTRY_LANG_Y, w, 12);
       if (on && this.row === 'langs' && blink) { ctx.fillStyle = '#ffffff'; ctx.fillRect(x - w / 2, COUNTRY_LANG_Y + 11, w, 1); }
       Font.draw(ctx, I18N.names[code], x, COUNTRY_LANG_Y + 3, { color: on ? PAL.k : '#ffffff', align: 'center' });
     });
-    Font.draw(ctx, LT('country.hint'), 160, 152, { color: '#c8f2ff', align: 'center' });
+    // Grosser START-Knopf (Gold mit Navy-Schrift, ausgewählt mit weissem Rahmen)
+    const sw = COUNTRY_START_W, sh = COUNTRY_START_H, sx = 160 - sw / 2, sy = COUNTRY_START_Y;
+    const sel = this.row === 'start';
+    ctx.fillStyle = sel && blink ? '#ffffff' : PAL.k; ctx.fillRect(sx - 2, sy - 2, sw + 4, sh + 4);
+    ctx.fillStyle = THEME.gold; ctx.fillRect(sx, sy, sw, sh);
+    ctx.fillStyle = '#c98e00'; ctx.fillRect(sx, sy + sh - 2, sw, 2);
+    Font.draw(ctx, L('country.start'), 160, sy + 5, { color: THEME.navyDark, scale: 2, align: 'center' });
+    Font.draw(ctx, LT('country.hint'), 160, 158, { color: '#c8f2ff', align: 'center' });
   }
 }

@@ -88,9 +88,11 @@ Die Übersetzungen dazu stehen in der grossen Tabelle unten.
 | Nr. | Ort | Text |
 |---|---|---|
 | T180 | Länderwahl, Titel | LAND UND SPRACHE |
-| T181 | Länderwahl, Hinweis unten | ← → LAND   ↑ ↓ SPRACHE   ENTER = OK / Touch: SPRACHE WÄHLEN, DANN FLAGGE ANTIPPEN |
+| T181 | 🆕 Länderwahl, Hinweis unten (Entwurf, geändert wegen START-Knopf) | ← → WÄHLEN   ↑ ↓ WECHSELN   ENTER = START / Touch: FLAGGE ANTIPPEN, DANN START |
 | T182 | Länderwahl, Namen unter den Flaggen (in `js/config.js`) | SCHWEIZ / SUISSE · DEUTSCHLAND · UK / IRELAND · FRANCE |
 | T183 | Länderwahl, Sprachzeile (jede Sprache in sich selbst) | DEUTSCH · ENGLISH · FRANÇAIS |
+| T191 | 🆕 Länderwahl, Vorsatz vor der Sprachzeile (Entwurf) | SPRACHE: |
+| T192 | 🆕 Länderwahl, grosser Knopf unten (Entwurf) | START |
 | T184 | Touch-Knöpfe | SPRUNG · SAUGEN |
 | T185 | Handy hochkant gehalten | BITTE GERÄT QUER HALTEN |
 | T186 | Hinweis auf iPhone/iPad | Für Vollbild: unten auf Teilen tippen und „Zum Home-Bildschirm“ wählen. |
@@ -247,7 +249,9 @@ Den Admin-Bereich (T150) gibt es auf Deutsch und Englisch (Einstellung „Admin-
 | T45 | Bestenliste vom Titel aus | B / ESC = ZURÜCK    ENTER = START<br>TIPPEN = ZURÜCK | B / ESC = BACK    ENTER = START<br>TAP = BACK | B / ÉCHAP = RETOUR    ENTRÉE = JOUER<br>TOUCHER = RETOUR |
 | T34 | Bestenliste nach dem Ergebnis | DANKE FÜRS SPIELEN!  ENTER = WEITER<br>DANKE FÜRS SPIELEN!  TIPPEN = WEITER | THANKS FOR PLAYING!  ENTER = NEXT<br>THANKS FOR PLAYING!  TAP = NEXT | MERCI D'AVOIR JOUÉ!  ENTRÉE = SUITE<br>MERCI D'AVOIR JOUÉ!  TOUCHER = SUITE |
 | T180 | 🆕 Länderwahl, Titel | LAND UND SPRACHE | COUNTRY AND LANGUAGE | PAYS ET LANGUE |
-| T181 | 🆕 Länderwahl, Hinweis unten (Tastatur / Touch) | ← → LAND   ↑ ↓ SPRACHE   ENTER = OK<br>SPRACHE WÄHLEN, DANN FLAGGE ANTIPPEN | ← → COUNTRY   ↑ ↓ LANGUAGE   ENTER = OK<br>CHOOSE LANGUAGE, THEN TAP A FLAG | ← → PAYS   ↑ ↓ LANGUE   ENTRÉE = OK<br>CHOISIS LA LANGUE, PUIS TOUCHE UN DRAPEAU |
+| T181 | 🆕 Länderwahl, Hinweis unten (Tastatur / Touch), Entwurf | ← → WÄHLEN   ↑ ↓ WECHSELN   ENTER = START<br>FLAGGE ANTIPPEN, DANN START | ← → CHOOSE   ↑ ↓ SWITCH   ENTER = START<br>TAP A FLAG, THEN START | ← → CHOISIR   ↑ ↓ CHANGER   ENTRÉE = JOUER<br>TOUCHE UN DRAPEAU, PUIS JOUER |
+| T191 | 🆕 Länderwahl, Vorsatz vor der Sprachzeile (Entwurf) | SPRACHE: | LANGUAGE: | LANGUE : |
+| T192 | 🆕 Länderwahl, grosser Knopf unten (Entwurf) | START | START | JOUER |
 | T50 | Anmeldung, Titel | SPIELER-ANMELDUNG | PLAYER REGISTRATION | INSCRIPTION DU JOUEUR |
 | T51 | Anmeldung, Hinweis | Nur Vorname + erster Buchstabe des Nachnamens erscheinen in der Bestenliste. | Only your first name and the first letter of your last name appear on the high score list. | Seuls le prénom et la première lettre du nom apparaissent dans le classement. |
 | T52 | Anmeldung, Felder | Vorname<br>Name<br>Firma<br>E-Mail | First name<br>Last name<br>Company<br>Email | Prénom<br>Nom<br>Entreprise<br>E-mail |
