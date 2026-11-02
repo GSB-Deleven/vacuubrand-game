@@ -148,7 +148,7 @@ Das Spiel selbst ist ein Canvas mit 320 × 180 Pixeln. Formulare (Anmeldung, Adm
 4. Am Ende berechnet `PlayScene.end()` Zeitbonus und Medaillen und übergibt alles an `ResultScene`.
 5. `ResultScene` speichert die Runde (`Store.addRound`) mit Land und Sprache, ausser bei Testrunden, und zeigt die Platzierung.
 6. `ContactScene` zeigt einen grossen QR-Code zur Kontaktseite des gewählten Landes (`contactUrlFor(lead.country)`, Rückfall `contactUrl`). Die Seite bleibt stehen, bis Enter, Tippen oder ein Knopf kommt. Der QR-Code wird als eigenes, scharfes Bild über das Spiel gelegt (`QRView`), weil er beim Hochskalieren des Pixelbilds unlesbar würde. Ist kein Link gesetzt, entfällt die Seite.
-7. `BoardScene` zeigt die Bestenlisten und geht nach `boardAutoReturnSeconds` zum Titel. Der Titel stellt wieder die Gerätesprache ein.
+7. `BoardScene` zeigt die Bestenlisten und geht nach `boardAutoReturnSeconds` zum Titel. Der Titel stellt wieder seine Sprache ein (`titleLang`, Standard Englisch).
 
 ---
 
@@ -174,9 +174,11 @@ const I18N = {
 | `deviceLang()` | Gerätesprache: in der Messe-Version `CONFIG.defaultLang` (Admin), online die Browsersprache, falls de/en/fr, sonst `defaultLang` |
 
 **Wann gilt welche Sprache?**
-- Titelbild, Bestenliste vom Titel aus und Admin-Schnellstart: Gerätesprache
+- Titelbild und Bestenliste vom Titel aus: `CONFIG.titleLang` (Standard `'en'`, damit der Titel an jeder Messe passt; leer = Gerätesprache)
+- Länderwahl: startet in der Gerätesprache, die auch Land und Sprache vorwählt
+- Admin-Schnellstart: Gerätesprache
 - Ab der Länderwahl bis zur Bestenliste nach der Runde: die gewählte Sprache
-- Zurück auf dem Titelbild (auch nach Abbruch oder Timeout): wieder die Gerätesprache (`TitleScene.enter()`)
+- Zurück auf dem Titelbild (auch nach Abbruch oder Timeout): wieder `titleLang` (`TitleScene.enter()`)
 
 **Regeln für Texte**
 - Deutsche Texte sind vom Marketing freigegeben bzw. in Prüfung und werden nicht eigenmächtig geändert. Englisch und Französisch sind Entwürfe

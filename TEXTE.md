@@ -14,6 +14,8 @@ Für die Nummern bei der Rückmeldung reicht z. B. „T12 ja, T15 lieber: …“
 
 > 🌍 **Neu: Das Spiel gibt es auf Deutsch, Englisch und Französisch.** Alle Texte stehen technisch in `js/i18n.js`. Die deutschen Texte sind unverändert. Die englischen und französischen Texte sind **Entwürfe und vom Marketing zu prüfen** (Tabelle ganz unten, Abschnitt „Alle Texte in drei Sprachen“).
 >
+> 🇬🇧 **Startbildschirm:** Er erscheint immer auf **Englisch** (Wunsch David, damit er an jeder Messe passt), z. B. T189 SUCK UP THE LAB CHAOS!, T41 B = HIGH SCORES. Ab der Länderwahl gilt die Sprache des Spielers.
+>
 > ⚖️ **Einwilligung (T53) und Datenschutz-Hinweis (T55)** sind rechtlich wichtig. Die englische Fassung bitte mit der Rechtsabteilung bzw. dem Datenschutz für UK und Irland abstimmen, die französische für Frankreich. Bis dahin sind es nur Übersetzungsentwürfe.
 
 ---

@@ -122,7 +122,9 @@ Sprinten geht auch mit Ctrl.
 4. Kurze Anleitung → Countdown → spielen.
 5. Ergebnis mit Platzierung (heute / ganze Messe).
 6. **Kontakt-Seite mit grossem QR-Code** zu den Ansprechpartnern des gewählten Landes. Sie bleibt stehen, bis jemand Enter drückt, tippt oder einen Knopf drückt. So hat der Besucher Zeit zum Scannen.
-7. Bestenliste → nach 20 Sekunden zurück zum Titelbild, wieder in der Gerätesprache.
+7. Bestenliste → nach 20 Sekunden zurück zum Titelbild.
+
+Das **Titelbild ist immer auf Englisch** (z. B. „B = HIGH SCORES“), damit es an jeder Messe passt. Ab der Länderwahl gilt die Sprache des Spielers.
 
 In der öffentlichen Bestenliste erscheint nur **„Vorname N.“**. Wer mehrmals spielt (gleiche E-Mail),
 steht mit seinem besten Ergebnis drin.
@@ -142,7 +144,7 @@ Auf dem Titelbild **Strg + Shift + A** drücken, PIN eingeben (Standard **1234**
 - **Leads (CSV/Excel)** und **Alle Runden (CSV/Excel)** exportieren → landen im Download-Ordner
 - **Sicherung speichern / laden** (JSON) – z.B. um Daten auf einen anderen Laptop zu übertragen
 - Messename, Rundenzeit, PIN, Tagespreis und Hauptpreis ändern (Preise erscheinen auf Startbildschirm und Bestenliste)
-- **Gerätesprache:** Sprache des Titelbildes (Deutsch, Englisch oder Französisch). Nach jeder Runde springt das Spiel dorthin zurück. Auf einer Messe in Frankreich z. B. auf Französisch stellen.
+- **Gerätesprache:** bestimmt, welches Land und welche Sprache in der Länderwahl vorgewählt sind (Deutsch → Schweiz, Englisch → UK, Französisch → Frankreich). Auf einer Messe in Frankreich z. B. auf Französisch stellen. Das Titelbild bleibt immer Englisch (`titleLang` in `js/config.js`).
 - **Admin-Sprache:** Deutsch oder Englisch, z. B. für das Team in UK
 - Im Export stehen pro Runde und pro Lead zusätzlich **Land** (CH, DE, UK, FR) und **Sprache** (de, en, fr)
 - **Referenzdaten laden (Test):** lädt Beispieldaten mit erfundenen Personen (Ordner `daten/`: JSON und CSV-Beispiele), um Bestenliste und Export auszuprobieren – vor der Messe mit „Alle Daten löschen“ wieder entfernen

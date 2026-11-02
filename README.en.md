@@ -91,7 +91,7 @@ The game runs in **German, English and French** (a wish of the UK team). Before 
 
 - 🇨🇭 Switzerland (German, French or English), 🇩🇪 Germany, 🇬🇧 UK/Ireland, 🇫🇷 France
 - The QR code at the end leads to the contacts for the chosen country
-- Booth staff set the device language (title screen) and the language of the admin area (German/English)
+- The title screen is in English for everyone. Booth staff set the device language (preselection in the country selection) and the language of the admin area (German/English)
 - The export contains the country and language of each player
 - The QR codes can be checked on a separate page: [qr/index.html](https://gsb-deleven.github.io/vacuubrand-game/qr/)
 

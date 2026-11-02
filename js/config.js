@@ -19,10 +19,13 @@ const CONFIG = {
   // (z. B. beim Schnellstart ohne Länderwahl).
   contactUrl: 'https://www.vacuubrand.com/ch/de/service-beratung/kontakt/ansprechpartner-weltweit/ch',
 
-  // Sprache des Titelbildschirms ("Gerätesprache"): 'de', 'en' oder 'fr'. Auch im Admin einstellbar.
-  // Online gilt die Sprache des Browsers (falls Deutsch, Englisch oder Französisch).
-  // Nach jeder Runde springt das Spiel auf diese Sprache zurück. Alle Texte stehen in js/i18n.js.
+  // Gerätesprache: 'de', 'en' oder 'fr'. Auch im Admin einstellbar. Sie bestimmt, welches Land und welche
+  // Sprache in der Länderwahl vorgewählt sind, und gilt beim Schnellstart.
+  // Online gilt die Sprache des Browsers (falls Deutsch, Englisch oder Französisch). Alle Texte: js/i18n.js.
   defaultLang: 'de',
+  // Sprache des Startbildschirms (mit Bestenliste vom Titel aus). 'en' = Englisch für alle, damit der Titel
+  // an jeder Messe passt. Leer ('') = Gerätesprache. Ab der Länderwahl gilt die Sprache des Spielers.
+  titleLang: 'en',
   adminLang: 'de',             // Sprache des Admin-Bereichs: 'de' oder 'en' (auch im Admin einstellbar)
 
   // Länder für die Wahl vor jeder Runde (Flaggen in dieser Reihenfolge).
