@@ -128,7 +128,9 @@ Sprinting also works with Ctrl.
 4. Short instructions → countdown → play.
 5. Result with ranking (today / whole show).
 6. **Contact page with a large QR code** leading to the contacts for the chosen country. It stays on screen until someone presses Enter, taps or presses a button, so visitors have time to scan it.
-7. High scores → after 20 seconds back to the title screen, again in the device language.
+7. High scores → after 20 seconds back to the title screen.
+
+The **title screen is always in English** (e.g. "B = HIGH SCORES"), so it fits every show. From the country selection on, the player's language applies.
 
 The public high score list shows only **"First name + initial"**. Anyone who plays several times (same email)
 is listed with their best result.
@@ -148,7 +150,7 @@ On the title screen press **Ctrl + Shift + A**, enter the PIN (default **1234**,
 - Export **Leads (CSV/Excel)** and **All rounds (CSV/Excel)** → saved in the Downloads folder
 - **Save / load backup** (JSON), e.g. to move data to another laptop
 - Change show name, round time, PIN, daily prize and main prize (prizes appear on the title screen and the high scores)
-- **Device language:** language of the title screen (German, English or French). The game returns to it after every round. At a show in the UK, for example, set it to English.
+- **Device language:** decides which country and language are preselected in the country selection (German → Switzerland, English → UK, French → France). At a show in the UK, for example, set it to English. The title screen always stays in English (`titleLang` in `js/config.js`).
 - **Admin language:** German or English
 - The export additionally contains **country** (CH, DE, UK, FR) and **language** (de, en, fr) for each round and each lead
 - **Load reference data (test):** loads sample data with invented people (folder `daten/`: JSON and CSV examples) to try out the high scores and export. Remove it with "Delete all data" before the show

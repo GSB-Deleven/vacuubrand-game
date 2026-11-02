@@ -102,7 +102,8 @@ class TitleScene {
     this.t = 0; this.mode = 'title'; this.modeT = 0;
     this.demo = new DemoStrip();
   }
-  enter() { setLang(deviceLang()); Sound.music('title'); }
+  // Startbildschirm: einheitlich in CONFIG.titleLang (Englisch), sonst Gerätesprache
+  enter() { setLang(I18N.langs.includes(CONFIG.titleLang) ? CONFIG.titleLang : deviceLang()); Sound.music('title'); }
   update() {
     this.t++; this.modeT++;
     this.demo.update();
@@ -363,8 +364,9 @@ class CountryScene {
     this.allowAdmin = true;
     this.t = 0; this.idle = 0;
     this.list = CONFIG.countries || [];
-    // Vorwahl: erstes Land mit der Gerätesprache
-    const dl = I18N.lang;
+    // Vorwahl nach der Gerätesprache (nicht nach der Sprache des Startbildschirms)
+    const dl = deviceLang();
+    setLang(dl);
     this.idx = Math.max(0, this.list.findIndex(c => c.lang === dl));
     this.row = 'flags';
     this.lang = dl;
