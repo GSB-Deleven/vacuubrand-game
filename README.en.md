@@ -253,7 +253,9 @@ On touch devices, on-screen buttons appear automatically: ◀ ▶ on the left to
 - Device language, language of the admin area and the QR code links per country
 - Pump slogans, points and time bonus
 
-Show name, round time, PIN, prizes and languages can be set directly in the admin area, the rest in a well-commented settings file.
+For events without lead collection there is a **Nickname only** switch in the admin area: people then only enter a nickname, like in the online version.
+
+Show name, round time, PIN, prizes, languages and "Nickname only" can be set directly in the admin area, the rest in a well-commented settings file.
 
 ---
 

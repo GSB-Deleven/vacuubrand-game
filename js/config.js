@@ -109,6 +109,13 @@ const CONFIG = {
     { key: 'shoes' }
   ],
 
+  // Nur Spitzname statt Anmeldung (nur Messe-Version; online gibt es sowieso nur den Spitznamen).
+  // true = keine Lead-Erfassung: Spieler geben nur einen Spitznamen ein, wie in der Online-Version.
+  // Keine E-Mail, keine Firma, keine Einwilligung, kein Newsletter. Länderwahl, Admin, Bestenliste und
+  // Kontakt-QR bleiben. Gedacht für Anlässe, wo es nur um Spass geht. Am besten im Admin umschalten
+  // ("Nur Spitzname"), dort wird es gemerkt. An einer Lead-Messe unbedingt ausschalten!
+  nameOnly: false,
+
   // Anmeldung vor dem Spiel (Lead-Erfassung). Beschriftungen, Einwilligung und Datenschutz-Hinweis
   // stehen in js/i18n.js ("reg.…"), weil sie je nach Sprache anders lauten.
   registration: {

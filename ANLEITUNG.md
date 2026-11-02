@@ -304,11 +304,25 @@ Auf dem Titelbild **Strg + Shift + A** drücken (Tablet: 3 Sekunden aufs Logo), 
 | **Einstellungen** | Messename, Rundenzeit, PIN, Tagespreis und Hauptpreis (Preise erscheinen auf Startbildschirm und Bestenliste) |
 | **Gerätesprache** | bestimmt, welches Land und welche Sprache in der Länderwahl vorgewählt sind (Deutsch → Schweiz, Englisch → UK, Französisch → Frankreich). Auf einer Messe in Frankreich z. B. auf Französisch stellen. Das Titelbild bleibt immer Englisch (`titleLang` in `js/config.js`) |
 | **Admin-Sprache** | Deutsch oder Englisch, z. B. für das Team in UK |
+| **Nur Spitzname (keine Lead-Erfassung)** | Kästchen bei den Einstellungen, dann **Speichern**. Für Anlässe, wo es nur um Spass geht: Die Leute geben nur einen Spitznamen ein, wie in der Online-Version. Keine E-Mail, keine Firma, keine Einwilligung, kein Newsletter. Länderwahl, Bestenliste und QR-Code am Ende bleiben. Siehe unten |
 | **Controller / Joystick** | **Controller einrichten**, falls Knöpfe falsch liegen |
 | **Letzte Runden** | einzelne Runden löschen (✕ zweimal klicken) |
 | **Gefahrenzone** | **Alle Daten löschen** nach der Messe (LÖSCHEN ins Feld tippen) |
 
 - Im Export stehen pro Runde und pro Lead zusätzlich **Land** (CH, DE, UK, FR) und **Sprache** (de, en, fr).
+### Nur Spitzname (Anlass ohne Leads)
+
+Solange der Schalter an ist, steht oben im Admin ein gelber Balken **NUR SPITZNAME IST AKTIV**. Die Einstellung bleibt auch nach einem Neustart gespeichert.
+
+![Admin mit eingeschaltetem Schalter „Nur Spitzname“ (Beispieldaten)](docs/screenshots/de/18-admin-nur-spitzname.png)
+
+- In der Bestenliste steht der Spitzname.
+- Der Export **Leads** enthält nur echte Anmeldungen, keine Spitznamen. Im Export **Alle Runden** zeigt die Spalte **Art**, ob es ein **Lead** oder ein **Spitzname** war; bei Spitznamen bleiben Name, Firma und E-Mail leer.
+- In der Übersicht werden Spitznamen separat gezählt („Spitznamen (keine Leads)“).
+
+> [!WARNING]
+> An einer Messe, an der Leads gesammelt werden, den Schalter **unbedingt ausschalten**. Sonst meldet sich niemand an.
+
 - **Referenzdaten laden (Test):** lädt Beispieldaten mit erfundenen Personen (Ordner `daten/`: JSON und CSV-Beispiele), um Bestenliste und Export auszuprobieren. Vor der Messe mit „Alle Daten löschen“ wieder entfernen.
 - Nach jedem Export erscheint der Inhalt zusätzlich in einem Textfeld mit „Inhalt kopieren“. Praktisch, falls der Browser keinen Download erlaubt (z. B. in der Online-Vorschau).
 

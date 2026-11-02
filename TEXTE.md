@@ -99,6 +99,7 @@ Die Übersetzungen dazu stehen in der grossen Tabelle unten.
 | T187 | Online-Demo, Spitzname-Seite | ONLINE-DEMO / Keine Anmeldung nötig. … / Spitzname / GAST |
 | T188 | Name in der Bestenliste, falls leer | SPIELER |
 | T189 | Startbildschirm, Untertitel | SAUG DAS LABOR-CHAOS WEG! |
+| T191 | 🆕 Messe mit Admin-Schalter „Nur Spitzname“: Überschrift der Spitzname-Seite (statt ONLINE-DEMO; Rest wie T187) | WILLKOMMEN! |
 
 ---
 
@@ -225,6 +226,9 @@ Falls dir hier trotzdem etwas nicht gefällt, einfach die Nummer nennen.
 |---|---|
 | T150 | ADMIN · PROFESSOR VACUUMUS, Übersicht, Top 3 heute (Tagespreis), Top 3 gesamte Messe, Export & Sicherung, Einstellungen, Letzte Runden, Gefahrenzone, Knöpfe und Bestätigungen. Sachlich und für das Personal verständlich |
 | T190 | 🆕 Admin, klein unter der Überschrift: Version … (Nummer aus `CONFIG.version`, z. B. 0.9.0), damit man am Stand sieht, welche Version läuft |
+| T192 | 🆕 Admin, Schalter „Nur Spitzname“: Nur Spitzname (keine Lead-Erfassung) / Für Anlässe ohne Lead-Sammlung: Spieler geben nur einen Spitznamen ein, wie in der Online-Version. Keine E-Mail, keine Firma, keine Einwilligung. Länderwahl, Bestenliste und QR-Code bleiben. |
+| T193 | 🆕 Admin, gelber Balken oben, solange der Schalter an ist: NUR SPITZNAME IST AKTIV: Es werden keine Leads erfasst. An einer Lead-Messe unten bei Einstellungen ausschalten! |
+| T194 | 🆕 Admin, Übersicht und Tabellen: · … Spitznamen (keine Leads) / Spitzname; Runden-Export Spalten: Art (Lead / Spitzname), Spitzname |
 
 ---
 
@@ -324,3 +328,7 @@ Den Admin-Bereich (T150) gibt es auf Deutsch und Englisch (Einstellung „Admin-
 | T172 | Kontakt-Seite, unten | ENTER = WEITER<br>TIPPEN = WEITER | ENTER = NEXT<br>TAP = NEXT | ENTRÉE = SUITE<br>TOUCHER = SUITE |
 | T188 | 🆕 Name, falls leer | SPIELER | PLAYER | JOUEUR |
 | T190 | 🆕 Admin, klein unter der Überschrift (Admin nur DE/EN) | Version … | Version … | (Admin nicht auf Französisch; wäre ebenfalls „Version …“) |
+| T191 | 🆕 Spitzname-Seite an der Messe mit Schalter „Nur Spitzname“, Überschrift | WILLKOMMEN! | WELCOME! | BIENVENUE! |
+| T192 | 🆕 Admin, Schalter (Admin nur DE/EN) | Nur Spitzname (keine Lead-Erfassung)<br>Für Anlässe ohne Lead-Sammlung: Spieler geben nur einen Spitznamen ein, wie in der Online-Version. Keine E-Mail, keine Firma, keine Einwilligung. Länderwahl, Bestenliste und QR-Code bleiben. | Nickname only (no lead capture)<br>For events without lead collection: players only enter a nickname, like in the online version. No email, no company, no consent. Country selection, high score list and QR code stay. | (Admin nicht auf Französisch) |
+| T193 | 🆕 Admin, gelber Warnbalken (Admin nur DE/EN) | NUR SPITZNAME IST AKTIV: Es werden keine Leads erfasst. An einer Lead-Messe unten bei Einstellungen ausschalten! | NICKNAME ONLY IS ACTIVE: no leads are captured. At a lead-collecting trade show, switch it off below under Settings! | (Admin nicht auf Französisch) |
+| T194 | 🆕 Admin, Übersicht, Tabellen und Runden-Export (Admin nur DE/EN) | · … Spitznamen (keine Leads)<br>Spitzname<br>Art: Lead / Spitzname | · … nicknames (no leads)<br>nickname<br>Type: Lead / Nickname | (Admin nicht auf Französisch) |

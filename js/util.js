@@ -33,6 +33,11 @@ function escapeHtml(s) {
   return String(s == null ? '' : s).replace(/[&<>"']/g, c =>
     ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 }
+// Spieler nur mit Spitzname (online, oder Messe mit "Nur Spitzname"): kein Lead
+function isNickLead(lead) { return !!(lead && (lead.isOnline || lead.nickOnly)); }
+// Anmeldung nur mit Spitzname? Online immer, an der Messe nur mit Schalter CONFIG.nameOnly
+function nickRegistration() { return CONFIG.mode === 'online' || !!CONFIG.nameOnly; }
+
 function displayName(lead) {
   if (!lead) return '???';
   const f = String(lead.firstName || '').trim().toUpperCase().slice(0, 9);

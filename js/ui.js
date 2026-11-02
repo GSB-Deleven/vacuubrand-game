@@ -26,7 +26,7 @@ class RegisterScene {
   constructor(country) { this.country = country || ''; this.allowAdmin = false; this.t = 0; this.idle = 0; this.demo = new DemoStrip(); }
 
   enter() {
-    if (CONFIG.mode === 'online') { this.enterOnline(); return; }
+    if (nickRegistration()) { this.enterOnline(); return; }
     const cfg = CONFIG.registration;
     const fields = cfg.fields.map(f =>
       '<label class="field"><span>' + escapeHtml(L('reg.' + f.key)) + (f.required ? ' *' : '') + '</span>' +
@@ -59,14 +59,14 @@ class RegisterScene {
     if (!Input.touch) setTimeout(() => { const i = form.querySelector('input'); if (i) i.focus(); }, 30);
   }
 
-  // Online-Demo: nur ein Spitzname, keine Kontaktdaten
+  // Nur Spitzname, keine Kontaktdaten: Online-Demo, oder Messe mit Schalter "Nur Spitzname" (CONFIG.nameOnly)
   enterOnline() {
     let last = '';
     try { last = window.localStorage.getItem('vakuumprof_nick') || ''; } catch (e) { /* egal */ }
     Overlay.show(
       '<form class="panel reg online" novalidate lang="' + I18N.lang + '">' +
       '<div class="logo"><img src="assets/vacuubrand-logo.png" alt="VACUUBRAND"></div>' +
-      '<h1>' + escapeHtml(L('on.title')) + '</h1>' +
+      '<h1>' + escapeHtml(L(CONFIG.mode === 'online' ? 'on.title' : 'nick.title')) + '</h1>' +
       '<p class="hint">' + escapeHtml(L('on.hint')) + '</p>' +
       '<label class="field"><span>' + escapeHtml(L('on.nick')) + '</span><input name="nick" type="text" maxlength="12" autocomplete="off" spellcheck="false" placeholder="' + escapeHtml(L('on.guest')) + '" value="' + escapeHtml(last) + '"></label>' +
       '<div class="buttons"><button type="button" class="btn ghost" data-act="cancel">' + escapeHtml(L('on.back')) + '</button>' +
@@ -79,7 +79,10 @@ class RegisterScene {
       e.preventDefault();
       const nick = (form.elements.nick.value.trim() || L('on.guest')).slice(0, 12);
       try { window.localStorage.setItem('vakuumprof_nick', nick); } catch (err) { /* egal */ }
-      const lead = Store.upsertLead({ firstName: nick, lastName: '', company: '', email: 'online:' + nick.toLowerCase(), consent: false, newsletter: false, isOnline: true, country: this.country, lang: I18N.lang });
+      // Gleicher Spitzname = gleicher Spieler. Online wie bisher "online:…", an der Messe "nick:…" (nie eine echte E-Mail)
+      const online = CONFIG.mode === 'online';
+      const lead = Store.upsertLead(Object.assign({ firstName: nick, lastName: '', company: '', email: (online ? 'online:' : 'nick:') + nick.toLowerCase(),
+        consent: false, newsletter: false, country: this.country, lang: I18N.lang }, online ? { isOnline: true } : { nickOnly: true }));
       Sound.sfx('select');
       Game.go(new PlayScene(lead));
     });
@@ -184,6 +187,7 @@ class AdminScene {
 
   personRow(e) {
     const l = e.lead || {};
+    if (isNickLead(l)) return '<li><b>' + escapeHtml(l.firstName) + '</b> · <i>' + LA('adm.nickTag') + '</i> — <b>' + e.score + '</b></li>';
     return '<li><b>' + escapeHtml(l.firstName) + ' ' + escapeHtml(l.lastName) + '</b> · ' + escapeHtml(l.company) +
       ' · ' + escapeHtml(l.email) + ' — <b>' + e.score + '</b></li>';
   }
@@ -201,8 +205,10 @@ class AdminScene {
     const recent = Store.rounds().slice().sort((a, b) => b.ts - a.ts).slice(0, 40);
     const rows = recent.map(r => {
       const l = leads[r.leadId] || {};
+      const nick = isNickLead(l);   // Spitzname-Runde: keine Firma, keine E-Mail
       return '<tr><td>' + formatDateTime(r.ts) + '</td><td>' + escapeHtml(l.firstName) + ' ' + escapeHtml(l.lastName) +
-        '</td><td>' + escapeHtml(l.company) + '</td><td>' + escapeHtml(l.email) + '</td><td>' + escapeHtml(r.country || l.country || '') +
+        (nick ? ' <i>(' + LA('adm.nickTag') + ')</i>' : '') +
+        '</td><td>' + (nick ? '' : escapeHtml(l.company)) + '</td><td>' + (nick ? '' : escapeHtml(l.email)) + '</td><td>' + escapeHtml(r.country || l.country || '') +
         '</td><td>' + escapeHtml(r.lang || l.lang || '') + '</td><td>' + r.score +
         '</td><td><button class="btn small danger" data-del="' + escapeHtml(r.id) + '">✕</button></td></tr>';
     }).join('');
@@ -210,8 +216,10 @@ class AdminScene {
       '<div class="panel admin" lang="' + I18N.adminLang + '"><h1>' + LA('adm.title') + '</h1>' +
       '<p class="version">' + LA('adm.version', escapeHtml(CONFIG.version || '')) + '</p>' +
       (Store.available ? '' : '<div class="warn">' + LA('adm.noStorage') + '</div>') +
+      (CONFIG.nameOnly ? '<div class="warn nick">' + LA('adm.nameOnlyActive') + '</div>' : '') +
       (note ? '<p class="ok">' + escapeHtml(note) + '</p>' : '') +
-      '<h2>' + LA('adm.overview') + '</h2><p>' + LA('adm.stats', st.playersToday, st.roundsToday, st.leads, st.rounds) + '</p>' +
+      '<h2>' + LA('adm.overview') + '</h2><p>' + LA('adm.stats', st.playersToday, st.roundsToday, st.leads, st.rounds) +
+        (st.nicks ? LA('adm.statsNick', st.nicks) : '') + '</p>' +
       '<div class="cols"><div><h3>' + LA('adm.top3day') + '</h3><ol>' + (today.map(e => this.personRow(e)).join('') || '<li>–</li>') + '</ol></div>' +
       '<div><h3>' + LA('adm.top3all') + '</h3><ol>' + (all.map(e => this.personRow(e)).join('') || '<li>–</li>') + '</ol></div></div>' +
       '<h2>' + LA('adm.export') + '</h2><div class="row">' +
@@ -233,6 +241,8 @@ class AdminScene {
       '<label>' + LA('adm.prizeMain') + '<input type="text" name="prizeMain" maxlength="17" placeholder="' + LA('adm.prizeEmpty') + '" value="' + escapeHtml(CONFIG.prizeMain || '') + '"></label>' +
       '<label>' + LA('adm.defaultLang') + this.langSelect('defaultLang', CONFIG.defaultLang, I18N.langs) + '</label>' +
       '<label>' + LA('adm.adminLang') + this.langSelect('adminLang', I18N.adminLang, ['de', 'en']) + '</label>' +
+      '<label class="check nameOnly"><input type="checkbox" name="nameOnly"' + (CONFIG.nameOnly ? ' checked' : '') + '><span><b>' + LA('adm.nameOnly') + '</b><br>' +
+        '<small>' + LA('adm.nameOnlyHelp') + '</small></span></label>' +
       '<button class="btn" type="submit">' + LA('adm.save') + '</button></form>' +
       '<h2>' + LA('adm.recent') + '</h2><table><tr><th>' + LA('adm.colTime') + '</th><th>' + LA('adm.colName') + '</th><th>' + LA('adm.colCompany') +
       '</th><th>' + LA('adm.colEmail') + '</th><th>' + LA('adm.colCountry') + '</th><th>' + LA('adm.colLang') + '</th><th>' + LA('adm.colScore') + '</th><th></th></tr>' +
@@ -262,7 +272,8 @@ class AdminScene {
         prizeDay: f.elements.prizeDay.value.trim().toUpperCase(),
         prizeMain: f.elements.prizeMain.value.trim().toUpperCase(),
         defaultLang: f.elements.defaultLang.value,
-        adminLang: f.elements.adminLang.value
+        adminLang: f.elements.adminLang.value,
+        nameOnly: f.elements.nameOnly.checked
       };
       Object.assign(CONFIG, s);
       I18N.adminLang = s.adminLang;
