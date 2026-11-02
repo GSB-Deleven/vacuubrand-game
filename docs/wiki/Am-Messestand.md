@@ -12,8 +12,8 @@ Immer **denselben Browser und denselben Ordner** benutzen, sonst ist die Bestenl
 ## Ablauf mit Besuchern
 
 1. Startbildschirm mit Demo lockt an, **B** zeigt die Bestenliste
-2. **Enter** → Land und Sprache wählen (Flaggen Schweiz, Deutschland, UK/Irland, Frankreich; Deutsch, Englisch oder Französisch)
-3. Anmeldung in der gewählten Sprache: Vorname, Name, Firma, E-Mail, Einwilligung (Pflicht), Newsletter (freiwillig)
+2. **Enter** → Land und Sprache wählen (Flaggen Schweiz, Deutschland, UK/Irland, Frankreich; Deutsch, Englisch oder Französisch). Flagge antippen markiert nur das Land und stellt die passende Sprache ein, die Sprache kann man noch ändern, dann **START**
+3. Anmeldung in der gewählten Sprache: Vorname, Name, Firma, E-Mail, Einwilligung (Pflicht), Newsletter (freiwillig). Ist im Admin **Nur Spitzname** eingeschaltet, nur ein Spitzname
 4. Kurze Anleitung, Countdown, spielen
 5. Ergebnis mit Medaillen und Platzierung
 6. Kontakt-Seite mit QR-Code zu den Ansprechpartnern des gewählten Landes (bleibt stehen, bis jemand weiterklickt)

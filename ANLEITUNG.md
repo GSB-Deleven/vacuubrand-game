@@ -54,7 +54,7 @@ Dort unten bei „Assets“ die Datei `Professor-Vacuumus-v….zip` laden (nicht
 | 🍎 Mac | ZIP doppelklicken (entpackt automatisch). `▶ START Mac.command` beim ersten Mal mit Rechtsklick → **Öffnen** → Öffnen starten. Kommt „keine Berechtigung“: im Terminal `chmod +x ` eintippen, die Datei ins Fenster ziehen, Enter |
 | 🍓 Raspberry Pi / Linux | ZIP entpacken (Rechtsklick → Hier entpacken, oder im Terminal `unzip Professor-Vacuumus-v….zip`). `▶ START Linux + Raspberry Pi.sh` doppelklicken. Startet es nicht: im Ordner im Terminal `chmod +x *.sh raspberry-pi/*.sh`. Automatischer Start beim Einschalten: [raspberry-pi/README.md](raspberry-pi/README.md) |
 
-Welche Version läuft, steht klein oben im Admin-Bereich (z. B. „Version 0.9.0“).
+Welche Version läuft, steht klein oben im Admin-Bereich (z. B. „Version 0.9.1“).
 
 > [!IMPORTANT]
 > **Bei einer neuen Version:** Bestenliste vorher im Admin sichern (JSON), neuen Ordner an **dieselbe Stelle** legen (alten ersetzen), sonst sieht das Spiel die bisherige Bestenliste nicht. Notfalls die Sicherung im Admin wieder laden.
@@ -298,7 +298,7 @@ Auf dem Titelbild **Strg + Shift + A** drücken (Tablet: 3 Sekunden aufs Logo), 
 
 | Bereich | Was es kann |
 |---|---|
-| **Version** | steht klein unter der Überschrift (z. B. „Version 0.9.0“), damit man sieht, welche Version läuft |
+| **Version** | steht klein unter der Überschrift (z. B. „Version 0.9.1“), damit man sieht, welche Version läuft |
 | **Übersicht** | **Top 3 heute** (Tagespreis) und **Top 3 gesamte Messe** mit vollen Kontaktdaten |
 | **Export & Sicherung** | **Leads (CSV/Excel)** und **Alle Runden (CSV/Excel)** exportieren, landen im Download-Ordner. **Sicherung speichern / laden** (JSON), z. B. um Daten auf einen anderen Laptop zu übertragen |
 | **Einstellungen** | Messename, Rundenzeit, PIN, Tagespreis und Hauptpreis (Preise erscheinen auf Startbildschirm und Bestenliste) |

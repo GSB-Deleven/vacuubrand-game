@@ -9,7 +9,7 @@ const CONFIG = {
   // Versionsnummer des Spiels. Steht klein im Admin-Bereich, damit man am Stand sieht, welche Version läuft.
   // Bei einer neuen Download-Version (Release auf GitHub) hier erhöhen, gleich wie der Tag (ohne "v"),
   // z. B. Tag v0.9.1 = '0.9.1'. Ablauf: TECHNIK.md, Kochrezept "Neue Version veröffentlichen".
-  version: '0.9.0',
+  version: '0.9.1',
   eventName: 'MESSE 2026',     // erscheint auf dem Titelbildschirm
   roundSeconds: 120,           // Länge einer Spielrunde in Sekunden
   adminPin: '1234',            // PIN für den Admin-Bereich – bitte ändern!
