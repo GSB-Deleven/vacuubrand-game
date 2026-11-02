@@ -1,4 +1,4 @@
-# 🧪 Professor Vakuumus
+# 🧪 Professor Vacuumus
 
 🇩🇪 **Deutsche Fassung: [README.md](README.md)**
 
@@ -38,7 +38,7 @@
 
 ## 🎯 What is it about?
 
-Professor Vakuumus is a short platformer in the style of the old Nintendo games. A crazy lab professor with wild orange hair cleans up the lab with his suction gun. On his back he carries a VACUUBRAND pump, which gets stronger and stronger during the round.
+Professor Vacuumus is a short platformer in the style of the old Nintendo games. A crazy lab professor with wild orange hair cleans up the lab with his suction gun. On his back he carries a VACUUBRAND pump, which gets stronger and stronger during the round.
 
 A round lasts **2 minutes**: long enough to be fun, short enough that no queue builds up at the booth.
 

@@ -1,4 +1,4 @@
-# 🧪 Professor Vakuumus
+# 🧪 Professor Vacuumus
 
 Das VACUUBRAND Messespiel: Ein verrückter Laborprofessor saugt mit seiner Saugpistole das Labor-Chaos weg. Unterwegs holt er sich immer stärkere VACUUBRAND Pumpen. Vor dem Spielen melden sich die Besucher an, die Besten gewinnen einen Preis.
 

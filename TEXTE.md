@@ -1,4 +1,4 @@
-# ✏️ Professor Vakuumus: alle Spieltexte
+# ✏️ Professor Vacuumus: alle Spieltexte
 
 > 📌 **Offene Aufgabe fürs Marketing:** alle Texte prüfen und freigeben oder umschreiben. Die Vorschläge unten sind ein Ausgangspunkt, keine Vorgabe.
 
@@ -24,6 +24,7 @@ Für die Nummern bei der Rückmeldung reicht z. B. „T12 ja, T15 lieber: …“
 |---|---|---|---|---|
 | T1 | Meldung beim Sturz ins Becken | IN DIE DESINFEKTIONSBAD GEFALLEN! / IN DIE FLÜSSIGSTICKSTOFF GEFALLEN! | INS DESINFEKTIONSBAD GEFALLEN! / IN DEN FLÜSSIGSTICKSTOFF GEFALLEN! | Artikel war falsch |
 | T2 | Banner Handschuhe | SAUG-ENERGIE LÄDT DOPPELT SO SCHNELL. | SOG-LEISTE LÄDT DOPPELT SO SCHNELL. | gleiches Wort wie in der Anzeige („SOG“) |
+| T40, T150 | Titel und Admin-Überschrift (alle Sprachen DE/EN/FR) | PROFESSOR VAKUUMUS | PROFESSOR VACUUMUS | Wunsch David: Name wie VACUUBRAND geschrieben |
 
 ---
 
@@ -105,7 +106,7 @@ Falls dir hier trotzdem etwas nicht gefällt, einfach die Nummer nennen.
 
 | Nr. | Text |
 |---|---|
-| T40 | VACUUBRAND (Logo) / PROFESSOR / VAKUUMUS |
+| T40 | VACUUBRAND (Logo) / PROFESSOR / VACUUMUS |
 | T41 | B = BESTENLISTE |
 | T42 | HEUTE FÜHRT: *Name, Punkte* |
 | T43 | MESSE 2026 (im Admin einstellbar) |
@@ -218,7 +219,7 @@ Falls dir hier trotzdem etwas nicht gefällt, einfach die Nummer nennen.
 
 | Nr. | Text |
 |---|---|
-| T150 | ADMIN · PROFESSOR VAKUUMUS, Übersicht, Top 3 heute (Tagespreis), Top 3 gesamte Messe, Export & Sicherung, Einstellungen, Letzte Runden, Gefahrenzone, Knöpfe und Bestätigungen. Sachlich und für das Personal verständlich |
+| T150 | ADMIN · PROFESSOR VACUUMUS, Übersicht, Top 3 heute (Tagespreis), Top 3 gesamte Messe, Export & Sicherung, Einstellungen, Letzte Runden, Gefahrenzone, Knöpfe und Bestätigungen. Sachlich und für das Personal verständlich |
 
 ---
 

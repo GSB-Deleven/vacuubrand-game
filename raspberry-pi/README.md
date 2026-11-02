@@ -1,4 +1,4 @@
-# 🍓 Professor Vakuumus auf dem Raspberry Pi (Arcade-Automat)
+# 🍓 Professor Vacuumus auf dem Raspberry Pi (Arcade-Automat)
 
 Der Raspberry Pi startet beim Einschalten direkt ins Spiel, im Vollbild und ohne Internet. Joystick oder Arcade-Knöpfe einstecken, fertig.
 

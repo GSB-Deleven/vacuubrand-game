@@ -1,6 +1,6 @@
 # Hinweise für Claude (und alle, die am Spiel arbeiten)
 
-Professor Vakuumus ist ein offline-fähiges Browsergame für VACUUBRAND-Messestände (Jump'n'Run im Pixel-Stil).
+Professor Vacuumus ist ein offline-fähiges Browsergame für VACUUBRAND-Messestände (Jump'n'Run im Pixel-Stil).
 Auftraggeber ist David (VACUUBRAND Schweiz, Labor, kein Programmierer): Antworten und Issue-Kommentare auf **Deutsch (Schweiz, ss statt ß)**, einfach erklärt, ohne Fachjargon. Keine Gedankenstriche in Texten für David.
 
 Diese Datei fasst den bisherigen Stand und alle Entscheidungen zusammen. Neue Sitzungen sollen hier einsteigen, statt den alten Chat zu brauchen.

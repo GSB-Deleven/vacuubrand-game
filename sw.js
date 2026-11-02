@@ -1,7 +1,9 @@
 'use strict';
 // Service Worker: macht die Online-Version offline-fähig (z. B. Tablet am Stand ohne WLAN).
 // Bei jeder neuen Version VERSION erhöhen, damit Tablets die neuen Dateien holen.
-const VERSION = 'vakuumus-v11';
+// Hinweis: Der Cache-Name behält absichtlich den alten Namen "vakuumus" (Professor heisst jetzt Vacuumus).
+// Nur die Nummer hochzählen, damit installierte Tablets sauber aktualisieren.
+const VERSION = 'vakuumus-v12';
 const FILES = [
   './',
   'index.html',

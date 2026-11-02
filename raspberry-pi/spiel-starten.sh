@@ -9,7 +9,8 @@ if [ -z "$BROWSER" ]; then
 fi
 # Mauszeiger ausblenden, falls unclutter installiert ist
 command -v unclutter >/dev/null 2>&1 && (unclutter -idle 1 >/dev/null 2>&1 &)
-# Eigenes Profil, damit Bestenliste und Leads immer am gleichen Ort gespeichert werden
+# Eigenes Profil, damit Bestenliste und Leads immer am gleichen Ort gespeichert werden.
+# Der Ordner heisst absichtlich weiter ".professor-vakuumus" (alter Name), sonst wären die gespeicherten Daten weg.
 exec "$BROWSER" --kiosk --noerrdialogs --disable-infobars --no-first-run \
   --disable-session-crashed-bubble --disable-features=Translate \
   --autoplay-policy=no-user-gesture-required --check-for-update-interval=31536000 \

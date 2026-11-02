@@ -1,6 +1,8 @@
 'use strict';
 // Speicherung im Browser (localStorage) – bleibt auf diesem Laptop, auch nach Neustart.
 const Store = {
+  // Schlüssel behalten absichtlich den alten Namen "vakuumprof_" (vor der Umbenennung in Vacuumus),
+  // sonst wären Bestenliste und Leads auf bestehenden Geräten weg. Exportnamen vakuum-professor_* ebenso.
   K_LEADS: 'vakuumprof_leads_v1',
   K_ROUNDS: 'vakuumprof_rounds_v1',
   K_SETTINGS: 'vakuumprof_settings_v1',

@@ -138,7 +138,7 @@ class TitleScene {
     Font.drawLogo(ctx, 160, 3, 1, PAL.k);
     const bob = Math.round(Math.sin(this.t * 0.05) * 2);
     Font.draw(ctx, 'PROFESSOR', 160, 15 + bob, { color: '#ffffff', scale: 3, align: 'center', outline: THEME.navy });
-    Font.draw(ctx, 'VAKUUMUS', 160, 40 + bob, { color: THEME.gold, scale: 4, align: 'center', outline: PAL.k });
+    Font.draw(ctx, 'VACUUMUS', 160, 40 + bob, { color: THEME.gold, scale: 4, align: 'center', outline: PAL.k });
     Font.draw(ctx, L('title.sub'), 160, 79, { color: PAL.k, align: 'center' });
     const cx = 233;
     const [sx, sy, sw, sh] = TITLE_BTN_START, [bx, by, bw, bh] = TITLE_BTN_BOARD;

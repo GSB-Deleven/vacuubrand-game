@@ -1,5 +1,5 @@
 #!/bin/bash
-# Professor Vakuumus auf dem Mac starten: Doppelklick auf diese Datei.
+# Professor Vacuumus auf dem Mac starten: Doppelklick auf diese Datei.
 # Erstes Mal: Rechtsklick -> "Öffnen" -> "Öffnen" (macOS fragt einmal nach).
 # Nimmt Chrome oder Edge im Vollbild, falls installiert, sonst den Standardbrowser (Safari).
 # Wichtig: Immer mit derselben Datei starten, sonst sieht ein anderer Browser eine leere Bestenliste.

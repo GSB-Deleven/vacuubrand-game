@@ -13,11 +13,11 @@ Reife Ideen: in der Discussion rechts auf **„Create issue from discussion“**
 
 ## Willkommens-Beitrag (Kategorie „Ankündigungen“, oben anpinnen)
 
-**Titel:** 👋 Willkommen bei Professor Vakuumus
+**Titel:** 👋 Willkommen bei Professor Vacuumus
 
 Hoi zusammen
 
-Hier sammeln wir alles rund um unser Messespiel **Professor Vakuumus**.
+Hier sammeln wir alles rund um unser Messespiel **Professor Vacuumus**.
 
 - 🎮 **Online spielen:** https://gsb-deleven.github.io/vacuubrand-game/
 - 📖 **Anleitung und Technik:** im Wiki
