@@ -1,4 +1,4 @@
-# Professor Vakuumus: Guide for Booth Staff
+# Professor Vacuumus: Guide for Booth Staff
 
 🇩🇪 Deutsche Fassung: **[ANLEITUNG.md](ANLEITUNG.md)**
 

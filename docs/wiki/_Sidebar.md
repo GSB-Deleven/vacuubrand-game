@@ -1,4 +1,4 @@
-**🧪 Professor Vakuumus**
+**🧪 Professor Vacuumus**
 
 - [[Home]]
 - [[Spielen und Steuerung]]

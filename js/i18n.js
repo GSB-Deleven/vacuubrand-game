@@ -165,7 +165,7 @@ const I18N = {
     'on.privacy': 'Deine Punkte werden nur auf diesem Gerät gespeichert. Es werden keine Daten übertragen.',
 
     // ---------------- Admin-Bereich (nur de und en) ----------------
-    'adm.title': 'ADMIN · PROFESSOR VAKUUMUS',
+    'adm.title': 'ADMIN · PROFESSOR VACUUMUS',
     'adm.pin': 'PIN', 'adm.open': 'ÖFFNEN', 'adm.back': 'ESC · ZURÜCK', 'adm.wrongPin': 'Falsche PIN.',
     'adm.noStorage': 'Achtung: Der Browser-Speicher ist nicht verfügbar – Daten gehen beim Schliessen verloren! Bitte regelmässig exportieren.',
     'adm.overview': 'Übersicht',
@@ -349,7 +349,7 @@ const I18N = {
     'on.back': 'BACK', 'on.go': 'LET\'S GO!',
     'on.privacy': 'Your points are stored only on this device. No data is transmitted.',
 
-    'adm.title': 'ADMIN · PROFESSOR VAKUUMUS',
+    'adm.title': 'ADMIN · PROFESSOR VACUUMUS',
     'adm.pin': 'PIN', 'adm.open': 'OPEN', 'adm.back': 'ESC · BACK', 'adm.wrongPin': 'Wrong PIN.',
     'adm.noStorage': 'Warning: browser storage is not available – data will be lost when closing! Please export regularly.',
     'adm.overview': 'Overview',

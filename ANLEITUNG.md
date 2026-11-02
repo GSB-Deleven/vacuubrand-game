@@ -1,4 +1,4 @@
-# Professor Vakuumus: Anleitung fürs Standpersonal
+# Professor Vacuumus: Anleitung fürs Standpersonal
 
 🇬🇧 English version: **[GUIDE.en.md](GUIDE.en.md)**
 

@@ -1,4 +1,4 @@
-# 🛠️ Professor Vakuumus: Technisches Handbuch
+# 🛠️ Professor Vacuumus: Technisches Handbuch
 
 Dieses Dokument erklärt, wie das Spiel aufgebaut ist, was jede Datei macht und wie man es anpasst oder erweitert. Für den Überblick fürs Management gibt es [README.md](README.md) (englisch: [README.en.md](README.en.md)), für das Standpersonal [ANLEITUNG.md](ANLEITUNG.md) (englisch: [GUIDE.en.md](GUIDE.en.md)). Alle Zahlen hier stammen direkt aus dem Code (Stand dieses Dokuments).
 
@@ -488,6 +488,8 @@ Im `localStorage` des Browsers:
 | `vakuumprof_leads_v1` | alle Leads |
 | `vakuumprof_rounds_v1` | alle gespielten Runden |
 | `vakuumprof_settings_v1` | im Admin geänderte Einstellungen (Messename, Rundenzeit, PIN, Preise) |
+
+ℹ️ Der Professor hiess früher „Vakuumus“ und heisst jetzt **Vacuumus** (wie VACUUBRAND). Absichtlich mit altem Namen geblieben sind: die Speicher-Schlüssel `vakuumprof_*`, der Cache-Name `vakuumus-vNN` in `sw.js`, die Exportdateien `vakuum-professor_*`, auf dem Pi die Autostart-Datei `professor-vakuumus.desktop` und der Profilordner `~/.professor-vakuumus`. Wer diese umbenennt, verliert Bestenliste und Leads auf bestehenden Geräten bzw. erzeugt doppelte Autostarts.
 
 ⚠️ Die Daten gehören zu **diesem Browser auf diesem Laptop und diesem Ordner**. Ein anderer Browser, ein verschobener Ordner oder gelöschte Browserdaten bedeuten eine leere Bestenliste. Darum jeden Abend exportieren.
 

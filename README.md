@@ -1,4 +1,4 @@
-# 🧪 Professor Vakuumus
+# 🧪 Professor Vacuumus
 
 🇬🇧 **English version: [README.en.md](README.en.md)** · 🇫🇷 Le jeu existe aussi en français.
 
@@ -37,7 +37,7 @@
 
 ## 🎯 Worum geht's?
 
-Professor Vakuumus ist ein kurzes Jump'n'Run im Stil der alten Nintendo-Spiele. Ein verrückter Laborprofessor mit wilden orangen Haaren räumt mit seiner Saugpistole das Labor auf. Auf dem Rücken trägt er eine VACUUBRAND Pumpe, und die wird im Lauf der Runde immer stärker.
+Professor Vacuumus ist ein kurzes Jump'n'Run im Stil der alten Nintendo-Spiele. Ein verrückter Laborprofessor mit wilden orangen Haaren räumt mit seiner Saugpistole das Labor auf. Auf dem Rücken trägt er eine VACUUBRAND Pumpe, und die wird im Lauf der Runde immer stärker.
 
 Eine Runde dauert **2 Minuten**. Das ist lang genug, dass es Spass macht, und kurz genug, dass am Stand keine Schlange entsteht.
 

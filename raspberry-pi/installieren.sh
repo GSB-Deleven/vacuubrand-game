@@ -20,10 +20,12 @@ if command -v raspi-config >/dev/null 2>&1; then sudo raspi-config nonint do_bla
 echo "3/3 Autostart einrichten ..."
 # Standard-Autostart (ältere Desktops und alle, die XDG-Autostart unterstützen)
 mkdir -p "$HOME/.config/autostart"
+# Dateiname bleibt absichtlich "professor-vakuumus.desktop" (alter Name), damit bestehende Installationen
+# überschrieben statt doppelt angelegt werden.
 cat > "$HOME/.config/autostart/professor-vakuumus.desktop" <<DESK
 [Desktop Entry]
 Type=Application
-Name=Professor Vakuumus
+Name=Professor Vacuumus
 Exec="$START"
 X-GNOME-Autostart-enabled=true
 DESK
