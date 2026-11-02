@@ -3,7 +3,7 @@
 // Bei jeder neuen Version VERSION erhöhen, damit Tablets die neuen Dateien holen.
 // Hinweis: Der Cache-Name behält absichtlich den alten Namen "vakuumus" (Professor heisst jetzt Vacuumus).
 // Nur die Nummer hochzählen, damit installierte Tablets sauber aktualisieren.
-const VERSION = 'vakuumus-v14';
+const VERSION = 'vakuumus-v15';
 const FILES = [
   './',
   'index.html',
@@ -45,15 +45,18 @@ self.addEventListener('activate', e => {
     .then(() => self.clients.claim()));
 });
 
-// Zuerst aus dem Cache (schnell, offline), im Hintergrund aktualisieren
+// Mit Internet immer zuerst die aktuelle Datei vom Server holen (damit Änderungen wie neue QR-Links
+// sofort ankommen). Ohne Internet, oder wenn der Server länger als 3 Sekunden braucht, aus dem Cache.
 self.addEventListener('fetch', e => {
   if (e.request.method !== 'GET' || new URL(e.request.url).origin !== location.origin) return;
-  e.respondWith(caches.open(VERSION).then(cache =>
-    cache.match(e.request, { ignoreSearch: true }).then(hit => {
-      const net = fetch(e.request.url, { cache: 'no-cache' }).then(res => {
-        if (res && res.ok) cache.put(e.request, res.clone());
-        return res;
-      }).catch(() => hit);
-      return hit || net;
-    })));
+  e.respondWith(caches.open(VERSION).then(cache => {
+    const cached = () => cache.match(e.request, { ignoreSearch: true });
+    const net = fetch(e.request.url, { cache: 'no-cache' }).then(res => {
+      if (res && res.ok) cache.put(e.request, res.clone());
+      return res;
+    });
+    const slow = new Promise(resolve => setTimeout(resolve, 3000)).then(cached);
+    return Promise.race([net, slow.then(hit => hit || net)])
+      .catch(() => cached().then(hit => hit || net));
+  }));
 });
