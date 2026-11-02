@@ -19,7 +19,7 @@ Immer **denselben Browser und denselben Ordner** benutzen, sonst ist die Bestenl
 6. Kontakt-Seite mit QR-Code zu den Ansprechpartnern des gewählten Landes (bleibt stehen, bis jemand weiterklickt)
 7. Bestenliste → zurück zum Start
 
-QR-Codes prüfen: `qr/index.html` oder https://gsb-deleven.github.io/vacuubrand-game/qr/
+QR-Codes prüfen: `qr/index.html` oder https://gsb-deleven.github.io/vacuubrand-game/qr/ (5 Karten: vier Länder und „Ohne Land“ = Ansprechpartner weltweit)
 
 Öffentlich sichtbar ist nur „Vorname N.“.
 

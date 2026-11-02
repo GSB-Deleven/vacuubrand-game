@@ -50,7 +50,7 @@ vacuubrand-game/
 ├── ANLEITUNG.md / GUIDE.en.md     Anleitung fürs Standpersonal (deutsch / englisch)
 ├── TECHNIK.md                    dieses Dokument
 ├── TEXTE.md                      alle Spieltexte mit Korrekturvorschlägen, mit Englisch und Französisch
-├── qr/                           Prüfseite für die QR-Codes (index.html) und QR-Bilder pro Land
+├── qr/                           Prüfseite für die QR-Codes (index.html, DE/EN) und QR-Bilder pro Land und ohne Land (QR_ALLE.png)
 ├── css/style.css                 Aussehen von Anmeldung und Admin-Bereich (HTML-Overlay)
 ├── assets/                       Logo und App-Icons (icon-192.png, icon-512.png)
 ├── manifest.webmanifest          App-Beschreibung für „Zum Home-Bildschirm“ (PWA)
@@ -84,7 +84,7 @@ Die Reihenfolge in `index.html` ist wichtig, weil spätere Dateien Dinge aus fr�
 | `referenzdaten.js` | die Referenzdaten als JavaScript, damit sie auch offline ohne Dateizugriff ladbar sind |
 | `ui.js` | HTML-Overlay: Anmeldeformular und Admin-Bereich |
 | `main.js` | Start, Szenenwechsel, Spielschleife, Skalierung, Mausklicks, Schnellstart |
-| `lib/qrcode.js` | QR-Code-Erzeugung (fremde Bibliothek „qrcode-generator“ von Kazuhiko Arase, MIT-Lizenz), für den Kontakt-QR-Code nach dem Ergebnis. Ziel-Link: `contactUrl` des gewählten Landes in `config.js` (`countries`) |
+| `lib/qrcode.js` | QR-Code-Erzeugung (fremde Bibliothek „qrcode-generator“ von Kazuhiko Arase, MIT-Lizenz), für den Kontakt-QR-Code nach dem Ergebnis. Ziel-Link: `contactUrl` des gewählten Landes in `config.js` (`countries`), ohne Land der allgemeine `contactUrl` (Ansprechpartner weltweit) |
 
 ---
 
@@ -204,15 +204,22 @@ countries: [
 - Die Flaggen sind Pixel-Sprites `SPR.flag_CH` usw. in `sprites.js` (`buildFlags`). Für ein neues Land: Eintrag in `countries` und eine Flagge `flag_<key>` zeichnen
 - Bedienung: ← → Flagge, ↑ ↓ (`Input` Aktion `up`/`down`) zwischen Flaggen und Sprachzeile, Enter/A bestätigt, Esc zurück. Touch und Maus: Sprache antippen (optional), dann Flagge antippen, das startet direkt. Nach `countrySelectSeconds` (60 s) ohne Eingabe zurück zum Titel
 - Vorgewählt ist das erste Land, dessen Sprache der Gerätesprache entspricht
-- Der Schnellstart (`Strg + Shift + Enter`) überspringt die Wahl: Gerätesprache und der allgemeine `contactUrl`
+- Der Schnellstart (`Strg + Shift + Enter`) überspringt die Wahl: Gerätesprache und der allgemeine `contactUrl` (Ansprechpartner weltweit, `https://www.vacuubrand.com/service-advice/contact/contacts-worldwide`, englische Seite mit allen Ländern). Er gilt auch für ein Land ohne eigenen `contactUrl`
 
 ### QR-Codes prüfen und Bilder neu erzeugen
 
-`qr/index.html` lädt `js/lib/qrcode.js` und `js/config.js` und zeigt für jedes Land den QR-Code (gleiche Einstellung wie im Spiel: `qrcode(0, 'L')`, Rand 4 Kästchen), den Link als Text und als Link. Die Seite läuft per Doppelklick und online unter https://gsb-deleven.github.io/vacuubrand-game/qr/. Nach einer Link-Änderung ist sie sofort aktuell.
+`qr/index.html` lädt `js/lib/qrcode.js` und `js/config.js` und zeigt für jedes Land den QR-Code (gleiche Einstellung wie im Spiel: `qrcode(0, 'L')`, Rand 4 Kästchen), den Link als Text und als Link. Die fünfte Karte „Ohne Land (Schnellstart)“ (`data-key="ALLE"`) zeigt den allgemeinen `contactUrl`. Die Seite läuft per Doppelklick und online unter https://gsb-deleven.github.io/vacuubrand-game/qr/. Nach einer Link-Änderung ist sie sofort aktuell.
 
-Die Bilder `qr/QR_CH.png`, `QR_DE.png`, `QR_UK.png`, `QR_FR.png` (10 Pixel pro Kästchen) sind zum Weiterschicken gedacht und müssen nach einer Link-Änderung **neu erzeugt** werden:
+Die Texte der Prüfseite gibt es auf Deutsch und Englisch (wie der Admin-Bereich, Objekt `T` in `qr/index.html`). Sprache: `?lang=de` / `?lang=en` oder Umschalter oben rechts, sonst die Browsersprache (Deutsch, sonst Englisch). Die Länder- und Sprachnamen auf den Karten kommen aus `CONFIG.countries`.
+
+Die Bilder `qr/QR_CH.png`, `QR_DE.png`, `QR_UK.png`, `QR_FR.png` und `QR_ALLE.png` (ohne Land, 10 Pixel pro Kästchen) sind zum Weiterschicken gedacht und müssen nach einer Link-Änderung **neu erzeugt** werden. Der Dateiname steht auf jeder Karte („Bild zum Weiterschicken“):
 - **Von Hand:** `qr/index.html` öffnen, Rechtsklick auf den QR-Code → „Bild speichern unter …“ und mit dem passenden Namen (z. B. `QR_UK.png`) in den Ordner `qr/` speichern
-- **Automatisch (Claude/Entwicklung):** mit Playwright `qr/index.html` öffnen, von jedem `.card canvas` `toDataURL('image/png')` speichern (`data-key` der Karte = Länderkürzel) und jedes Bild mit jsQR gegen `data-url` prüfen
+- **Automatisch (Claude/Entwicklung):** mit Playwright `qr/index.html` öffnen, von jedem `.card canvas` `toDataURL('image/png')` speichern (Dateiname aus dem Link `.card .png a`) und jedes Bild mit jsQR gegen `data-url` des Canvas prüfen
+
+Danach auch die **Doku-Screenshots** der Prüfseite neu machen (sie stehen in ANLEITUNG.md, GUIDE.en.md, README.md und README.en.md):
+- `docs/qr-pruefseite.png` = `qr/index.html?lang=de`, `docs/qr-check-page.en.png` = `qr/index.html?lang=en`
+- Playwright mit Fenster 1720 × 900 Pixel (dann stehen alle 5 Karten nebeneinander), `deviceScaleFactor: 1`, `page.screenshot({ fullPage: true })`
+- Von Hand geht es auch: Seite im Browser breit genug öffnen und einen Bildschirmausschnitt speichern
 
 ---
 

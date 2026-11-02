@@ -15,9 +15,10 @@ const CONFIG = {
   // (Produktname + Werbetext). Aus, bis das Marketing die Texte freigegeben hat (siehe TEXTE.md).
   // true = einschalten. Schutzausrüstung und "LABOR GERETTET!" erscheinen immer.
   productBanners: false,
-  // Allgemeiner Link für den QR-Code am Ende der Runde. Gilt nur, wenn ein Land keinen eigenen Link hat
-  // (z. B. beim Schnellstart ohne Länderwahl).
-  contactUrl: 'https://www.vacuubrand.com/ch/de/service-beratung/kontakt/ansprechpartner-weltweit/ch',
+  // Allgemeiner Link für den QR-Code am Ende der Runde, wenn kein Land gewählt wurde (z. B. beim Schnellstart
+  // ohne Länderwahl) oder ein Land keinen eigenen Link hat. Zeigt die Ansprechpartner weltweit (alle Länder,
+  // Seite auf Englisch). Bild zum Weiterschicken: qr/QR_ALLE.png (nach einer Änderung neu erzeugen, siehe TECHNIK.md).
+  contactUrl: 'https://www.vacuubrand.com/service-advice/contact/contacts-worldwide',
 
   // Gerätesprache: 'de', 'en' oder 'fr'. Auch im Admin einstellbar. Sie bestimmt, welches Land und welche
   // Sprache in der Länderwahl vorgewählt sind, und gilt beim Schnellstart.

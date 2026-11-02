@@ -134,7 +134,7 @@ steht mit seinem besten Ergebnis drin.
 Auf dem Titelbild, der Bestenliste oder im Anmeldeformular **Strg + Shift + Enter** drücken:
 Das Spiel startet sofort mit dem Spieler **ADMIN**. Diese Testrunden werden **nicht** gespeichert
 und erscheinen weder in der Bestenliste noch im Export. Die Länderwahl wird übersprungen: Es gilt die Gerätesprache,
-der QR-Code am Ende zeigt den allgemeinen Kontakt-Link.
+der QR-Code am Ende zeigt die Ansprechpartner weltweit (alle Länder).
 
 ## Admin-Bereich (für das Standpersonal)
 
@@ -167,9 +167,15 @@ Entwürfe und brauchen die Freigabe für UK/Irland bzw. Frankreich. Nach der Mes
 Im Ordner `qr/` liegt eine Prüfseite: **`qr/index.html`** doppelklicken (läuft ohne Internet) oder online
 **https://gsb-deleven.github.io/vacuubrand-game/qr/** öffnen. Sie zeigt für jedes Land den QR-Code gross,
 dazu den Link als Text und zum Anklicken. Einfach mit dem Handy scannen und schauen, ob die richtige Seite kommt.
+Die fünfte Karte **„Ohne Land (Schnellstart)“** zeigt den Code, der kommt, wenn kein Land gewählt wurde:
+die Seite mit den Ansprechpartnern weltweit (alle Länder). Oben rechts lässt sich die Seite auf Englisch umstellen (DE / EN).
 
-Die Links stehen in `js/config.js` im Abschnitt `countries` und lassen sich dort austauschen. Die Prüfseite ist danach
-sofort aktuell (F5). Für E-Mails liegen die Bilder `QR_CH.png`, `QR_DE.png`, `QR_UK.png` und `QR_FR.png` im gleichen Ordner.
+![Prüfseite qr/index.html mit allen fünf QR-Codes](docs/qr-pruefseite.png)
+
+Die Links stehen in `js/config.js` im Abschnitt `countries` (ohne Land: `contactUrl`) und lassen sich dort austauschen.
+Die Prüfseite ist danach sofort aktuell (F5). Für E-Mails liegen die Bilder `QR_CH.png`, `QR_DE.png`, `QR_UK.png`,
+`QR_FR.png` und `QR_ALLE.png` (ohne Land) im gleichen Ordner. Diese Bilder werden nach einer Link-Änderung nicht von
+selbst neu erzeugt (siehe TECHNIK.md, Abschnitt „QR-Codes prüfen und Bilder neu erzeugen“).
 
 ## Anpassen
 
