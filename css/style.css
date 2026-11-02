@@ -144,6 +144,7 @@ input.bad { border-color: #ff6b6b; }
 .admin .row { display: flex; gap: 0.6em; flex-wrap: wrap; align-items: center; }
 .admin .row label { display: flex; flex-direction: column; gap: 0.2em; }
 .admin .row input { width: 12em; }
+.admin .row select { width: 12em; font: inherit; padding: 0.3em; background: #fff; color: #1a1c2c; border: 2px solid #a9bfd8; }
 .admin .warn { background: #e04848; padding: 0.4em; margin-bottom: 0.5em; }
 .admin .ok { color: #7be07b; }
 

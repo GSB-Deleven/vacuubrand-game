@@ -304,7 +304,7 @@ class Item {
     if (this.hitWall) this.dir *= -1;
     if (this.y > scene.level.H * T + 20) {
       this.alive = false;
-      if (this.kind === 'pump') scene.showMsg('OH NEIN, DIE PUMPE IST WEG! NÄCHSTER KOLBEN-BLOCK...', 140, '#ff8f8f');
+      if (this.kind === 'pump') scene.showMsg(L('msg.pumpLost'), 140, '#ff8f8f');
     }
   }
   draw(ctx, camX) {
@@ -343,7 +343,7 @@ class Boss {
     if (!this.active) {
       if (p.x > scene.level.bossArenaX * T) {
         this.active = true;
-        scene.showMsg('DIE DAMPF-KRAKE! SAUG SIE WEG!', 150, '#e6dcff');
+        scene.showMsg(L('msg.boss'), 150, '#e6dcff');
         Sound.sfx('bossappear');
       }
       return;

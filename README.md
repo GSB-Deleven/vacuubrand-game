@@ -1,5 +1,7 @@
 # 🧪 Professor Vakuumus
 
+🇬🇧 **English version: [README.en.md](README.en.md)** · 🇫🇷 Le jeu existe aussi en français.
+
 > [!NOTE]
 > **🧪 Online testen: [gsb-deleven.github.io/vacuubrand-game](https://gsb-deleven.github.io/vacuubrand-game/)**
 >
@@ -57,22 +59,28 @@ Vor dem Spielen melden sich die Besucher mit Namen, Firma und E-Mail an. Wer die
 
 ## 🕹️ So läuft das am Stand
 
-**1. Anmelden** 📝
-Vorname, Name, Firma, E-Mail und das Häkchen für die Einwilligung. Unter dem Formular saugt der Professor schon mal Laborchaos weg.
+**1. Land und Sprache wählen** 🌍
+Vier Flaggen (Schweiz, Deutschland, UK/Irland, Frankreich), dazu Deutsch, Englisch oder Französisch. Das Land bestimmt, wohin der QR-Code am Ende führt.
+
+**2. Anmelden** 📝
+Vorname, Name, Firma, E-Mail und das Häkchen für die Einwilligung, in der gewählten Sprache. Unter dem Formular saugt der Professor schon mal Laborchaos weg.
 
 ![Anmeldung](docs/2_anmeldung.png)
 
-**2. Spielen** 🎮
+**3. Spielen** 🎮
 Laufen, springen und saugen, mit Tastatur, Gamepad oder Joystick. Aus den Kolben-Blöcken kommen stärkere Pumpen und Schutzausrüstung.
 
 ![Spielszene im Verdampfer-Labor](docs/3_spiel.png)
 
-**3. Ergebnis und Medaillen** 🥇
+**4. Ergebnis und Medaillen** 🥇
 Punkte, Zeitbonus, Medaillen und die Platzierung von heute und von der ganzen Messe.
 
 ![Ergebnis](docs/6_ergebnis.png)
 
-**4. Bestenliste** 🏆
+**5. Kontakt** 📲
+Ein grosser QR-Code führt zu den VACUUBRAND Ansprechpartnern im Land des Spielers. Er bleibt stehen, bis jemand weiterklickt.
+
+**6. Bestenliste** 🏆
 Öffentlich erscheint nur „Vorname N.“, also keine vollen Namen und keine Firmen.
 
 ![Bestenliste](docs/7_bestenliste.png)
@@ -96,6 +104,20 @@ Am Schluss wartet die **Dampf-Krake** 🐙. Die schafft nur die VACUU·PURE 10C.
 ![Endgegner Dampf-Krake](docs/5_boss.png)
 
 Die Plattformen im Spiel sind **VACUU·LAN** Leitungen, und die **VACUU·VIEW extended** gibt als „Zeitvakuum“ 10 Sekunden extra. So tauchen weitere Produkte ganz nebenbei auf.
+
+---
+
+## 🌍 Drei Sprachen, vier Länder
+
+Das Spiel läuft auf **Deutsch, Englisch und Französisch** (Wunsch des UK-Teams). Vor jeder Runde wählen die Besucher ihr Land und ihre Sprache. Das passt für internationale Messen:
+
+- 🇨🇭 Schweiz (Deutsch, Französisch oder Englisch wählbar), 🇩🇪 Deutschland, 🇬🇧 UK/Irland, 🇫🇷 Frankreich
+- Der QR-Code am Ende führt zu den Ansprechpartnern des gewählten Landes
+- Das Standpersonal stellt die Gerätesprache (Titelbild) und die Sprache des Admin-Bereichs (Deutsch/Englisch) selbst ein
+- Im Export stehen Land und Sprache jedes Spielers
+- Die QR-Codes lassen sich auf einer eigenen Seite prüfen: [qr/index.html](https://gsb-deleven.github.io/vacuubrand-game/qr/)
+
+Die englischen und französischen Texte sind Entwürfe und werden noch vom Marketing geprüft (siehe [TEXTE.md](TEXTE.md)).
 
 ---
 
@@ -178,7 +200,8 @@ Dasselbe Spiel läuft auf **Laptop, Tablet und Handy**. Auf Touch-Geräten ersch
 - Messename auf dem Startbildschirm (z. B. „ILMAC 2026“)
 - Rundenzeit
 - Admin-PIN
-- Texte der Anmeldung und der Einwilligung
+- Texte der Anmeldung und der Einwilligung, in drei Sprachen
+- Gerätesprache und die Links der QR-Codes pro Land
 - Pumpen-Slogans, Punkte und Zeitbonus
 
 Die ersten drei gehen direkt im Admin-Bereich, der Rest in einer gut kommentierten Einstellungsdatei.
@@ -195,7 +218,7 @@ Die ersten drei gehen direkt im Admin-Bereich, der Rest in einer gut kommentiert
 
 ---
 
-📖 **Anleitung fürs Standpersonal** mit Steuerung, Admin-Bereich, Export und Tipps: [ANLEITUNG.md](ANLEITUNG.md)
+📖 **Anleitung fürs Standpersonal** mit Steuerung, Admin-Bereich, Export und Tipps: [ANLEITUNG.md](ANLEITUNG.md) · 🇬🇧 [GUIDE.en.md](GUIDE.en.md)
 
 🛠️ **Technisches Handbuch** mit Aufbau, Dateien und allen Einstellungen: [TECHNIK.md](TECHNIK.md)
 

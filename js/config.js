@@ -15,7 +15,33 @@ const CONFIG = {
   // (Produktname + Werbetext). Aus, bis das Marketing die Texte freigegeben hat (siehe TEXTE.md).
   // true = einschalten. Schutzausrüstung und "LABOR GERETTET!" erscheinen immer.
   productBanners: false,
-  contactUrl: 'https://www.vacuubrand.com/ch/de/service-beratung/kontakt/ansprechpartner-weltweit/ch', // QR-Code am Ende der Runde
+  // Allgemeiner Link für den QR-Code am Ende der Runde. Gilt nur, wenn ein Land keinen eigenen Link hat
+  // (z. B. beim Schnellstart ohne Länderwahl).
+  contactUrl: 'https://www.vacuubrand.com/ch/de/service-beratung/kontakt/ansprechpartner-weltweit/ch',
+
+  // Sprache des Titelbildschirms ("Gerätesprache"): 'de', 'en' oder 'fr'. Auch im Admin einstellbar.
+  // Online gilt die Sprache des Browsers (falls Deutsch, Englisch oder Französisch).
+  // Nach jeder Runde springt das Spiel auf diese Sprache zurück. Alle Texte stehen in js/i18n.js.
+  defaultLang: 'de',
+  adminLang: 'de',             // Sprache des Admin-Bereichs: 'de' oder 'en' (auch im Admin einstellbar)
+
+  // Länder für die Wahl vor jeder Runde (Flaggen in dieser Reihenfolge).
+  //  key        = Kürzel (steht auch im Export)
+  //  name       = Anzeige unter der Flagge (Grossbuchstaben; " / " wird zu zwei Zeilen)
+  //  lang       = Sprache, die beim Antippen der Flagge vorgewählt wird
+  //  contactUrl = Link im QR-Code am Ende der Runde (Ansprechpartner dieses Landes). Hier austauschen.
+  //  Prüfen: qr/index.html zeigt alle QR-Codes mit Link.
+  countries: [
+    { key: 'CH', name: 'SCHWEIZ / SUISSE', lang: 'de',
+      contactUrl: 'https://www.vacuubrand.com/ch/de/service-beratung/kontakt/ansprechpartner-weltweit?tx_branddistributors_vacuubranddistributors%5Baction%5D=search&tx_branddistributors_vacuubranddistributors%5Bcontroller%5D=VacuuBrandDistributor&cHash=9abe530addce1913d335150179acf00a' },
+    { key: 'DE', name: 'DEUTSCHLAND', lang: 'de',
+      contactUrl: 'https://www.vacuubrand.com/ch/de/service-beratung/kontakt/ansprechpartner-weltweit?tx_branddistributors_vacuubranddistributors%5Baction%5D=search&tx_branddistributors_vacuubranddistributors%5Bcontroller%5D=VacuuBrandDistributor&cHash=9abe530addce1913d335150179acf00a' },
+    { key: 'UK', name: 'UK / IRELAND', lang: 'en',
+      contactUrl: 'https://www.vacuubrand.com/ch/en/service-advice/contact/contacts-worldwide' },
+    { key: 'FR', name: 'FRANCE', lang: 'fr',
+      contactUrl: 'https://www.vacuubrand.com/ch/fr/services-et-conseils/contact/contacts-dans-le-monde-entier' }
+  ],
+  countrySelectSeconds: 60,    // ohne Eingabe zurück zum Titel
 
   hitTimePenalty: 3,           // Sekunden Abzug bei Treffer
   hitTimePenaltyGoggles: 1,    // ... mit Schutzbrille
@@ -39,53 +65,52 @@ const CONFIG = {
   bvcSeconds: 8,               // BVC gilt im ganzen Zellkultur-Labor; nur falls man sie ausserhalb erwischt: so viele Sekunden
 
   resultAutoReturnSeconds: 25, // Ergebnis-Bildschirm schliesst automatisch
-  contactSeconds: 20,          // so lange bleibt die Kontakt-Seite mit dem QR-Code stehen
+  // Die Kontakt-Seite mit dem QR-Code bleibt stehen, bis jemand Enter drückt, tippt oder einen Knopf drückt.
   boardAutoReturnSeconds: 20,
   registrationTimeoutSeconds: 90,
   leaderboardSize: 10,
 
-  // Medaillen am Ende der Runde (Bonuspunkte kommen zum Gesamtergebnis dazu)
+  // Medaillen am Ende der Runde (Bonuspunkte kommen zum Gesamtergebnis dazu). Namen: js/i18n.js ("medal.…")
   medals: [
-    { key: 'boss', name: 'KRAKE BEZWUNGEN', bonus: 2000 },
-    { key: 'ppe', name: 'VOLLSCHUTZ', bonus: 1000 },
-    { key: 'nohit', name: 'UNVERLETZT', bonus: 1500 },
-    { key: 'pump', name: 'TOP-PUMPE', bonus: 1000 },
-    { key: 'combo', name: 'COMBO-PROFI', bonus: 1000 },
-    { key: 'view', name: 'ZEITMEISTER', bonus: 500 }
+    { key: 'boss', bonus: 2000 },
+    { key: 'ppe', bonus: 1000 },
+    { key: 'nohit', bonus: 1500 },
+    { key: 'pump', bonus: 1000 },
+    { key: 'combo', bonus: 1000 },
+    { key: 'view', bonus: 500 }
   ],
   comboMedal: 5,               // ab dieser Combo-Stufe gibt es die Medaille COMBO-PROFI
 
   // Die Pumpen: 1 = Start-Pumpe, 4 = stärkste (nur sie schafft die Dampf-Krake).
   // power = maximales Gewicht, das eingesaugt werden kann; tank = Sekunden Dauersaugen
+  // Titel und Slogans der Banner: js/i18n.js ("pump.1.title" usw.)
   pumps: [
     null,
-    { short: 'ME 1C', title: 'MEMBRANPUMPE ME 1C', slogan: 'IDEAL FÜR DIE FILTRATION', range: 46, power: 1, pull: 1.6, tank: 3 },
-    { short: 'PC 3001 VARIO SELECT', title: 'PC 3001 VARIO SELECT', slogan: 'ROTAVAP · VAKUUM-KONZENTRATOR · TROCKENSCHRANK\nMEHR SOG: JETZT AUCH RUNDKOLBEN!', range: 72, power: 2, pull: 2.4, tank: 3.5 },
-    { short: 'MD 4C VARIO SELECT', title: 'MD 4C VARIO SELECT', slogan: 'CHEMIEFEST: DESTILLATION · TROCKNUNG\nVACUU·SELECT REGELT AUTOMATISCH!', range: 88, power: 2, pull: 2.9, tank: 5 },
-    { short: 'VACUU·PURE 10C', title: 'VACUU·PURE 10C', slogan: 'ÖLFREI: GEFRIERTROCKNUNG · SCHLENK · TURBO\nMAXIMALER SOG!', range: 104, power: 3, pull: 3.4, tank: 4 }
+    { short: 'ME 1C', range: 46, power: 1, pull: 1.6, tank: 3 },
+    { short: 'PC 3001 VARIO SELECT', range: 72, power: 2, pull: 2.4, tank: 3.5 },
+    { short: 'MD 4C VARIO SELECT', range: 88, power: 2, pull: 2.9, tank: 5 },
+    { short: 'VACUU·PURE 10C', range: 104, power: 3, pull: 3.4, tank: 4 }
   ],
 
-  // Schutzausrüstung aus den Kolben-Blöcken (in dieser Reihenfolge)
+  // Schutzausrüstung aus den Kolben-Blöcken (in dieser Reihenfolge). Texte: js/i18n.js ("ppe.goggles.name" usw.)
   ppe: [
-    { key: 'goggles', name: 'SCHUTZBRILLE', text: 'TREFFER KOSTEN NUR NOCH 1 SEKUNDE.' },
-    { key: 'gloves', name: 'HANDSCHUHE', text: 'SOG-LEISTE LÄDT DOPPELT SO SCHNELL.' },
-    { key: 'helmet', name: 'SCHUTZHELM', text: 'GEGNER VON UNTEN WEGKÖPFEN!' },
-    { key: 'shoes', name: 'SICHERHEITSSCHUHE', text: 'AUF GEGNER SPRINGEN ZERSTÖRT SIE!' }
+    { key: 'goggles' },
+    { key: 'gloves' },
+    { key: 'helmet' },
+    { key: 'shoes' }
   ],
 
-  // Anmeldung vor dem Spiel (Lead-Erfassung)
+  // Anmeldung vor dem Spiel (Lead-Erfassung). Beschriftungen, Einwilligung und Datenschutz-Hinweis
+  // stehen in js/i18n.js ("reg.…"), weil sie je nach Sprache anders lauten.
   registration: {
-    intro: 'Nur Vorname + erster Buchstabe des Nachnamens erscheinen in der Bestenliste.',
     fields: [
-      { key: 'firstName', label: 'Vorname', required: true, maxLength: 40 },
-      { key: 'lastName', label: 'Name', required: true, maxLength: 40 },
-      { key: 'company', label: 'Firma', required: true, maxLength: 60 },
-      { key: 'email', label: 'E-Mail', required: true, type: 'email', maxLength: 80 }
+      { key: 'firstName', required: true, maxLength: 40 },
+      { key: 'lastName', required: true, maxLength: 40 },
+      { key: 'company', required: true, maxLength: 60 },
+      { key: 'email', required: true, type: 'email', maxLength: 80 }
     ],
     consentRequired: true,
-    consentText: 'Ich bin einverstanden, dass VACUUBRAND mich im Rahmen des Gewinnspiels und zu Produktinformationen kontaktiert.',
-    newsletterText: 'Ja, ich möchte zusätzlich den VACUUBRAND Newsletter erhalten.',
-    privacyNote: 'Die Daten werden nur lokal auf diesem Gerät gespeichert und ausschliesslich für das Gewinnspiel und die Kontaktaufnahme verwendet.'
+    newsletter: true             // Kästchen für den Newsletter anzeigen
   }
 };
 

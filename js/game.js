@@ -60,7 +60,7 @@ class PlayScene {
   addTime(sec, x, y) {
     this.time += sec;
     this.timeFlash = 24;
-    this.popup(x, y, '+' + sec + ' SEK', '#7be07b');
+    this.popup(x, y, L('plusSec', sec), '#7be07b');
   }
 
   // ------------------------------------------------------------------
@@ -167,7 +167,7 @@ class PlayScene {
     const z = zoneOf(p.x);
     if (z > this.zone) {
       this.zone = z;
-      this.showMsg('ZONE ' + (z + 1) + ': ' + ZONE_STYLE[z].name, 130, THEME.gold);
+      this.showMsg(L('msg.zone', z + 1, L('zone.' + z)), 130, THEME.gold);
       if (!this.bossMusic) Sound.music('zone' + z);
     }
     // Boss-Arena: eigene Musik
@@ -185,7 +185,7 @@ class PlayScene {
         this.setState('finish');
       } else if (this.lockedT <= 0) {
         this.lockedT = 150;
-        this.showMsg('ERST DIE DAMPF-KRAKE EINSAUGEN!', 120, '#ff8f8f');
+        this.showMsg(L('msg.locked'), 120, '#ff8f8f');
       }
     }
   }
@@ -261,20 +261,20 @@ class PlayScene {
     // In die Auffangwanne gefallen: Platsch!
     if (!p.splashed && p.vy > 0 && p.y - 4 > PIT_SURFACE && tileAt(lv, Math.floor(p.x / T), 10) === ' ') {
       p.splashed = true;
-      const st = PIT_STYLE[zoneOf(p.x)];
+      const pz = zoneOf(p.x), st = PIT_STYLE[pz];
       for (let i = 0; i < 14; i++) {
         this.parts.push({ x: p.x + (Math.random() - 0.5) * 10, y: PIT_SURFACE, vx: (Math.random() - 0.5) * 2.4, vy: -1.5 - Math.random() * 2.2, g: 0.15, t: 30 + Math.random() * 15, c: i % 3 ? st.top : st.mid, s: 2 });
       }
       Sound.sfx('splash');
-      this.showMsg(st.into + ' GEFALLEN!', 110, st.top);
+      this.showMsg(L('pit.' + pz), 110, st.top);
     }
     if (p.y > lv.H * T + 24) {
       p.splashed = false;
       this.time -= CONFIG.fallTimePenalty;
       p.x = p.safe.x; p.y = p.safe.y; p.vx = 0; p.vy = 0; p.inv = 90;
-      this.popup(p.x, p.y - 20, '-' + CONFIG.fallTimePenalty + ' SEK', '#ff8f8f');
+      this.popup(p.x, p.y - 20, L('minusSec', CONFIG.fallTimePenalty), '#ff8f8f');
       Sound.sfx('ouch');
-      this.popup(p.x, p.y - 30, 'AUTSCH!', '#ffffff');
+      this.popup(p.x, p.y - 30, L('ouch'), '#ffffff');
       this.hits++;
       this.breakCombo();
       this.shake(12, 2);
@@ -350,7 +350,7 @@ class PlayScene {
       else p.bvcT--;
       if (p.bvcT <= 0) {
         p.bvcT = 0; p.bvcZone = false;
-        this.showMsg(p.pump ? 'DIE BVC BLEIBT IM ZELLKULTUR-LABOR - WEITER MIT DER PUMPE!' : 'DIE BVC BLEIBT IM ZELLKULTUR-LABOR!', 130, '#ff8fb8');
+        this.showMsg(L(p.pump ? 'msg.bvcLeave' : 'msg.bvcLeave0'), 130, '#ff8fb8');
         if (p.sucking) { Sound.suckStop(); p.sucking = false; }
       }
     }
@@ -360,12 +360,12 @@ class PlayScene {
       if (Input.pressed('suck')) Sound.sfx('puff');
       if (this.noPumpT <= 0) {
         this.noPumpT = 150;
-        this.showMsg('KEINE PUMPE! SPRING GEGEN DEN KOLBEN-BLOCK!', 130, THEME.gold);
+        this.showMsg(L('msg.noPump'), 130, THEME.gold);
       }
     }
     if (wants && hasTool && !bvc && p.overheat && Input.pressed('suck') && this.heatT <= 0) {
       this.heatT = 60;
-      this.showMsg('ÜBERHITZT! KURZ ABKÜHLEN LASSEN...', 70, '#ff8f8f');
+      this.showMsg(L('msg.overheat'), 70, '#ff8f8f');
       Sound.sfx('heavy');
     }
     const sucking = wants && hasTool && (bvc || !p.overheat);
@@ -375,7 +375,7 @@ class PlayScene {
       if (p.energy <= 0) {
         p.energy = 0; p.overheat = true;
         this.heatT = 60;
-        this.showMsg('ÜBERHITZT! KURZ ABKÜHLEN LASSEN...', 90, '#ff8f8f');
+        this.showMsg(L('msg.overheat'), 90, '#ff8f8f');
         Sound.sfx('overheat');
       }
     } else if (!sucking) {
@@ -417,7 +417,7 @@ class PlayScene {
         e.shake = 6;
         if (this.heavyT <= 0) {
           this.heavyT = 150;
-          this.showMsg('ZU SCHWER! DU BRAUCHST EINE STÄRKERE PUMPE!', 130, '#ff8f8f');
+          this.showMsg(L('msg.heavy'), 130, '#ff8f8f');
           Sound.sfx('heavy');
         }
       }
@@ -442,7 +442,7 @@ class PlayScene {
         if (b.hp > 0) {
           b.hp--;
           b.x += Math.sign(nz.x - b.x) * 0.15;
-          if (b.hp <= 0) this.showMsg('GLEICH HAST DU SIE!', 80, '#7be07b');
+          if (b.hp <= 0) this.showMsg(L('msg.almost'), 80, '#7be07b');
         } else {
           b.pullV = Math.min(b.pullV + 0.05, 2.5);
           const dx = nz.x - b.x, dy = nz.y - (b.y - b.h / 2), len = Math.hypot(dx, dy) || 1;
@@ -453,7 +453,7 @@ class PlayScene {
             this.popup(nz.x, nz.y - 24, '+3000!', THEME.gold);
             this.burst(nz.x, nz.y, ['#e6dcff', '#c7b5f5', '#ffffff', THEME.gold], 24);
             this.exitOpen = true;
-            this.banner = { title: 'LABOR GERETTET!', sub: 'SCHNELL ZUM AUSGANG →\nRESTZEIT GIBT BONUSPUNKTE!', t: 200 };
+            this.banner = { title: L('banner.saved.title'), sub: L('banner.saved.sub'), t: 200 };
             Sound.sfx('boss');
             this.shake(36, 3); this.flashT = 6;
             Sound.music('zone' + (ZONE_STYLE.length - 1));
@@ -461,7 +461,7 @@ class PlayScene {
         }
       } else if (this.heavyT <= 0) {
         this.heavyT = 150;
-        this.showMsg('DIE KRAKE IST ZU STARK! HOL DIR DIE VACUU·PURE 10C!', 130, '#ff8f8f');
+        this.showMsg(L('msg.krakeStrong'), 130, '#ff8f8f');
         Sound.sfx('heavy');
       }
     }
@@ -481,7 +481,7 @@ class PlayScene {
     const pts = e.def.points * mult;
     this.addScore(pts);
     this.captures++;
-    this.popup(e.x, e.y - e.h - 4, '+' + pts + (mult > 1 ? ' ×' + mult : '') + (e.def.showName ? ' ' + e.def.name : ''), mult > 1 ? THEME.gold : '#ffffff');
+    this.popup(e.x, e.y - e.h - 4, '+' + pts + (mult > 1 ? ' ×' + mult : '') + (e.def.showName ? ' ' + L('enemy.' + e.type) : ''), mult > 1 ? THEME.gold : '#ffffff');
     this.burst(e.x, e.y - e.h / 2, bvcBonus ? ['#ffffff', '#ff8fb8'] : ['#ffffff', '#c8f2ff', '#6fcbe8'], 6);
     Sound.sfx('capture', e.def.weight, lvl);
   }
@@ -495,8 +495,7 @@ class PlayScene {
         p.pump = it.value;
         this.bestPump = Math.max(this.bestPump, p.pump);
         p.energy = 1; p.overheat = false;
-        const cfg = CONFIG.pumps[p.pump];
-        this.productBanner({ title: cfg.title, sub: cfg.slogan, t: 220, icon: 'pump' + p.pump });
+        this.productBanner({ title: L('pump.' + p.pump + '.title'), sub: L('pump.' + p.pump + '.slogan'), t: 220, icon: 'pump' + p.pump });
         this.shake(12, 2); this.flashT = 4;
         Sound.sfx('upgrade');
         this.addScore(500);
@@ -504,12 +503,11 @@ class PlayScene {
         if (p.sucking) Sound.suckStart(p.bvcT > 0 ? 2 : p.pump);
       } else Sound.sfx('powerup');
     } else if (it.kind === 'ppe') {
-      const q = CONFIG.ppe.find(x => x.key === it.value);
       if (!p.ppe[it.value]) {
         p.ppe[it.value] = true;
         this.addTime(CONFIG.ppeTimeBonus, p.x, p.y - 26);
         const full = p.fullPPE();
-        this.banner = { title: full ? 'VOLLSCHUTZ!' : q.name, sub: full ? 'KOMPLETTE SCHUTZAUSRÜSTUNG:\nNICHTS KANN DIR MEHR SCHADEN!' : q.text, t: 190, icon: 'ppe_' + it.value };
+        this.banner = { title: L(full ? 'banner.full.title' : 'ppe.' + it.value + '.name'), sub: L(full ? 'banner.full.sub' : 'ppe.' + it.value + '.text'), t: 190, icon: 'ppe_' + it.value };
         Sound.sfx(full ? 'fanfare' : 'powerup');
       } else {
         this.addTime(CONFIG.ppeDuplicateTimeBonus, p.x, p.y - 26);
@@ -519,14 +517,14 @@ class PlayScene {
     } else if (it.kind === 'bvc') {
       p.bvcZone = zoneOf(p.x) === BVC_ZONE;
       p.bvcT = p.bvcZone ? 1 : CONFIG.bvcSeconds * 60;
-      this.productBanner({ title: 'PUMPE BVC PROFESSIONAL', sub: 'MIT VHC: MEDIENABSAUGUNG\nPUNKTE ×2', t: 220, icon: 'bvc' });
+      this.productBanner({ title: L('banner.bvc.title'), sub: L('banner.bvc.sub'), t: 220, icon: 'bvc' });
       this.addScore(300);
       if (p.sucking) Sound.suckStart(2);
       Sound.sfx('powerup');
     } else if (it.kind === 'view') {
       this.views++;
       this.addTime(CONFIG.viewTimeBonus, p.x, p.y - 26);
-      this.productBanner({ title: 'VACUU·VIEW EXTENDED', sub: 'ZEITVAKUUM: +' + CONFIG.viewTimeBonus + ' SEKUNDEN!', t: 180, icon: 'view' });
+      this.productBanner({ title: L('banner.view.title'), sub: L('banner.view.sub', CONFIG.viewTimeBonus), t: 180, icon: 'view' });
       this.addScore(300);
       Sound.sfx('timebonus');
     }
@@ -550,7 +548,7 @@ class PlayScene {
           p.vy = -3.6;
           e.safeT = 12; e.shake = 8;
           Sound.sfx('boing');
-          if (this.shoeHintT <= 0) { this.shoeHintT = 400; this.showMsg('MIT SICHERHEITSSCHUHEN KÖNNTEST DU SIE ZERTRETEN!', 120, THEME.gold); }
+          if (this.shoeHintT <= 0) { this.shoeHintT = 400; this.showMsg(L('msg.shoes'), 120, THEME.gold); }
         }
         continue;
       }
@@ -577,9 +575,9 @@ class PlayScene {
     this.breakCombo();
     this.shake(12, 2);
     Sound.suckStop(); p.sucking = false;
-    this.popup(p.x, p.y - 24, '-' + pen + ' SEK', '#ff8f8f');
+    this.popup(p.x, p.y - 24, L('minusSec', pen), '#ff8f8f');
     Sound.sfx('ouch');
-    this.popup(p.x, p.y - 32, 'AUTSCH!', '#ffffff');
+    this.popup(p.x, p.y - 32, L('ouch'), '#ffffff');
   }
 
   updateEffects() {
@@ -640,8 +638,9 @@ class PlayScene {
     if (x < -20 || x > VIEW_W + 20) return;
     const spr = this.exitOpen ? SPR.doorOpen : SPR.doorLocked;
     ctx.drawImage(spr, x - 10, 10 * T - spr.height);
-    ctx.fillStyle = PAL.k; ctx.fillRect(x - 14, 10 * T - 46, 28, 10);
-    Font.draw(ctx, 'EXIT', x, 10 * T - 44, { color: this.exitOpen ? '#7be07b' : '#ff8f8f', align: 'center' });
+    const ew = Math.max(28, Font.width(L('exit')) + 6);
+    ctx.fillStyle = PAL.k; ctx.fillRect(x - ew / 2, 10 * T - 46, ew, 10);
+    Font.draw(ctx, L('exit'), x, 10 * T - 44, { color: this.exitOpen ? '#7be07b' : '#ff8f8f', align: 'center' });
   }
 
   drawBar(ctx, x, y, w, v, col, label, labelCol) {
@@ -658,22 +657,22 @@ class PlayScene {
     ctx.fillStyle = 'rgba(52,80,122,0.94)';
     ctx.fillRect(0, 0, VIEW_W, HUD_H);
     this.drawTimeBar(ctx);
-    Font.draw(ctx, 'PUNKTE ' + pad(this.score, 6), 4, 3, { color: '#ffffff' });
+    Font.draw(ctx, L('hud.points', pad(this.score, 6)), 4, 3, { color: '#ffffff' });
     if (p.bvcT > 0) {
-      Font.draw(ctx, 'BVC PROFESSIONAL' + (p.bvcZone ? '' : ' ' + Math.ceil(p.bvcT / 60) + ' S'), 160, 3, { color: '#ff8fb8', align: 'center' });
+      Font.draw(ctx, L('hud.bvc') + (p.bvcZone ? '' : ' ' + L('hud.sec', Math.ceil(p.bvcT / 60))), 160, 3, { color: '#ff8fb8', align: 'center' });
     } else {
-      const pumpName = p.pump ? CONFIG.pumps[p.pump].short : 'KEINE PUMPE';
+      const pumpName = p.pump ? CONFIG.pumps[p.pump].short : L('hud.noPump');
       Font.draw(ctx, pumpName, 160, 3, { color: p.pump ? '#7be07b' : '#a7b3c4', align: 'center' });
     }
     const sec = Math.max(0, Math.ceil(this.time));
     const low = sec <= 10;
-    if (!low || this.t % 30 < 20) Font.draw(ctx, 'ZEIT ' + pad(sec, 3), 316, 3, { color: low ? '#ff6b6b' : '#ffffff', align: 'right' });
+    if (!low || this.t % 30 < 20) Font.draw(ctx, L('hud.time', pad(sec, 3)), 316, 3, { color: low ? '#ff6b6b' : '#ffffff', align: 'right' });
     // Leisten
     const heat = p.overheat && p.bvcT <= 0;
     const sogCol = p.bvcT > 0 ? '#ff8fb8' : heat ? (this.t % 20 < 10 ? '#e04848' : '#ff8f8f') : '#3aa0e8';
-    this.drawBar(ctx, 4, 14, 50, p.bvcT > 0 ? 1 : p.energy, sogCol, heat ? 'HEISS' : 'SOG', heat ? '#ff8f8f' : '#ffffff');
+    this.drawBar(ctx, 4, 14, 50, p.bvcT > 0 ? 1 : p.energy, sogCol, heat ? L('hud.heat') : L('hud.sog'), heat ? '#ff8f8f' : '#ffffff');
     // Auf Touch gibt es kein Sprinten, darum dort keine SPRINT-Leiste
-    if (!Input.touch) this.drawBar(ctx, 96, 14, 40, p.stamina, p.tired ? '#8795a8' : '#7be07b', 'SPRINT');
+    if (!Input.touch) this.drawBar(ctx, 96, 14, 40, p.stamina, p.tired ? '#8795a8' : '#7be07b', L('hud.sprint'));
     // Schutzausrüstung (bei Vollschutz goldener Rahmen)
     if (p.fullPPE()) {
       ctx.fillStyle = THEME.gold; ctx.fillRect(240, 11, 76, 12);
@@ -689,7 +688,7 @@ class PlayScene {
     this.drawCombo(ctx);
     const b = this.boss;
     if (b && b.active && b.alive && !b.captured) {
-      Font.draw(ctx, 'DAMPF-KRAKE', 160, HUD_H + 8, { color: '#e6dcff', align: 'center', outline: PAL.k });
+      Font.draw(ctx, L('boss'), 160, HUD_H + 8, { color: '#e6dcff', align: 'center', outline: PAL.k });
       ctx.fillStyle = PAL.k; ctx.fillRect(109, HUD_H + 17, 102, 5);
       ctx.fillStyle = '#7b5fb8'; ctx.fillRect(110, HUD_H + 18, Math.round(100 * b.hp / b.maxHp), 3);
     }
@@ -727,7 +726,7 @@ class PlayScene {
     ctx.fillRect(x - 1, y - 1, w + 2, h + 2);
     ctx.fillStyle = lost ? '#8795a8' : THEME.gold; ctx.fillRect(x, y, w, h);
     ctx.fillStyle = lost ? '#a7b3c4' : '#ffd966'; ctx.fillRect(x, y, w, 1);
-    Font.draw(ctx, 'COMBO', x + 4, y + 3, { color: lost ? '#3b4658' : THEME.navy });
+    Font.draw(ctx, L('combo'), x + 4, y + 3, { color: lost ? '#3b4658' : THEME.navy });
     Font.draw(ctx, '×' + n, x + w - 4, y + 2 - pop, { color: lost ? '#3b4658' : PAL.k, scale: 2, align: 'right' });
     // Timer-Balken
     const bx = x + 4, by = y + h - 8, bw = w - 8;
@@ -741,7 +740,7 @@ class PlayScene {
       ctx.fillRect(bx + 1, by + 1, Math.max(1, Math.round((bw - 2) * frac)), 4);
       ctx.fillStyle = 'rgba(255,255,255,0.45)'; ctx.fillRect(bx + 1, by + 1, Math.max(1, Math.round((bw - 2) * frac)), 1);
     }
-    if (lost) Font.draw(ctx, 'VORBEI', bx + bw / 2, by - 1, { color: '#ffffff', align: 'center' });
+    if (lost) Font.draw(ctx, L('combo.lost'), bx + bw / 2, by - 1, { color: '#ffffff', align: 'center' });
     ctx.globalAlpha = 1;
   }
 
@@ -753,20 +752,20 @@ class PlayScene {
       const n = 3 - Math.floor(this.stateT / 60);
       Font.draw(ctx, String(n), 160, 70, { color: THEME.gold, scale: 4, align: 'center', outline: PAL.k });
     }
-    if (this.state === 'play' && this.stateT < 50) Font.draw(ctx, 'LOS!', 160, 70, { color: '#7be07b', scale: 4, align: 'center', outline: PAL.k });
+    if (this.state === 'play' && this.stateT < 50) Font.draw(ctx, L('go'), 160, 70, { color: '#7be07b', scale: 4, align: 'center', outline: PAL.k });
     if (this.state === 'timeup') {
       drawPanel(ctx, 70, 64, 180, 34);
-      Font.draw(ctx, 'ZEIT ABGELAUFEN!', 160, 76, { color: THEME.gold, align: 'center' });
+      Font.draw(ctx, L('timeup'), 160, 76, { color: THEME.gold, align: 'center' });
     }
     if (this.state === 'finish') {
       drawPanel(ctx, 60, 60, 200, 44);
-      Font.draw(ctx, 'GESCHAFFT!', 160, 67, { color: '#7be07b', scale: 2, align: 'center' });
-      Font.draw(ctx, 'RESTZEIT ' + Math.ceil(this.time) + ' SEK = BONUS!', 160, 88, { color: '#ffffff', align: 'center' });
+      Font.draw(ctx, L('finish'), 160, 67, { color: '#7be07b', scale: 2, align: 'center' });
+      Font.draw(ctx, L('finish.bonus', Math.ceil(this.time)), 160, 88, { color: '#ffffff', align: 'center' });
     }
     if (this.paused) {
       drawPanel(ctx, 60, 55, 200, 60);
-      Font.draw(ctx, 'PAUSE', 160, 62, { color: THEME.gold, scale: 2, align: 'center' });
-      Font.draw(ctx, hint('ESC / START = WEITERSPIELEN\nENTER = RUNDE ABBRECHEN', 'TIPPEN = WEITERSPIELEN'), 160, 84, { color: '#ffffff', align: 'center' });
+      Font.draw(ctx, L('pause'), 160, 62, { color: THEME.gold, scale: 2, align: 'center' });
+      Font.draw(ctx, LT('pause.hint'), 160, 84, { color: '#ffffff', align: 'center' });
     }
   }
 
@@ -805,14 +804,14 @@ class PlayScene {
 
   drawHowto(ctx) {
     drawPanel(ctx, 16, 8, 288, 164);
-    Font.draw(ctx, 'SO GEHT\'S', 160, 13, { color: THEME.gold, scale: 2, align: 'center' });
-    const left = Input.touch ? [['←  →', 'LAUFEN'], ['SPRUNG', 'SPRINGEN']] : [['←  →', 'LAUFEN'], ['↑', 'SPRINGEN'], ['↓', 'DUCKEN']];
-    const right = Input.touch ? [['SAUGEN', 'HALTEN'], ['II', 'PAUSE']] : [['LEERTASTE', 'SAUGEN'], ['SHIFT/CTRL', 'SPRINTEN'], ['CONTROLLER', 'GEHT AUCH']];
+    Font.draw(ctx, L('howto.title'), 160, 13, { color: THEME.gold, scale: 2, align: 'center' });
+    const left = Input.touch ? [['←  →', L('howto.walk')], [L('touch.jump'), L('howto.jump')]] : [['←  →', L('howto.walk')], ['↑', L('howto.jump')], ['↓', L('howto.duck')]];
+    const right = Input.touch ? [[L('touch.suck'), L('howto.hold')], ['II', L('howto.pause')]] : [[L('key.space'), L('howto.suck')], [L('key.shift'), L('howto.sprint')], [L('key.pad'), L('howto.pad')]];
     left.forEach((r, i) => { drawKey(ctx, 88, 33 + i * 13, r[0]); Font.draw(ctx, r[1], 94, 35 + i * 13, { color: '#ffffff' }); });
     right.forEach((r, i) => { drawKey(ctx, 232, 33 + i * 13, r[0]); Font.draw(ctx, r[1], 238, 35 + i * 13, { color: '#ffffff' }); });
-    if (!Input.touch) Font.draw(ctx, 'SOG + SPRINT SIND BEGRENZT: LEISTEN BEACHTEN!', 160, 75, { color: '#c8f2ff', align: 'center' });
+    if (!Input.touch) Font.draw(ctx, L('howto.limits'), 160, 75, { color: '#c8f2ff', align: 'center' });
     ctx.fillStyle = THEME.gold; ctx.fillRect(28, 86, 264, 1);
-    Font.draw(ctx, 'KOLBEN-BLÖCKE VON UNTEN ANSPRINGEN:', 160, 91, { color: THEME.gold, align: 'center' });
+    Font.draw(ctx, L('howto.blocks'), 160, 91, { color: THEME.gold, align: 'center' });
     // Block + Inhalte
     ctx.drawImage(SPR.q0, 26, 104);
     const icons = ['pump1', 'pump2', 'pump3', 'pump4', 'bvc', 'ppe_goggles', 'ppe_gloves', 'ppe_helmet', 'ppe_shoes', 'view'];
@@ -822,11 +821,11 @@ class PlayScene {
       ctx.drawImage(spr, Math.round(x - spr.width / 2), 120 - spr.height);
     });
     ctx.fillStyle = '#5d6b80'; ctx.fillRect(166, 100, 1, 32); ctx.fillRect(262, 100, 1, 32);
-    Font.draw(ctx, 'PUMPEN', 106, 124, { color: '#ffffff', align: 'center' });
-    Font.draw(ctx, 'SCHUTZAUSRÜSTUNG', 214, 124, { color: '#ffffff', align: 'center' });
+    Font.draw(ctx, L('howto.pumps'), 106, 124, { color: '#ffffff', align: 'center' });
+    Font.draw(ctx, L('howto.ppe'), 214, 124, { color: '#ffffff', align: 'center' });
     Font.draw(ctx, '+10 S', 280, 124, { color: '#7be07b', align: 'center' });
-    Font.draw(ctx, 'SAUG IN ' + CONFIG.roundSeconds + ' SEK SO VIEL CHAOS WIE MÖGLICH EIN!', 160, 146, { color: '#ffffff', align: 'center' });
-    if (this.t % 50 < 35) Font.draw(ctx, hint('ENTER = START', 'TIPPEN = START'), 160, 160, { color: THEME.gold, align: 'center' });
+    Font.draw(ctx, L('howto.goal', CONFIG.roundSeconds), 160, 146, { color: '#ffffff', align: 'center' });
+    if (this.t % 50 < 35) Font.draw(ctx, LT('howto.start'), 160, 160, { color: THEME.gold, align: 'center' });
   }
 }
 
@@ -848,8 +847,8 @@ function drawKey(ctx, rightX, y, label) {
 }
 
 function drawSign(ctx, s, camX) {
-  // Auf Tablet/Handy statt der Leertaste den Knopf nennen
-  const text = Input.touch ? s.text.replace('LEERTASTE HALTEN', 'KNOPF SAUGEN HALTEN') : s.text;
+  // Auf Tablet/Handy statt der Leertaste den Knopf nennen (Schlüssel + ".touch")
+  const text = LT(s.key);
   const lines = text.split('\n');
   const w = Math.max(...lines.map(l => l.length)) * 6 + 7;
   const h = lines.length * 9 + 5;
@@ -952,13 +951,13 @@ function ditherPatterns(ctx) {
   return DITHER;
 }
 
-// Abgründe = Auffangwannen, je Zone eine andere Flüssigkeit
+// Abgründe = Auffangwannen, je Zone eine andere Flüssigkeit (Texte: js/i18n.js "pit.0" usw.)
 const PIT_STYLE = [
-  { name: 'FILTRAT-WANNE', into: 'IN DIE FILTRAT-WANNE', deep: '#1f4f8a', mid: '#3a7fcf', top: '#8fd0ff', bubble: '#c8ecff' },
-  { name: 'DESINFEKTIONSBAD', into: 'INS DESINFEKTIONSBAD', deep: '#8a2f5e', mid: '#d0609a', top: '#ffb0d6', bubble: '#ffe0f0' },
-  { name: 'LÖSEMITTEL-AUFFANGWANNE', into: 'IN DIE LÖSEMITTEL-AUFFANGWANNE', deep: '#8a4a10', mid: '#e0861f', top: '#ffc46b', bubble: '#fff0c8' },
-  { name: 'SÄURE-AUFFANGWANNE', into: 'IN DIE SÄURE-AUFFANGWANNE', deep: '#55700f', mid: '#9cc52e', top: '#e2f58a', bubble: '#f4ffc8' },
-  { name: 'FLÜSSIGSTICKSTOFF', into: 'IN DEN FLÜSSIGSTICKSTOFF', deep: '#3d6f96', mid: '#8fc4e8', top: '#e6f7ff', bubble: '#ffffff', fog: true }
+  { deep: '#1f4f8a', mid: '#3a7fcf', top: '#8fd0ff', bubble: '#c8ecff' },
+  { deep: '#8a2f5e', mid: '#d0609a', top: '#ffb0d6', bubble: '#ffe0f0' },
+  { deep: '#8a4a10', mid: '#e0861f', top: '#ffc46b', bubble: '#fff0c8' },
+  { deep: '#55700f', mid: '#9cc52e', top: '#e2f58a', bubble: '#f4ffc8' },
+  { deep: '#3d6f96', mid: '#8fc4e8', top: '#e6f7ff', bubble: '#ffffff', fog: true }
 ];
 const PIT_SURFACE = 10 * T + 6; // Flüssigkeitsspiegel (Welt-y)
 

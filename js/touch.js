@@ -3,6 +3,7 @@
 // Die Knöpfe erzeugen virtuelle "Touch…"-Tasten, genau wie Tastatur und Gamepad.
 const Touch = {
   el: null,
+  rot: null,
   active: false,
   pointers: new Map(),   // pointerId -> Liste der gedrückten Codes
   fsTried: false,
@@ -17,13 +18,14 @@ const Touch = {
       '<div class="t-panel t-move" data-zone="move">' +
       '<div class="t-key t-left">◀</div><div class="t-key t-right">▶</div></div>' +
       '<div class="t-panel t-act" data-zone="act">' +
-      '<div class="t-key t-jump">SPRUNG</div><div class="t-key t-suck">SAUGEN</div></div>' +
+      '<div class="t-key t-jump"></div><div class="t-key t-suck"></div></div>' +
       '<div class="t-btn t-pause" data-code="TouchPause">II</div>';
     document.body.appendChild(el);
     const rot = document.createElement('div');
     rot.id = 'rotate';
-    rot.innerHTML = '<div>📱↻<br>BITTE GERÄT QUER HALTEN</div>';
     document.body.appendChild(rot);
+    this.rot = rot;
+    this.relabel();
 
     // Touch erkennen (auch wenn es nie eine Maus gibt)
     window.addEventListener('pointerdown', e => { if (e.pointerType === 'touch') this.enable(); }, true);
@@ -43,6 +45,14 @@ const Touch = {
       if (y < 16 && x > 100 && x < 220) this.logoT = setTimeout(() => Game.requestAdmin(), 3000);
     });
     for (const t of ['pointerup', 'pointercancel', 'pointerleave']) canvas.addEventListener(t, () => clearTimeout(this.logoT));
+  },
+
+  // Beschriftung in der aktuellen Sprache (wird bei jedem Sprachwechsel aufgerufen)
+  relabel() {
+    if (!this.el) return;
+    this.el.querySelector('.t-jump').textContent = L('touch.jump');
+    this.el.querySelector('.t-suck').textContent = L('touch.suck');
+    if (this.rot) this.rot.innerHTML = '<div>📱↻<br>' + escapeHtml(L('touch.rotate')) + '</div>';
   },
 
   enable() {
