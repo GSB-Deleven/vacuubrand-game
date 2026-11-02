@@ -11,8 +11,8 @@ Dieses Dokument erklärt, wie das Spiel aufgebaut ist, was jede Datei macht und 
 3. [Architektur](#-architektur)
    (darin auch: Mehrsprachigkeit, Länder und QR-Codes)
 4. [Spielmechanik](#-spielmechanik)
-5. [Level, Gegner und Endgegner](#-level-gegner-und-endgegner)
-6. [Steuerung](#-steuerung)
+5. [Level, Gegner und Endgegner](#%EF%B8%8F-level-gegner-und-endgegner)
+6. [Steuerung](#%EF%B8%8F-steuerung)
 7. [Grafik und Sound](#-grafik-und-sound)
 8. [Daten, Bestenliste und Export](#-daten-bestenliste-und-export)
 9. [Admin-Bereich](#-admin-bereich)
@@ -220,7 +220,7 @@ Die Bilder `qr/QR_CH.png`, `QR_DE.png`, `QR_UK.png`, `QR_FR.png` und `QR_ALLE.pn
 - **Automatisch (Claude/Entwicklung):** mit Playwright `qr/index.html` öffnen, von jedem `.card canvas` `toDataURL('image/png')` speichern (Dateiname aus dem Link `.card .png a`) und jedes Bild mit jsQR gegen `data-url` des Canvas prüfen
 
 Danach auch die **Doku-Screenshots** der Prüfseite neu machen (sie stehen in ANLEITUNG.md, GUIDE.en.md, README.md und README.en.md):
-- `docs/qr-pruefseite.png` = `qr/index.html?lang=de`, `docs/qr-check-page.en.png` = `qr/index.html?lang=en`
+- `docs/screenshots/de/17-qr-pruefseite.png` = `qr/index.html?lang=de`, `docs/screenshots/en/17-qr-pruefseite.png` = `qr/index.html?lang=en`
 - Playwright mit Fenster 1720 × 900 Pixel (dann stehen alle 5 Karten nebeneinander), `deviceScaleFactor: 1`, `page.screenshot({ fullPage: true })`
 - Von Hand geht es auch: Seite im Browser breit genug öffnen und einen Bildschirmausschnitt speichern
 
@@ -617,6 +617,7 @@ In `SONGS` (`js/sound.js`) die Notenfolgen `lead` (Melodie) und `bass` bearbeite
 - **Online-Modus:** `index.html?online` mit `locale` en-GB / fr-CH / it-IT; der Titel ist immer Englisch, `deviceLang()` folgt dem Browser
 - **Service Worker:** wird nur auf `*.github.io` registriert. Zum Testen das Spiel mit `python3 -m http.server` ausliefern und `navigator.serviceWorker.register('sw.js')` von Hand aufrufen; prüfen, dass eine geänderte Datei sofort ankommt und das Spiel ohne Server aus dem Cache startet
 - **QR-Bilder:** siehe „QR-Codes prüfen und Bilder neu erzeugen“
+- **Doku-Screenshots** (`docs/screenshots/de/` und `docs/screenshots/en/`, gleiche Dateinamen in beiden Ordnern, verlinkt in README, ANLEITUNG/GUIDE und `docs/wiki/Home.md`): Spiel per `python3 -m http.server` ausliefern, Fenster 1280 × 720 (`deviceScaleFactor: 1`, 4-fache Pixel, scharf). Vor dem Laden `vakuumprof_settings_v1` mit `defaultLang`/`adminLang` = `de` bzw. `en` setzen, Referenzdaten mit `Store.importJSON(REFERENCE_DATA)` laden (ein Teil der Runden mit `day = todayKey()`, damit „heute“ gefüllt ist). Ablauf wie oben mit erfundener Person (`@example.com`); für die Zonen den Spieler direkt setzen (`scene.player.x`, `pump`, `ppe`, `bvcT`/`bvcZone`, `scene.camX`, `scene.state = 'play'`) und kurz die Leertaste halten. Ergebnis erst nach `ResultScene.t > 260` aufnehmen (dann leuchten alle Medaillen). Touch: `devices['iPad Pro 11 landscape']`, einmal tippen. Online-Anmeldung: `index.html?online`. QR-Prüfseite: 1720 × 900, `fullPage`
 
 **Typische Probleme**
 

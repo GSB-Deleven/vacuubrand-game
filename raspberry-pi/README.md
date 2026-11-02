@@ -1,5 +1,7 @@
 # 🍓 Professor Vacuumus auf dem Raspberry Pi (Arcade-Automat)
 
+[Zurück zur Übersicht](../README.md) · [Anleitung fürs Standpersonal](../ANLEITUNG.md) · 🇬🇧 [Guide for booth staff](../GUIDE.en.md)
+
 Der Raspberry Pi startet beim Einschalten direkt ins Spiel, im Vollbild und ohne Internet. Joystick oder Arcade-Knöpfe einstecken, fertig.
 
 ## Was du brauchst
@@ -30,7 +32,7 @@ Der Raspberry Pi startet beim Einschalten direkt ins Spiel, im Vollbild und ohne
 | Leads exportieren | Admin → Export. Die Datei landet in `~/Downloads`, von dort auf einen USB-Stick kopieren. Oder im Admin „Inhalt kopieren“ |
 | Spiel manuell starten | Doppelklick auf `▶ START Linux + Raspberry Pi.sh` im Spielordner |
 
-Die Daten (Bestenliste, Leads) liegen im Ordner `~/.professor-vakuumus` auf der SD-Karte und bleiben auch nach dem Ausschalten erhalten. Trotzdem jeden Abend exportieren.
+Die Daten (Bestenliste, Leads) liegen im Ordner `~/.professor-vakuumus` auf der SD-Karte (alter Name, absichtlich so gelassen, damit bestehende Daten erhalten bleiben) und bleiben auch nach dem Ausschalten erhalten. Trotzdem jeden Abend exportieren.
 
 ## Autostart wieder entfernen
 

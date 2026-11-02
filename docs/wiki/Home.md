@@ -2,7 +2,7 @@
 
 Das VACUUBRAND Messespiel: Ein verrückter Laborprofessor saugt mit seiner Saugpistole das Labor-Chaos weg. Unterwegs holt er sich immer stärkere VACUUBRAND Pumpen. Vor dem Spielen melden sich die Besucher an, die Besten gewinnen einen Preis.
 
-![Titelbild](https://github.com/GSB-Deleven/vacuubrand-game/raw/main/docs/1_titel.png)
+![Titelbild](https://github.com/GSB-Deleven/vacuubrand-game/raw/main/docs/screenshots/de/01-titel.png)
 
 ## 🚀 Schnellstart
 
