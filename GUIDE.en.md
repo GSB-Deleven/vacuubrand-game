@@ -54,7 +54,7 @@ At the bottom under "Assets", download `Professor-Vacuumus-v….zip` (not "Sourc
 | 🍎 Mac | Double-click the ZIP (it unpacks automatically). The first time, start `▶ START Mac.command` with right-click → **Open** → Open. If it says "permission denied": type `chmod +x ` in Terminal, drag the file into the window, press Enter |
 | 🍓 Raspberry Pi / Linux | Unzip it (right-click → Extract Here, or in a terminal `unzip Professor-Vacuumus-v….zip`). Double-click `▶ START Linux + Raspberry Pi.sh`. If it does not start: in a terminal inside the folder run `chmod +x *.sh raspberry-pi/*.sh`. Automatic start when switched on: [raspberry-pi/README.md](raspberry-pi/README.md) (German) |
 
-The running version is shown in small print at the top of the admin area (e.g. "Version 0.9.1").
+The running version is shown in small print at the top of the admin area (e.g. "Version 0.9.2").
 
 > [!IMPORTANT]
 > **For a new version:** first back up the high scores in the admin area (JSON), then put the new folder in the **same place** (replace the old one), otherwise the game cannot see the existing high score list. If needed, load the backup again in the admin area.
@@ -298,7 +298,7 @@ On the title screen press **Ctrl + Shift + A** (tablet: 3 seconds on the logo), 
 
 | Section | What it does |
 |---|---|
-| **Version** | shown in small print below the heading (e.g. "Version 0.9.1"), so you can see which version is running |
+| **Version** | shown in small print below the heading (e.g. "Version 0.9.2"), so you can see which version is running |
 | **Overview** | **Top 3 today** (daily prize) and **Top 3 whole show** with full contact details |
 | **Export & backup** | Export **Leads (CSV/Excel)** and **All rounds (CSV/Excel)**, saved in the Downloads folder. **Save / load backup** (JSON), e.g. to move data to another laptop |
 | **Settings** | Show name, round time, PIN, daily prize and main prize (prizes appear on the title screen and the high scores) |
