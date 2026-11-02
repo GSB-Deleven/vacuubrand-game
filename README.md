@@ -13,7 +13,7 @@
 
 > [!NOTE]
 > **🧪 Online testen: [gsb-deleven.github.io/vacuubrand-game](https://gsb-deleven.github.io/vacuubrand-game/)**
-> Die Online-Version ist nur zum Ausprobieren. An der Messe läuft die Offline-Version mit Anmeldung und Export: [herunterladen](https://github.com/GSB-Deleven/vacuubrand-game/releases/latest).
+> Die Online-Version ist nur zum Ausprobieren. An der Messe läuft die Offline-Version mit Anmeldung und Export: [herunterladen](https://github.com/GSB-Deleven/vacuubrand-game/releases).
 >
 > <details>
 > <summary>Unterschiede zur Messe-Version (aufklappen)</summary>
@@ -192,8 +192,9 @@ Das Spiel läuft auf **Deutsch, Englisch und Französisch** (Wunsch des UK-Teams
 - Export als **Excel-Datei (CSV)**: eine Liste mit allen Kontakten, eine mit allen gespielten Runden, jeweils mit Land und Sprache. Die Kontakte können danach direkt ins CRM oder an den Vertrieb.
 - Die Einwilligung ist Pflicht, der Newsletter freiwillig und separat angekreuzt.
 - Nach der Messe löscht ein Knopf alle Daten.
+- Für Anlässe ohne Lead-Sammlung gibt es im Admin den Schalter **Nur Spitzname**: Die Leute geben nur einen Spitznamen ein, es werden keine Kontaktdaten erfasst. Solange er an ist, zeigt der Admin einen gelben Warnbalken.
 
-![Admin-Bereich mit Top 3, Export und Einstellungen (Beispieldaten)](docs/screenshots/de/15-admin.png)
+![Admin-Bereich mit Top 3, Export, Einstellungen und Schalter „Nur Spitzname“ (Beispieldaten)](docs/screenshots/de/15-admin.png)
 
 > [!IMPORTANT]
 > Den Einwilligungstext sollte die Datenschutzstelle vor dem ersten Einsatz noch einmal anschauen, für UK/Irland und Frankreich jeweils separat. Er lässt sich in einer Datei ändern, ohne Programmierkenntnisse.
@@ -202,7 +203,7 @@ Das Spiel läuft auf **Deutsch, Englisch und Französisch** (Wunsch des UK-Teams
 
 ## ⬇️ Herunterladen
 
-Die fertige Version zum Herunterladen: **[Professor Vacuumus, neueste Version](https://github.com/GSB-Deleven/vacuubrand-game/releases/latest)**
+Die fertige Version zum Herunterladen: **[Professor Vacuumus, neueste Version](https://github.com/GSB-Deleven/vacuubrand-game/releases)**
 
 1. Unten bei „Assets“ die Datei `Professor-Vacuumus-v….zip` laden.
 2. Entpacken (Windows: Rechtsklick → „Alle extrahieren“, Mac: Doppelklick, Raspberry Pi: Rechtsklick → „Hier entpacken“).
