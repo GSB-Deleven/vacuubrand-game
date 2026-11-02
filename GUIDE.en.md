@@ -116,10 +116,14 @@ The title screen is **always in English** (e.g. "B = HIGH SCORES"), so it fits e
 
 ![Country selection with four flags and three languages](docs/screenshots/en/02-land.png)
 
-Four flags (Switzerland, Germany, UK/Ireland, France), below them the languages DEUTSCH · ENGLISH · FRANÇAIS.
+Four flags (Switzerland, Germany, UK/Ireland, France), below them the row LANGUAGE: DEUTSCH · ENGLISH · FRANÇAIS and at the bottom the big **START** button.
 
-- **Keyboard/gamepad:** ← → picks the flag, ↑ ↓ switches to the language row, Enter confirms. The flag preselects the country's language (UK: English), any other language can be chosen in the language row.
-- **Tablet/phone:** first tap the language (only needed if it should be different), then tap the flag. That starts right away.
+1. **Pick a flag:** this only marks the country and sets the matching language right away (Switzerland and Germany: German, UK: English, France: French). It does not start yet.
+2. **Change the language (only if needed):** e.g. a visitor from French-speaking Switzerland picks the Swiss flag and then FRANÇAIS. Picking a flag again switches back to that flag's language.
+3. Press **START**: now the registration opens in the chosen language.
+
+- **Keyboard/gamepad:** ↑ ↓ moves between the three rows (flags, language, START), ← → chooses within the row, Enter starts from anywhere.
+- **Tablet/phone:** tap a flag, tap a language if needed, then tap START.
 - After 60 seconds without input the game returns to the title screen.
 
 ### Step 3: Register

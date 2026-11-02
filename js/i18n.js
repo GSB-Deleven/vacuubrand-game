@@ -34,8 +34,10 @@ const I18N = {
 
     // Länderwahl (neu)
     'country.title': 'LAND UND SPRACHE',
-    'country.hint': '← → LAND   ↑ ↓ SPRACHE   ENTER = OK',
-    'country.hint.touch': 'SPRACHE WÄHLEN, DANN FLAGGE ANTIPPEN',
+    'country.hint': '← → WÄHLEN   ↑ ↓ WECHSELN   ENTER = START',
+    'country.hint.touch': 'FLAGGE ANTIPPEN, DANN START',
+    'country.lang': 'SPRACHE:',
+    'country.start': 'START',
 
     // Anleitung vor der Runde
     'howto.title': 'SO GEHT\'S',
@@ -232,8 +234,10 @@ const I18N = {
     'player': 'PLAYER',
 
     'country.title': 'COUNTRY AND LANGUAGE',
-    'country.hint': '← → COUNTRY   ↑ ↓ LANGUAGE   ENTER = OK',
-    'country.hint.touch': 'CHOOSE LANGUAGE, THEN TAP A FLAG',
+    'country.hint': '← → CHOOSE   ↑ ↓ SWITCH   ENTER = START',
+    'country.hint.touch': 'TAP A FLAG, THEN START',
+    'country.lang': 'LANGUAGE:',
+    'country.start': 'START',
 
     'howto.title': 'HOW TO PLAY',
     'howto.walk': 'WALK', 'howto.jump': 'JUMP', 'howto.duck': 'DUCK',
@@ -415,8 +419,10 @@ const I18N = {
     'player': 'JOUEUR',
 
     'country.title': 'PAYS ET LANGUE',
-    'country.hint': '← → PAYS   ↑ ↓ LANGUE   ENTRÉE = OK',
-    'country.hint.touch': 'CHOISIS LA LANGUE, PUIS TOUCHE UN DRAPEAU',
+    'country.hint': '← → CHOISIR   ↑ ↓ CHANGER   ENTRÉE = JOUER',
+    'country.hint.touch': 'TOUCHE UN DRAPEAU, PUIS JOUER',
+    'country.lang': 'LANGUE :',
+    'country.start': 'JOUER',
 
     'howto.title': 'COMMENT JOUER',
     'howto.walk': 'MARCHER', 'howto.jump': 'SAUTER', 'howto.duck': 'SE BAISSER',
