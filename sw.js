@@ -3,7 +3,7 @@
 // Bei jeder neuen Version VERSION erhöhen, damit Tablets die neuen Dateien holen.
 // Hinweis: Der Cache-Name behält absichtlich den alten Namen "vakuumus" (Professor heisst jetzt Vacuumus).
 // Nur die Nummer hochzählen, damit installierte Tablets sauber aktualisieren.
-const VERSION = 'vakuumus-v12';
+const VERSION = 'vakuumus-v13';
 const FILES = [
   './',
   'index.html',
@@ -32,7 +32,11 @@ const FILES = [
 ];
 
 self.addEventListener('install', e => {
-  e.waitUntil(caches.open(VERSION).then(c => c.addAll(FILES)).then(() => self.skipWaiting()));
+  // cache: 'reload' holt jede Datei frisch vom Server. Sonst könnte der Browser-Zwischenspeicher
+  // (GitHub Pages: 10 Minuten) alte Dateien in den neuen Cache legen.
+  e.waitUntil(caches.open(VERSION)
+    .then(c => c.addAll(FILES.map(f => new Request(f, { cache: 'reload' }))))
+    .then(() => self.skipWaiting()));
 });
 
 self.addEventListener('activate', e => {
@@ -46,7 +50,7 @@ self.addEventListener('fetch', e => {
   if (e.request.method !== 'GET' || new URL(e.request.url).origin !== location.origin) return;
   e.respondWith(caches.open(VERSION).then(cache =>
     cache.match(e.request, { ignoreSearch: true }).then(hit => {
-      const net = fetch(e.request).then(res => {
+      const net = fetch(e.request.url, { cache: 'no-cache' }).then(res => {
         if (res && res.ok) cache.put(e.request, res.clone());
         return res;
       }).catch(() => hit);
