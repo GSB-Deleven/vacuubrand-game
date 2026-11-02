@@ -33,13 +33,14 @@ const CONFIG = {
   //  Prüfen: qr/index.html zeigt alle QR-Codes mit Link.
   countries: [
     { key: 'CH', name: 'SCHWEIZ / SUISSE', lang: 'de',
-      contactUrl: 'https://www.vacuubrand.com/ch/de/service-beratung/kontakt/ansprechpartner-weltweit?tx_branddistributors_vacuubranddistributors%5Baction%5D=search&tx_branddistributors_vacuubranddistributors%5Bcontroller%5D=VacuuBrandDistributor&cHash=9abe530addce1913d335150179acf00a' },
+      contactUrl: 'https://www.vacuubrand.com/ch/de/service-beratung/kontakt/ansprechpartner-weltweit/ch' },
     { key: 'DE', name: 'DEUTSCHLAND', lang: 'de',
-      contactUrl: 'https://www.vacuubrand.com/ch/de/service-beratung/kontakt/ansprechpartner-weltweit?tx_branddistributors_vacuubranddistributors%5Baction%5D=search&tx_branddistributors_vacuubranddistributors%5Bcontroller%5D=VacuuBrandDistributor&cHash=9abe530addce1913d335150179acf00a' },
+      contactUrl: 'https://www.vacuubrand.com/ch/de/service-beratung/kontakt/ansprechpartner-weltweit/de' },
+    // UK: Kürzel /gb (nicht /uk). Englische Seite, zeigt die Ansprechpartner für UK und Irland
     { key: 'UK', name: 'UK / IRELAND', lang: 'en',
-      contactUrl: 'https://www.vacuubrand.com/ch/en/service-advice/contact/contacts-worldwide' },
+      contactUrl: 'https://www.vacuubrand.com/ch/en/service-advice/contact/contacts-worldwide/gb' },
     { key: 'FR', name: 'FRANCE', lang: 'fr',
-      contactUrl: 'https://www.vacuubrand.com/ch/fr/services-et-conseils/contact/contacts-dans-le-monde-entier' }
+      contactUrl: 'https://www.vacuubrand.com/ch/fr/services-et-conseils/contact/contacts-dans-le-monde-entier/fr' }
   ],
   countrySelectSeconds: 60,    // ohne Eingabe zurück zum Titel
 
