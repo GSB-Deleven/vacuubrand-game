@@ -148,6 +148,10 @@ input.bad { border-color: #ff6b6b; }
 .admin .row select { width: 12em; font: inherit; padding: 0.3em; background: #fff; color: #1a1c2c; border: 2px solid #a9bfd8; }
 .admin .warn { background: #e04848; padding: 0.4em; margin-bottom: 0.5em; }
 .admin .ok { color: #7be07b; }
+/* Schalter "Nur Spitzname" und Warnung oben, solange er an ist */
+.admin .row label.check { flex-direction: row; flex-basis: 100%; margin-top: 0.3em; }
+.admin .row label.check input { width: 1.3em; }
+.admin .warn.nick { background: #f9b000; color: #1a1c2c; font-weight: bold; }
 
 .logo {
   background: #fff;

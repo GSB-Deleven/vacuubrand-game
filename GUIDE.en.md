@@ -300,11 +300,25 @@ On the title screen press **Ctrl + Shift + A** (tablet: 3 seconds on the logo), 
 | **Settings** | Show name, round time, PIN, daily prize and main prize (prizes appear on the title screen and the high scores) |
 | **Device language** | decides which country and language are preselected in the country selection (German → Switzerland, English → UK, French → France). At a show in the UK, for example, set it to English. The title screen always stays in English (`titleLang` in `js/config.js`) |
 | **Admin language** | German or English, e.g. for the team in the UK |
+| **Nickname only (no lead capture)** | Tick box in the settings, then **Save**. For events that are just for fun: people only enter a nickname, like in the online version. No email, no company, no consent, no newsletter. Country selection, high scores and the QR code at the end stay. See below |
 | **Controller / joystick** | **Set up controller** if buttons are in the wrong place |
 | **Latest rounds** | delete single rounds (click ✕ twice) |
 | **Danger zone** | **Delete all data** after the show (type DELETE into the field) |
 
 - The export additionally contains **country** (CH, DE, UK, FR) and **language** (de, en, fr) for each round and each lead.
+### Nickname only (event without leads)
+
+As long as the switch is on, a yellow bar **NICKNAME ONLY IS ACTIVE** is shown at the top of the admin area. The setting is kept after a restart.
+
+![Admin with the "Nickname only" switch turned on (sample data)](docs/screenshots/en/18-admin-nur-spitzname.png)
+
+- The high score list shows the nickname.
+- The **Leads** export only contains real registrations, no nicknames. In the **All rounds** export the column **Type** shows whether it was a **Lead** or a **Nickname**; for nicknames, name, company and email stay empty.
+- The overview counts nicknames separately ("nicknames (no leads)").
+
+> [!WARNING]
+> At a show where leads are collected, **always switch it off**. Otherwise nobody registers.
+
 - **Load reference data (test):** loads sample data with invented people (folder `daten/`: JSON and CSV examples) to try out the high scores and export. Remove it with "Delete all data" before the show.
 - After every export the content also appears in a text field with "Copy content". Handy if the browser does not allow downloads (e.g. in the online preview).
 

@@ -511,6 +511,8 @@ Ist der Speicher gesperrt (z. B. strenge Datenschutzeinstellung), läuft das Spi
 
 **Lead:** `id`, `firstName`, `lastName`, `company`, `email` (klein geschrieben, eindeutig), `consent`, `newsletter`, `country` (CH, DE, UK, FR), `lang` (de, en, fr), `created`, `updated`. Wer sich mit derselben E-Mail wieder anmeldet, aktualisiert seinen Lead.
 
+**Spitzname-Spieler** (kein Lead): online `isOnline: true`, `email` = `online:<spitzname>`; an der Messe mit Schalter „Nur Spitzname“ (`CONFIG.nameOnly`) `nickOnly: true`, `email` = `nick:<spitzname>`. Der Spitzname steht in `firstName`, die übrigen Felder sind leer. Gleicher Spitzname = gleicher Spieler. Erkennen mit `isNickLead(lead)` (`js/util.js`); `Store.realLeads()` liefert nur echte Leads.
+
 **Runde:** `id`, `ts` (Zeitstempel), `day` (JJJJ-MM-TT), `eventName`, `leadId`, `country`, `lang`, `score` (Gesamt), `base` (Grundpunkte), `timeBonus`, `medalBonus`, `medals` (Liste), `finished`, `timeLeft`, `pump`, `captures`, `ppe`, `views`, `maxCombo`.
 
 ### Bestenliste
@@ -524,8 +526,8 @@ Ist der Speicher gesperrt (z. B. strenge Datenschutzeinstellung), läuft das Spi
 
 | Export | Inhalt |
 |---|---|
-| Leads (CSV) | Vorname, Name, Firma, E-Mail, Einwilligung, Newsletter, Land, Sprache, bester Score, Platz gesamt, Anzahl Runden, erstmals gespielt |
-| Runden (CSV) | Datum/Zeit, Tag, Messe, Kontaktdaten, Land, Sprache, Punkte, Grundpunkte, Zeitbonus, Medaillenbonus, Medaillen, Labor gerettet, Eingesaugt, beste Pumpe |
+| Leads (CSV) | nur echte Leads (ohne Spitznamen): Vorname, Name, Firma, E-Mail, Einwilligung, Newsletter, Land, Sprache, bester Score, Platz gesamt, Anzahl Runden, erstmals gespielt |
+| Runden (CSV) | Datum/Zeit, Tag, Messe, Art (Lead oder Spitzname), Spitzname, Kontaktdaten (bei Spitzname leer), Land, Sprache, Punkte, Grundpunkte, Zeitbonus, Medaillenbonus, Medaillen, Labor gerettet, Eingesaugt, beste Pumpe |
 | Sicherung (JSON) | alle Leads und Runden, zum Übertragen auf einen anderen Laptop |
 
 Die Spaltennamen folgen der Admin-Sprache (Deutsch oder Englisch). Die CSV-Dateien haben Strichpunkt als Trenner und eine UTF-8-Kennung, damit Excel sie mit Umlauten direkt richtig öffnet. Einträge, die mit `=`, `+`, `-` oder `@` beginnen, werden entschärft, damit Excel keine Formeln ausführt.
@@ -556,7 +558,8 @@ Beim **Laden einer Sicherung** werden nur neue Einträge ergänzt, nichts wird �
 | Übersicht | Spieler und Runden heute und gesamt |
 | Top 3 | heute (Tagespreis) und gesamte Messe, mit vollen Kontaktdaten |
 | Export & Sicherung | Leads-CSV, Runden-CSV, JSON-Sicherung speichern und laden, Referenzdaten laden. Nach jedem Export steht der Inhalt zusätzlich in einem Textfeld mit „Inhalt kopieren“, falls der Browser keinen Download zulässt |
-| Einstellungen | Messename, Rundenzeit (30 bis 600 s), Admin-PIN, Tagespreis und Hauptpreis (je max. 17 Zeichen, erscheinen auf Startbildschirm und Bestenliste, nicht in der Online-Demo), Gerätesprache (`defaultLang`: de/en/fr), Admin-Sprache (`adminLang`: de/en) |
+| Einstellungen | Messename, Rundenzeit (30 bis 600 s), Admin-PIN, Tagespreis und Hauptpreis (je max. 17 Zeichen, erscheinen auf Startbildschirm und Bestenliste, nicht in der Online-Demo), Gerätesprache (`defaultLang`: de/en/fr), Admin-Sprache (`adminLang`: de/en), Schalter **Nur Spitzname** (`nameOnly`). Alles wird im Browser gespeichert (`vakuumprof_settings_v1`) und beim Start über `CONFIG` gelegt |
+| Nur Spitzname | ist der Schalter an, zeigt der Admin oben einen gelben Warnbalken, die Übersicht zählt Spitznamen separat, Top 3 und Letzte Runden markieren sie mit „Spitzname“ ohne Firma/E-Mail. Die Anmeldung (`RegisterScene`) nimmt dann den Spitznamen-Weg wie online (`nickRegistration()` in `js/util.js`), mit Überschrift `nick.title` statt ONLINE-DEMO |
 | Letzte Runden | die letzten 40 Runden mit Land und Sprache, einzeln löschbar (✕ zweimal klicken) |
 | Gefahrenzone | alle Daten löschen, nur nach Eintippen von „LÖSCHEN“ (oder „DELETE“) |
 | Sonstiges | Vollbild, Ton an/aus |

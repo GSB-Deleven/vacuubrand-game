@@ -163,6 +163,8 @@ const I18N = {
     'on.nick': 'Spitzname', 'on.guest': 'GAST',
     'on.back': 'ZURÜCK', 'on.go': 'LOS GEHT\'S!',
     'on.privacy': 'Deine Punkte werden nur auf diesem Gerät gespeichert. Es werden keine Daten übertragen.',
+    // Messe mit Schalter "Nur Spitzname": Überschrift statt ONLINE-DEMO (Rest wie on.…)
+    'nick.title': 'WILLKOMMEN!',
 
     // ---------------- Admin-Bereich (nur de und en) ----------------
     'adm.title': 'ADMIN · PROFESSOR VACUUMUS',
@@ -182,6 +184,10 @@ const I18N = {
     'adm.prizeDay': 'Tagespreis', 'adm.prizeMain': 'Hauptpreis (ganze Messe)', 'adm.prizeEmpty': 'leer = keine Anzeige',
     'adm.defaultLang': 'Gerätesprache (Vorwahl Land und Sprache)', 'adm.adminLang': 'Admin-Sprache',
     'adm.save': 'Speichern',
+    'adm.nameOnly': 'Nur Spitzname (keine Lead-Erfassung)',
+    'adm.nameOnlyHelp': 'Für Anlässe ohne Lead-Sammlung: Spieler geben nur einen Spitznamen ein, wie in der Online-Version. Keine E-Mail, keine Firma, keine Einwilligung. Länderwahl, Bestenliste und QR-Code bleiben.',
+    'adm.nameOnlyActive': 'NUR SPITZNAME IST AKTIV: Es werden keine Leads erfasst. An einer Lead-Messe unten bei Einstellungen ausschalten!',
+    'adm.nickTag': 'Spitzname', 'adm.statsNick': ' · <b>{0}</b> Spitznamen (keine Leads)',
     'adm.recent': 'Letzte Runden',
     'adm.colTime': 'Zeit', 'adm.colName': 'Name', 'adm.colCompany': 'Firma', 'adm.colEmail': 'E-Mail', 'adm.colScore': 'Punkte',
     'adm.colCountry': 'Land', 'adm.colLang': 'Sprache',
@@ -205,6 +211,7 @@ const I18N = {
     'adm.step.jump': 'SPRINGEN', 'adm.step.suck': 'SAUGEN', 'adm.step.sprint': 'SPRINTEN', 'adm.step.start': 'START / PAUSE',
     'adm.badBackup': 'Keine gültige Sicherungsdatei.',
     // CSV-Export (Spaltennamen)
+    'csv.type': 'Art', 'csv.typeLead': 'Lead', 'csv.typeNick': 'Spitzname', 'csv.nick': 'Spitzname',
     'csv.dateTime': 'Datum/Zeit', 'csv.day': 'Tag', 'csv.event': 'Messe', 'csv.firstName': 'Vorname', 'csv.lastName': 'Name',
     'csv.company': 'Firma', 'csv.email': 'E-Mail', 'csv.consent': 'Einwilligung', 'csv.newsletter': 'Newsletter',
     'csv.country': 'Land', 'csv.lang': 'Sprache',
@@ -348,6 +355,7 @@ const I18N = {
     'on.nick': 'Nickname', 'on.guest': 'GUEST',
     'on.back': 'BACK', 'on.go': 'LET\'S GO!',
     'on.privacy': 'Your points are stored only on this device. No data is transmitted.',
+    'nick.title': 'WELCOME!',
 
     'adm.title': 'ADMIN · PROFESSOR VACUUMUS',
     'adm.pin': 'PIN', 'adm.open': 'OPEN', 'adm.back': 'ESC · BACK', 'adm.wrongPin': 'Wrong PIN.',
@@ -366,6 +374,10 @@ const I18N = {
     'adm.prizeDay': 'Daily prize', 'adm.prizeMain': 'Main prize (whole show)', 'adm.prizeEmpty': 'empty = not shown',
     'adm.defaultLang': 'Device language (preselects country and language)', 'adm.adminLang': 'Admin language',
     'adm.save': 'Save',
+    'adm.nameOnly': 'Nickname only (no lead capture)',
+    'adm.nameOnlyHelp': 'For events without lead collection: players only enter a nickname, like in the online version. No email, no company, no consent. Country selection, high score list and QR code stay.',
+    'adm.nameOnlyActive': 'NICKNAME ONLY IS ACTIVE: no leads are captured. At a lead-collecting trade show, switch it off below under Settings!',
+    'adm.nickTag': 'nickname', 'adm.statsNick': ' · <b>{0}</b> nicknames (no leads)',
     'adm.recent': 'Latest rounds',
     'adm.colTime': 'Time', 'adm.colName': 'Name', 'adm.colCompany': 'Company', 'adm.colEmail': 'Email', 'adm.colScore': 'Score',
     'adm.colCountry': 'Country', 'adm.colLang': 'Language',
@@ -388,6 +400,7 @@ const I18N = {
     'adm.padButton': 'button {0}',
     'adm.step.jump': 'JUMP', 'adm.step.suck': 'SUCK', 'adm.step.sprint': 'SPRINT', 'adm.step.start': 'START / PAUSE',
     'adm.badBackup': 'Not a valid backup file.',
+    'csv.type': 'Type', 'csv.typeLead': 'Lead', 'csv.typeNick': 'Nickname', 'csv.nick': 'Nickname',
     'csv.dateTime': 'Date/time', 'csv.day': 'Day', 'csv.event': 'Show', 'csv.firstName': 'First name', 'csv.lastName': 'Last name',
     'csv.company': 'Company', 'csv.email': 'Email', 'csv.consent': 'Consent', 'csv.newsletter': 'Newsletter',
     'csv.country': 'Country', 'csv.lang': 'Language',
@@ -530,7 +543,8 @@ const I18N = {
     'on.hint': 'Pas d\'inscription nécessaire. Quel nom afficher dans le classement?',
     'on.nick': 'Pseudo', 'on.guest': 'INVITÉ',
     'on.back': 'RETOUR', 'on.go': 'C\'EST PARTI!',
-    'on.privacy': 'Tes points sont enregistrés uniquement sur cet appareil. Aucune donnée n\'est transmise.'
+    'on.privacy': 'Tes points sont enregistrés uniquement sur cet appareil. Aucune donnée n\'est transmise.',
+    'nick.title': 'BIENVENUE!'
   }
 };
 

@@ -253,7 +253,9 @@ Auf Touch-Geräten erscheinen automatisch Bildschirm-Tasten: links ◀ ▶ zum L
 - Gerätesprache, Sprache des Admin-Bereichs und die Links der QR-Codes pro Land
 - Pumpen-Slogans, Punkte und Zeitbonus
 
-Messename, Rundenzeit, PIN, Preise und Sprachen gehen direkt im Admin-Bereich, der Rest in einer gut kommentierten Einstellungsdatei.
+Für Anlässe ohne Lead-Sammlung gibt es im Admin den Schalter **Nur Spitzname**: Dann geben die Leute nur einen Spitznamen ein, wie in der Online-Version.
+
+Messename, Rundenzeit, PIN, Preise, Sprachen und „Nur Spitzname“ gehen direkt im Admin-Bereich, der Rest in einer gut kommentierten Einstellungsdatei.
 
 ---
 

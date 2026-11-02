@@ -34,6 +34,8 @@ const Store = {
 
   uid(prefix) { return prefix + Date.now().toString(36) + Math.random().toString(36).slice(2, 7); },
   leads() { return this.load(this.K_LEADS, []); },
+  // Echte Leads (mit Anmeldung), ohne Spitzname-Spieler (online oder Messe mit "Nur Spitzname")
+  realLeads() { return this.leads().filter(l => !isNickLead(l)); },
   rounds() { return this.load(this.K_ROUNDS, []); },
   leadMap() {
     const m = {};
@@ -92,7 +94,8 @@ const Store = {
     const rounds = this.rounds();
     const today = rounds.filter(r => r.day === day);
     return {
-      leads: this.leads().length,
+      leads: this.realLeads().length,
+      nicks: this.leads().length - this.realLeads().length,
       rounds: rounds.length,
       roundsToday: today.length,
       playersToday: new Set(today.map(r => r.leadId)).size
@@ -136,10 +139,15 @@ const Store = {
   },
   exportRoundsCSV() {
     const leads = this.leadMap();
-    const rows = this.rounds().slice().sort((a, b) => a.ts - b.ts).map(r => Object.assign({}, r, { lead: leads[r.leadId] || {} }));
+    // Spitzname-Runden: Spalte "Art" = Spitzname, Name in eigener Spalte, Lead-Spalten bleiben leer
+    const rows = this.rounds().slice().sort((a, b) => a.ts - b.ts).map(r => {
+      const l = leads[r.leadId] || {};
+      return Object.assign({}, r, { nick: isNickLead(l) ? l.firstName : '', lead: isNickLead(l) ? {} : l });
+    });
     const yn = v => LA(v ? 'csv.yes' : 'csv.no');
     const text = this.csv([
       [LA('csv.dateTime'), r => formatDateTime(r.ts)], [LA('csv.day'), r => r.day], [LA('csv.event'), r => r.eventName],
+      [LA('csv.type'), r => LA(r.nick ? 'csv.typeNick' : 'csv.typeLead')], [LA('csv.nick'), r => r.nick],
       [LA('csv.firstName'), r => r.lead.firstName], [LA('csv.lastName'), r => r.lead.lastName], [LA('csv.company'), r => r.lead.company],
       [LA('csv.email'), r => r.lead.email], [LA('csv.consent'), r => yn(r.lead.consent)], [LA('csv.newsletter'), r => yn(r.lead.newsletter)],
       [LA('csv.country'), r => r.country || r.lead.country || ''], [LA('csv.lang'), r => r.lang || r.lead.lang || ''],
@@ -153,7 +161,7 @@ const Store = {
   exportLeadsCSV() {
     const rounds = this.rounds();
     const yn = v => LA(v ? 'csv.yes' : 'csv.no');
-    const rows = this.leads().map(l => {
+    const rows = this.realLeads().map(l => {   // Spitzname-Spieler sind keine Leads
       const mine = rounds.filter(r => r.leadId === l.id);
       return Object.assign({}, l, {
         n: mine.length,
