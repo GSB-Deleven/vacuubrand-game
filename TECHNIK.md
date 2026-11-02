@@ -590,6 +590,15 @@ In `SONGS` (`js/sound.js`) die Notenfolgen `lead` (Melodie) und `bass` bearbeite
 - **Konsole:** `F12` öffnet die Entwicklerwerkzeuge. Fehler erscheinen rot unter „Konsole“. `window.__game` gibt Zugriff auf das laufende Spiel, z. B. `__game.scene.time = 999` für mehr Zeit beim Testen
 - **Automatische Tests:** Während der Entwicklung wurde das Spiel mit Playwright (automatisierter Browser) getestet: Bot-Durchlauf, Erreichbarkeit aller Blöcke und schwebenden Gegner, Controller-Simulation, Medaillen und Screenshots. Diese Testskripte gehören nicht zum Spielordner
 
+**Test-Rezepte für Claude** (Skripte im Scratchpad neu schreiben; `require('playwright')` geht überall, `npm install jsqr pngjs` im Scratchpad)
+- **Textbreiten:** im Browser über alle Schlüssel von `I18N.de` und jede Sprache laufen, `Font.width()` jeder Zeile gegen den Platz des Kastens prüfen (z. B. Schilder `sign.1` ≤ 137 px, übrige Schilder ≤ 230 px, Banner ≤ 283 px, Medaillen ≤ 101 px, Knöpfe auf dem Titel ≤ 144 px, Meldungen ≤ 312 px bzw. 2 Zeilen) und jedes Zeichen gegen `FONT_GLYPHS`. Fehlende EN/FR-Schlüssel melden
+- **Durchlauf pro Land/Sprache:** Titel → Enter → Pfeiltasten in der Länderwahl (mit ~80 ms Pause zwischen Tasten, sonst geht ein Druck verloren) → Formular mit erfundenen Daten (`@example.com`) → in der Anleitung erst nach 0,5 s Enter drücken → Spiel per `__game.update(); Input.endFrame();` in einer Schleife vorspulen → `__game.scene.time = 0.05` beendet die Runde → Kontakt-Seite: Screenshot, QR mit jsQR lesen und mit `contactUrlFor(land)` vergleichen, dann 61 s vorspulen und prüfen, dass die Seite noch steht
+- **Touch:** `devices['iPhone 13 landscape']` bzw. iPad, Punkte im 320×180-Bild per `page.touchscreen.tap` antippen (Startknopf ca. 233/99, Flaggen bei y 55, Sprachzeile bei y 122)
+- **Gamepad:** vor dem Laden `navigator.getGamepads` mit einem Stub überschreiben (`mapping: 'standard'`, Knöpfe 0 = A, 9 = Start, 12 bis 15 = Steuerkreuz)
+- **Online-Modus:** `index.html?online` mit `locale` en-GB / fr-CH / it-IT; der Titel ist immer Englisch, `deviceLang()` folgt dem Browser
+- **Service Worker:** wird nur auf `*.github.io` registriert. Zum Testen das Spiel mit `python3 -m http.server` ausliefern und `navigator.serviceWorker.register('sw.js')` von Hand aufrufen; prüfen, dass eine geänderte Datei sofort ankommt und das Spiel ohne Server aus dem Cache startet
+- **QR-Bilder:** siehe „QR-Codes prüfen und Bilder neu erzeugen“
+
 **Typische Probleme**
 
 | Problem | Lösung |
