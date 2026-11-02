@@ -194,7 +194,7 @@ Pumpen kommen aus den Kolben-Blöcken mit Nummer. Sie laufen wie die Pilze bei S
 | 3 | MD 4C VARIO select | 88 px | 2 | 5 s | Chemielabor |
 | 4 | VACUU·PURE 10C | 104 px | 3 | 4 s | Hochvakuum-Technikum |
 
-Eine neue Pumpe gibt +500 Punkte, füllt die SOG-Leiste und zeigt Name und Slogan im Boden-Banner. Dazu gibt es eine Fanfare, einen kurzen Blitz und ein leichtes Wackeln.
+Eine neue Pumpe gibt +500 Punkte, füllt die SOG-Leiste und zeigt Name und Slogan im Boden-Banner (nur wenn `CONFIG.productBanners` eingeschaltet ist; Standard: aus, bis die Texte freigegeben sind). Dazu gibt es eine Fanfare, einen kurzen Blitz und ein leichtes Wackeln.
 
 **BVC professional (Sonderfall):** kommt aus dem Block „V“ im Zellkultur-Labor. Im ganzen Zellkultur-Labor trägt der Professor dann die BVC, die Saugpistole wird zum VHC-Handstück. Sie saugt **alles** ein (Flüssigkeiten, Dämpfe und alle anderen Gegner, egal wie schwer) **ohne Energie-Limit** und mit **doppelten Punkten**. Nur die Dampf-Krake schafft sie nicht, Reichweite mindestens 84 px. Verlässt man das Labor, ist wieder die normale Pumpe aktiv. Wird die BVC ausserhalb erwischt, gilt sie `bvcSeconds` = 8 s.
 

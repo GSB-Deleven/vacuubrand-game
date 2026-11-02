@@ -11,6 +11,10 @@ const CONFIG = {
   adminPin: '1234',            // PIN für den Admin-Bereich – bitte ändern!
   prizeDay: '',                // Tagespreis, wird auf Startbildschirm und Bestenliste angezeigt (leer = keine Anzeige)
   prizeMain: '',               // Hauptpreis der ganzen Messe (leer = keine Anzeige)
+  // Produkt-Einblendungen unten im Bild beim Einsammeln einer Pumpe, der BVC oder von VACUU·VIEW
+  // (Produktname + Werbetext). Aus, bis das Marketing die Texte freigegeben hat (siehe TEXTE.md).
+  // true = einschalten. Schutzausrüstung und "LABOR GERETTET!" erscheinen immer.
+  productBanners: false,
   contactUrl: 'https://www.vacuubrand.com/ch/de/service-beratung/kontakt/ansprechpartner-weltweit/ch', // QR-Code am Ende der Runde
 
   hitTimePenalty: 3,           // Sekunden Abzug bei Treffer
